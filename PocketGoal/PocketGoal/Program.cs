@@ -3,6 +3,11 @@ using PocketGoal.Data;
 using PocketGoal.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.Sources.Clear();
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
+    .AddEnvironmentVariables();
 
 // Configure port for Render or local environment
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";

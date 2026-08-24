@@ -57,19 +57,18 @@ builder.Services.AddScoped<INotificationsService, NotificationsService>();
 
 var app = builder.Build();
 
-// Ensure Database is created and initialized
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.EnsureCreated();
+        context.Database.Migrate();   // was: context.Database.EnsureCreated();
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while initializing the database.");
+        logger.LogError(ex, "An error occurred while migrating the database.");
     }
 }
 

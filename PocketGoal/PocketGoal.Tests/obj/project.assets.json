@@ -1707,11 +1707,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "d:\\Dhanush\\PocketGoal\\PocketGoal.Tests\\PocketGoal.Tests.csproj",
+      "projectUniqueName": "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal.Tests\\PocketGoal.Tests.csproj",
       "projectName": "PocketGoal.Tests",
-      "projectPath": "d:\\Dhanush\\PocketGoal\\PocketGoal.Tests\\PocketGoal.Tests.csproj",
+      "projectPath": "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal.Tests\\PocketGoal.Tests.csproj",
       "packagesPath": "C:\\Users\\TSI\\.nuget\\packages\\",
-      "outputPath": "d:\\Dhanush\\PocketGoal\\PocketGoal.Tests\\obj\\",
+      "outputPath": "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -1734,8 +1734,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "d:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal.csproj": {
-              "projectPath": "d:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal.csproj"
+            "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj": {
+              "projectPath": "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj"
             }
           }
         }

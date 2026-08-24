@@ -1,0 +1,83 @@
+@model List<PocketGoal.Models.UserProfile>
+@{
+    ViewData["Title"] = "Select Profile";
+    var activeId = (Guid?)ViewBag.ActiveProfileId;
+}
+
+<div class="row justify-content-center my-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="stat-card">
+            <div class="text-center mb-4">
+                <div class="brand-icon mx-auto mb-2" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h3 class="fw-bold text-dark mb-1">Select Active Profile</h3>
+                <p class="text-muted small">Switch between tracking profiles or look up by email/phone</p>
+            </div>
+
+            <!-- Lookup by Email/Phone -->
+            <form asp-action="LookupProfile" method="post" class="mb-4 p-3 bg-light rounded-3 border">
+                @Html.AntiForgeryToken()
+                <label class="form-label small fw-bold">Find by Email or Phone</label>
+                <div class="input-group">
+                    <input type="text" name="emailOrPhone" class="form-control" placeholder="e.g. rahul@example.com or +919876543210" required />
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> Find
+                    </button>
+                </div>
+            </form>
+
+            @if (Model != null && Model.Any())
+            {
+                <h6 class="fw-bold text-muted small text-uppercase mb-3">Available Profiles on this System</h6>
+                <div class="list-group mb-4 shadow-sm">
+                    @foreach (var user in Model)
+                    {
+                        var isActive = activeId.HasValue && activeId.Value == user.Id;
+                        <div class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-3 @(isActive ? "border-primary bg-primary-light" : "")">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px;">
+                                    @user.Name.Substring(0, Math.Min(1, user.Name.Length)).ToUpper()
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark">
+                                        @user.Name
+                                        @if (isActive)
+                                        {
+                                            <span class="badge bg-primary ms-1">Active</span>
+                                        }
+                                    </div>
+                                    <div class="text-muted small">@user.Email &bull; @user.PhoneNumber</div>
+                                </div>
+                            </div>
+                            <div>
+                                @if (!isActive)
+                                {
+                                    <form asp-action="SelectProfile" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="profileId" value="@user.Id" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                            Select
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary btn-sm rounded-pill px-3">
+                                        Open Dashboard
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div class="text-center pt-2">
+                <a asp-action="Onboarding" class="btn btn-outline-primary rounded-pill px-4">
+                    <i class="bi bi-plus-circle me-1"></i> Create New Profile & Goal
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,208 @@
+@model PocketGoal.ViewModels.OnboardingViewModel
+@{
+    ViewData["Title"] = "Get Started - Create Your Savings Goal";
+}
+
+<div class="row justify-content-center my-2">
+    <div class="col-lg-10 col-xl-9">
+        <div class="onboarding-card">
+            <!-- Hero Header -->
+            <div class="onboarding-hero">
+                <div class="d-inline-flex align-items-center justify-content-center bg-white text-primary rounded-circle mb-3 shadow-sm" style="width: 56px; height: 56px; font-size: 1.6rem;">
+                    <i class="bi bi-piggy-bank-fill"></i>
+                </div>
+                <h1 class="h3 fw-bold mb-2">Welcome to PocketGoal</h1>
+                <p class="mb-0 opacity-90 mx-auto" style="max-width: 580px;">
+                    Set your purchase goal, plan your monthly deposits, and track your daily expenses seamlessly—no complicated passwords required.
+                </p>
+            </div>
+
+            <!-- Form Body -->
+            <div class="p-4 p-md-5">
+                <form asp-action="Onboarding" method="post" id="onboardingForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+
+                    <!-- Step 1: Your Profile Details -->
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.9rem;">1</span>
+                            <h5 class="fw-bold mb-0 text-dark">Your Profile Details</h5>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label asp-for="Name" class="form-label"></label> <span class="text-danger">*</span>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-person"></i></span>
+                                    <input asp-for="Name" class="form-control" placeholder="e.g. Rahul Sharma" />
+                                </div>
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="Email" class="form-label"></label> <span class="text-danger">*</span>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope"></i></span>
+                                    <input asp-for="Email" class="form-control" type="email" placeholder="rahul@example.com" />
+                                </div>
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="PhoneNumber" class="form-label"></label> <span class="text-danger">*</span>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-telephone"></i></span>
+                                    <input asp-for="PhoneNumber" class="form-control" placeholder="+91 9876543210" />
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4 text-muted opacity-25" />
+
+                    <!-- Step 2: What Are You Saving For? -->
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.9rem;">2</span>
+                            <h5 class="fw-bold mb-0 text-dark">What are you saving for?</h5>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="GoalName" class="form-label"></label> <span class="text-danger">*</span>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-laptop"></i></span>
+                                    <input asp-for="GoalName" class="form-control" placeholder="e.g. Gaming Laptop, Bike, Europe Trip" id="goalNameInput" />
+                                </div>
+                                <span asp-validation-for="GoalName" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="TargetPrice" class="form-label"></label> <span class="text-danger">*</span>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted fw-bold">₹</span>
+                                    <input asp-for="TargetPrice" class="form-control" type="number" step="100" min="100" placeholder="120000" id="targetPriceInput" />
+                                </div>
+                                <span asp-validation-for="TargetPrice" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="SavingPeriodMonths" class="form-label"></label> <span class="text-danger">*</span>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar3"></i></span>
+                                    <select asp-for="SavingPeriodMonths" class="form-select" id="periodMonthsSelect">
+                                        <option value="1">1 Month</option>
+                                        <option value="2">2 Months</option>
+                                        <option value="3">3 Months</option>
+                                        <option value="4" selected>4 Months</option>
+                                        <option value="6">6 Months</option>
+                                        <option value="9">9 Months</option>
+                                        <option value="12">1 Year (12 Months)</option>
+                                        <option value="18">1.5 Years (18 Months)</option>
+                                        <option value="24">2 Years (24 Months)</option>
+                                        <option value="36">3 Years (36 Months)</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="SavingPeriodMonths" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="InitialSavings" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted fw-bold">₹</span>
+                                    <input asp-for="InitialSavings" class="form-control" type="number" step="100" min="0" placeholder="0 (if already saved some)" id="initialSavingsInput" />
+                                </div>
+                                <span asp-validation-for="InitialSavings" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="GoalDescription" class="form-label"></label>
+                                <textarea asp-for="GoalDescription" class="form-control" rows="2" placeholder="Optional notes (e.g. RTX 4070 Laptop, Diwali sale target)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instant Interactive Calculation Preview Card -->
+                    <div class="p-3 p-md-4 rounded-3 border bg-light mb-4">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                            <div class="fw-bold text-dark d-flex align-items-center gap-2">
+                                <i class="bi bi-calculator text-primary fs-5"></i>
+                                <span>Estimated Savings Breakdown</span>
+                            </div>
+                            <span class="badge bg-primary-light text-primary border px-3 py-1 fw-bold" id="previewGoalTitle">Gaming Laptop</span>
+                        </div>
+
+                        <div class="row g-3 text-center">
+                            <div class="col-6 col-md-3">
+                                <div class="p-2 bg-white rounded-3 border">
+                                    <div class="text-muted small">Target Price</div>
+                                    <div class="h5 fw-bold text-dark mb-0" id="previewTargetPrice">₹120,000</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-2 bg-white rounded-3 border">
+                                    <div class="text-muted small">Remaining to Save</div>
+                                    <div class="h5 fw-bold text-primary mb-0" id="previewRemaining">₹120,000</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-2 bg-white rounded-3 border">
+                                    <div class="text-muted small">Required / Month</div>
+                                    <div class="h5 fw-bold text-success mb-0" id="previewMonthly">₹30,000</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="p-2 bg-white rounded-3 border">
+                                    <div class="text-muted small">Required / Day</div>
+                                    <div class="h5 fw-bold text-secondary mb-0" id="previewDaily">₹1,000</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3 pt-2">
+                        <a asp-action="Switch" class="text-muted text-decoration-none small">
+                            <i class="bi bi-person-check me-1"></i> Already have a profile? Select profile
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg px-4 shadow">
+                            <i class="bi bi-rocket-takeoff-fill me-2"></i> Launch My Savings Tracker
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function updateCalculationPreview() {
+            const goalName = document.getElementById('goalNameInput').value || 'Your Goal';
+            const price = parseFloat(document.getElementById('targetPriceInput').value) || 0;
+            const initial = parseFloat(document.getElementById('initialSavingsInput').value) || 0;
+            const months = parseInt(document.getElementById('periodMonthsSelect').value) || 1;
+
+            const remaining = Math.max(0, price - initial);
+            const monthly = months > 0 ? (remaining / months) : remaining;
+            const days = months * 30;
+            const daily = days > 0 ? (remaining / days) : remaining;
+
+            document.getElementById('previewGoalTitle').textContent = goalName;
+            document.getElementById('previewTargetPrice').textContent = '₹' + price.toLocaleString('en-IN');
+            document.getElementById('previewRemaining').textContent = '₹' + remaining.toLocaleString('en-IN');
+            document.getElementById('previewMonthly').textContent = '₹' + Math.round(monthly).toLocaleString('en-IN');
+            document.getElementById('previewDaily').textContent = '₹' + Math.round(daily).toLocaleString('en-IN');
+        }
+
+        document.getElementById('goalNameInput').addEventListener('input', updateCalculationPreview);
+        document.getElementById('targetPriceInput').addEventListener('input', updateCalculationPreview);
+        document.getElementById('initialSavingsInput').addEventListener('input', updateCalculationPreview);
+        document.getElementById('periodMonthsSelect').addEventListener('change', updateCalculationPreview);
+
+        // Initial run
+        updateCalculationPreview();
+    </script>
+}

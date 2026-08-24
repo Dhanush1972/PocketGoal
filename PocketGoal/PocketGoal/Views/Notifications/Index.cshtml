@@ -1,0 +1,110 @@
+@model PocketGoal.ViewModels.NotificationCenterViewModel
+@{
+    ViewData["Title"] = "Savings Reminders & Notifications";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">Savings Reminders & Notifications</h2>
+        <p class="text-muted mb-0">Stay informed about your monthly savings targets, pacing alerts, and milestones.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Reminders List -->
+    <div class="col-lg-8">
+        <div class="stat-card p-4">
+            <h5 class="fw-bold text-dark mb-3">
+                <i class="bi bi-bell-fill text-primary me-2"></i> Active Goal Reminders
+            </h5>
+
+            @if (Model.GeneratedReminders.Any())
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var item in Model.GeneratedReminders)
+                    {
+                        <div class="p-3 rounded-3 border bg-white shadow-sm">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge @item.UrgencyBadge">
+                                        @item.Type
+                                    </span>
+                                    <strong class="text-dark">@item.Title</strong>
+                                </div>
+                                <span class="text-muted small">@item.GeneratedAt.ToString("MMM dd, yyyy")</span>
+                            </div>
+
+                            <div class="p-3 bg-light rounded-2 border mb-3">
+                                <div class="text-muted small fw-bold mb-1"><i class="bi bi-envelope me-1"></i> Email Preview (@Model.User.Email):</div>
+                                <div class="text-dark small mb-2"><strong>@item.Subject</strong></div>
+                                <div class="text-muted small">@item.MessageBody</div>
+
+                                <hr class="my-2 opacity-25" />
+
+                                <div class="text-muted small fw-bold mb-1"><i class="bi bi-chat-dots me-1"></i> SMS Preview (@Model.User.PhoneNumber):</div>
+                                <div class="text-dark small">@item.SmsBody</div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <form asp-action="Trigger" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="GoalId" value="@item.GoalId" />
+                                    <input type="hidden" name="Type" value="@item.Type" />
+                                    <input type="hidden" name="Channel" value="@PocketGoal.Models.NotificationChannel.Both" />
+                                    <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                        <i class="bi bi-send-fill me-1"></i> Send Test Notification
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 bg-light rounded-3">
+                    <i class="bi bi-check-circle text-success display-4"></i>
+                    <h5 class="fw-bold text-dark mt-3">All Caught Up!</h5>
+                    <p class="text-muted small mb-0">No urgent pacing alerts or pending deadlines at this time.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Notification Provider & Channel Settings -->
+    <div class="col-lg-4">
+        <div class="stat-card p-4 mb-4">
+            <h5 class="fw-bold text-dark mb-3">
+                <i class="bi bi-sliders text-primary me-2"></i> Delivery Channels
+            </h5>
+
+            <div class="mb-3 p-3 bg-light rounded-3 border">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-envelope-check text-primary fs-5"></i>
+                        <span class="fw-bold text-dark small">Email Notifications</span>
+                    </div>
+                    <span class="badge bg-success-light text-success border">Active</span>
+                </div>
+                <div class="text-muted small">Target: <strong>@Model.User.Email</strong></div>
+                <div class="text-muted" style="font-size: 0.75rem;">Provider: @Model.EmailProviderName</div>
+            </div>
+
+            <div class="mb-3 p-3 bg-light rounded-3 border">
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-phone-vibrate text-primary fs-5"></i>
+                        <span class="fw-bold text-dark small">SMS / Phone Alerts</span>
+                    </div>
+                    <span class="badge bg-success-light text-success border">Active</span>
+                </div>
+                <div class="text-muted small">Target: <strong>@Model.User.PhoneNumber</strong></div>
+                <div class="text-muted" style="font-size: 0.75rem;">Provider: @Model.SmsProviderName</div>
+            </div>
+
+            <div class="p-3 bg-primary-light rounded-3 border border-primary text-primary small">
+                <i class="bi bi-shield-check me-1"></i> Notification credentials and provider endpoints are stored securely on the server.
+            </div>
+        </div>
+    </div>
+</div>

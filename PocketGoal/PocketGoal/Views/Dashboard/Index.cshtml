@@ -1,0 +1,437 @@
+@model PocketGoal.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var primary = Model.PrimaryGoal;
+}
+
+<div class="row g-3 mb-4 align-items-center">
+    <div class="col-md-7">
+        <h2 class="fw-bold text-dark mb-1">
+            Namaste, @Model.User.Name 👋
+        </h2>
+        <p class="text-muted mb-0">Here is your real-time savings pace and monthly financial summary.</p>
+    </div>
+    <div class="col-md-5 text-md-end d-flex gap-2 justify-content-md-end flex-wrap">
+        @if (primary != null)
+        {
+            <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@primary.Id" class="btn btn-success rounded-pill px-3 shadow-sm">
+                <i class="bi bi-plus-circle-fill me-1"></i> Add Savings
+            </a>
+        }
+        <a asp-controller="Expenses" asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm">
+            <i class="bi bi-dash-circle-fill me-1"></i> Record Expense
+        </a>
+    </div>
+</div>
+
+<!-- Active Reminders Banner (if any) -->
+@if (Model.ActiveReminders.Any())
+{
+    <div class="mb-4">
+        @foreach (var rem in Model.ActiveReminders)
+        {
+            <div class="alert alert-light border shadow-sm rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 mb-2">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle @rem.BadgeClass text-white d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; font-size: 1.1rem;">
+                        <i class="bi @rem.Icon"></i>
+                    </div>
+                    <div>
+                        <strong class="text-dark d-block">@rem.Title</strong>
+                        <span class="text-muted small">@rem.Message</span>
+                    </div>
+                </div>
+                <a asp-controller="Notifications" asp-action="Index" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                    View Reminder
+                </a>
+            </div>
+        }
+    </div>
+}
+
+<!-- Top KPI Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-muted small fw-bold text-uppercase">Total Saved</span>
+                <div class="stat-icon bg-success-light text-success">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+            </div>
+            <h3 class="fw-bold text-dark mb-1">₹@Model.TotalSavedAllGoals.ToString("N0")</h3>
+            <span class="text-muted small">Across @Model.AllGoals.Count goal@(Model.AllGoals.Count == 1 ? "" : "s")</span>
+        </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-muted small fw-bold text-uppercase">Target Needed</span>
+                <div class="stat-icon bg-primary-light text-primary">
+                    <i class="bi bi-bullseye"></i>
+                </div>
+            </div>
+            <h3 class="fw-bold text-dark mb-1">₹@Model.TotalTargetAllGoals.ToString("N0")</h3>
+            <span class="text-muted small">Remaining: ₹@Model.TotalRemainingAllGoals.ToString("N0")</span>
+        </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-muted small fw-bold text-uppercase">This Month Expenses</span>
+                <div class="stat-icon bg-danger-light text-danger">
+                    <i class="bi bi-credit-card-2-front"></i>
+                </div>
+            </div>
+            <h3 class="fw-bold text-dark mb-1">₹@Model.CurrentMonthExpenses.ToString("N0")</h3>
+            <span class="text-muted small">Today: ₹@Model.TodayExpenses.ToString("N0")</span>
+        </div>
+    </div>
+
+    <div class="col-6 col-lg-3">
+        <div class="stat-card">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-muted small fw-bold text-uppercase">Active Goals</span>
+                <div class="stat-icon bg-warning-light text-warning">
+                    <i class="bi bi-flag-fill"></i>
+                </div>
+            </div>
+            <h3 class="fw-bold text-dark mb-1">@Model.ActiveGoalsCount</h3>
+            <span class="text-muted small">@Model.CompletedGoalsCount completed 🎉</span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Core Feature: Primary Saving Goal Circular Meter -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="stat-card p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div>
+                    <span class="badge bg-primary-light text-primary border fw-bold px-2 py-1 mb-1">Primary Savings Goal</span>
+                    <h4 class="fw-bold text-dark mb-0">@(primary != null ? primary.GoalName : "No Active Goals")</h4>
+                </div>
+                @if (primary != null)
+                {
+                    <div>
+                        @if (primary.PaceStatus == PocketGoal.Models.GoalPaceStatus.Completed)
+                        {
+                            <span class="badge-pace-completed"><i class="bi bi-check-circle-fill"></i> Completed</span>
+                        }
+                        else if (primary.PaceStatus == PocketGoal.Models.GoalPaceStatus.OnTrack)
+                        {
+                            <span class="badge-pace-ontrack"><i class="bi bi-speedometer"></i> On Track</span>
+                        }
+                        else if (primary.PaceStatus == PocketGoal.Models.GoalPaceStatus.Behind)
+                        {
+                            <span class="badge-pace-behind"><i class="bi bi-exclamation-triangle-fill"></i> Behind Pace</span>
+                        }
+                        else
+                        {
+                            <span class="badge-pace-overdue"><i class="bi bi-clock-history"></i> Overdue</span>
+                        }
+                    </div>
+                }
+            </div>
+
+            @if (primary != null)
+            {
+                <div class="row align-items-center my-3">
+                    <!-- Circular SVG Meter -->
+                    <div class="col-md-6 text-center mb-3 mb-md-0">
+                        @{
+                            var radius = 80;
+                            var circumference = 2 * Math.PI * radius;
+                            var pct = (double)primary.ProgressPercentage;
+                            var strokeDashoffset = circumference - (pct / 100.0 * circumference);
+                        }
+                        <div class="circular-progress-container">
+                            <svg class="circular-progress-svg" viewBox="0 0 200 200">
+                                <defs>
+                                    <linearGradient id="goalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#4f46e5" />
+                                        <stop offset="100%" stop-color="#10b981" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="circular-bg" cx="100" cy="100" r="@radius" />
+                                <circle class="circular-meter" cx="100" cy="100" r="@radius"
+                                        stroke-dasharray="@circumference"
+                                        stroke-dashoffset="@strokeDashoffset" />
+                            </svg>
+                            <div class="circular-inner-content">
+                                <div class="progress-pct-text">@primary.ProgressPercentage.ToString("N1")%</div>
+                                <div class="text-muted small fw-semibold">Saved</div>
+                                <div class="badge bg-light text-dark border mt-1">
+                                    ₹@primary.CurrentSavedAmount.ToString("N0") / ₹@primary.TargetAmount.ToString("N0")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pacing & Saving Requirements -->
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 border mb-3">
+                            <div class="text-muted small fw-bold text-uppercase mb-1">Required Monthly Saving</div>
+                            <div class="h3 fw-bold text-success mb-1">
+                                ₹@primary.RequiredMonthlySaving.ToString("N0")
+                                <span class="text-muted fs-6 fw-normal">/ month</span>
+                            </div>
+                            <div class="text-muted small">
+                                Remaining: <strong>₹@primary.RemainingAmount.ToString("N0")</strong> to save
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mb-3 text-center">
+                            <div class="col-6">
+                                <div class="p-2 bg-white rounded-2 border">
+                                    <div class="text-muted small">Weekly Target</div>
+                                    <div class="fw-bold text-dark">₹@primary.RequiredWeeklySaving.ToString("N0")</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 bg-white rounded-2 border">
+                                    <div class="text-muted small">Daily Target</div>
+                                    <div class="fw-bold text-dark">₹@primary.RequiredDailySaving.ToString("N0")</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center text-muted small px-1">
+                            <div><i class="bi bi-calendar3 me-1"></i> Target: @primary.TargetDate.ToString("MMM dd, yyyy")</div>
+                            <div><i class="bi bi-hourglass-split me-1"></i> @primary.DaysRemaining days left</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                    <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@primary.Id" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                        <i class="bi bi-journal-text me-1"></i> View Goal Details & History
+                    </a>
+                    <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@primary.Id" class="btn btn-success btn-sm rounded-pill px-3">
+                        <i class="bi bi-plus-lg me-1"></i> Add ₹ Deposit
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-plus-circle text-muted display-4"></i>
+                    <h5 class="fw-bold text-dark mt-3">No Active Saving Goals</h5>
+                    <p class="text-muted">Create a saving goal to start tracking progress towards your dream purchase.</p>
+                    <a asp-controller="SavingGoals" asp-action="Create" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-plus-lg me-1"></i> Create Saving Goal
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Category Expense Breakdown -->
+    <div class="col-lg-5">
+        <div class="stat-card p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-pie-chart text-primary me-2"></i> Current Month Expenses
+                </h5>
+                <a asp-controller="Expenses" asp-action="Index" class="btn btn-link btn-sm text-decoration-none p-0">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            @if (Model.TopExpenseCategories.Any())
+            {
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-baseline mb-2">
+                        <span class="text-muted small">Total Spent This Month</span>
+                        <span class="h5 fw-bold text-danger mb-0">₹@Model.CurrentMonthExpenses.ToString("N2")</span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var cat in Model.TopExpenseCategories)
+                    {
+                        <div>
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="category-icon-box" style="background-color: @(cat.CategoryColor)15; color: @cat.CategoryColor;">
+                                        <i class="bi @cat.CategoryIcon"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold text-dark small">@cat.CategoryName</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">@cat.ExpenseCount transactions</div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-dark small">₹@cat.TotalAmount.ToString("N0")</div>
+                                    <div class="text-muted" style="font-size: 0.75rem;">@cat.PercentageOfTotal%</div>
+                                </div>
+                            </div>
+                            <div class="progress" style="height: 6px; border-radius: 4px;">
+                                <div class="progress-bar" role="progressbar" style="width: @cat.PercentageOfTotal%; background-color: @cat.CategoryColor;" aria-valuenow="@cat.PercentageOfTotal" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4 bg-light rounded-3 border">
+                    <i class="bi bi-receipt text-muted fs-2"></i>
+                    <p class="text-muted small mt-2 mb-2">No expenses recorded for this month yet.</p>
+                    <a asp-controller="Expenses" asp-action="Create" class="btn btn-outline-primary btn-sm rounded-pill">
+                        <i class="bi bi-plus-lg me-1"></i> Add Expense
+                    </a>
+                </div>
+            }
+
+            <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center small text-muted">
+                <span>Previous Month: <strong>₹@Model.PreviousMonthExpenses.ToString("N0")</strong></span>
+                <span>All Time: <strong>₹@Model.TotalExpensesAllTime.ToString("N0")</strong></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- All Goals & Recent Activity Grid -->
+<div class="row g-4">
+    <!-- All Saving Goals List -->
+    <div class="col-lg-7">
+        <div class="stat-card p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-card-checklist text-primary me-2"></i> Your Saving Goals
+                </h5>
+                <a asp-controller="SavingGoals" asp-action="Create" class="btn btn-primary btn-sm rounded-pill px-3">
+                    <i class="bi bi-plus-lg me-1"></i> New Goal
+                </a>
+            </div>
+
+            @if (Model.AllGoals.Any())
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var goal in Model.AllGoals)
+                    {
+                        <div class="p-3 rounded-3 border bg-white shadow-sm">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@goal.Id" class="fw-bold text-dark text-decoration-none">
+                                        @goal.GoalName
+                                    </a>
+                                    <div class="text-muted small">Target: @goal.TargetDate.ToString("MMM dd, yyyy")</div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="fw-bold text-dark">₹@goal.CurrentSavedAmount.ToString("N0")</span>
+                                    <span class="text-muted small"> / ₹@goal.TargetAmount.ToString("N0")</span>
+                                </div>
+                            </div>
+
+                            <div class="progress mb-2" style="height: 8px; border-radius: 4px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: @goal.ProgressPercentage%;" aria-valuenow="@goal.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span class="text-muted">@goal.ProgressPercentage.ToString("N1")% saved &bull; Remaining: ₹@goal.RemainingAmount.ToString("N0")</span>
+                                <div class="d-flex gap-2">
+                                    <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-sm btn-outline-success py-0 px-2 rounded-pill">
+                                        + Save
+                                    </a>
+                                    <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@goal.Id" class="btn btn-sm btn-outline-secondary py-0 px-2 rounded-pill">
+                                        View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">No goals found.</p>
+            }
+        </div>
+    </div>
+
+    <!-- Recent Transactions Activity -->
+    <div class="col-lg-5">
+        <div class="stat-card p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold text-dark mb-0">
+                    <i class="bi bi-clock-history text-primary me-2"></i> Recent Activity
+                </h5>
+            </div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-pills nav-fill mb-3 bg-light p-1 rounded-3" id="activityTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active py-1 small rounded-3" id="expenses-tab" data-bs-toggle="tab" data-bs-target="#expenses-pane" type="button" role="tab">
+                        Recent Expenses
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-1 small rounded-3" id="savings-tab" data-bs-toggle="tab" data-bs-target="#savings-pane" type="button" role="tab">
+                        Recent Savings
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="activityTabsContent">
+                <!-- Expenses Pane -->
+                <div class="tab-pane fade show active" id="expenses-pane" role="tabpanel">
+                    @if (Model.RecentExpenses.Any())
+                    {
+                        <div class="d-flex flex-column gap-2">
+                            @foreach (var exp in Model.RecentExpenses)
+                            {
+                                <div class="d-flex align-items-center justify-content-between p-2 rounded-2 border-bottom">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="category-icon-box" style="background-color: @(exp.CategoryColor)15; color: @exp.CategoryColor; width: 32px; height: 32px; font-size: 0.9rem;">
+                                            <i class="bi @exp.CategoryIcon"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold text-dark small">@(string.IsNullOrEmpty(exp.Description) ? exp.CategoryName : exp.Description)</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">@exp.CategoryName &bull; @exp.ExpenseDate.ToString("MMM dd")</div>
+                                        </div>
+                                    </div>
+                                    <span class="fw-bold text-danger small">-₹@exp.Amount.ToString("N2")</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted small text-center py-3">No expenses recorded yet.</p>
+                    }
+                </div>
+
+                <!-- Savings Pane -->
+                <div class="tab-pane fade" id="savings-pane" role="tabpanel">
+                    @if (Model.RecentSavings.Any())
+                    {
+                        <div class="d-flex flex-column gap-2">
+                            @foreach (var sav in Model.RecentSavings)
+                            {
+                                <div class="d-flex align-items-center justify-content-between p-2 rounded-2 border-bottom">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="category-icon-box bg-success-light text-success" style="width: 32px; height: 32px; font-size: 0.9rem;">
+                                            <i class="bi bi-wallet-fill"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold text-dark small">@sav.GoalName</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;">@(string.IsNullOrEmpty(sav.Notes) ? "Savings deposit" : sav.Notes) &bull; @sav.SavedDate.ToString("MMM dd")</div>
+                                        </div>
+                                    </div>
+                                    <span class="fw-bold text-success small">+₹@sav.Amount.ToString("N2")</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted small text-center py-3">No savings deposits recorded yet.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

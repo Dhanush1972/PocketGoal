@@ -56,13 +56,13 @@ namespace PocketGoal.Controllers
             var (success, error, expense) = await _expenseService.CreateExpenseAsync(userId.Value, model);
             if (!success)
             {
-                ModelState.AddModelError(string.Empty, error ?? "Failed to save expense.");
+                ModelState.AddModelError(string.Empty, error ?? "Expense save panna mudiyala da.");
                 var refreshed = await _expenseService.GetCreateViewModelAsync(userId.Value);
                 model.CategoryOptions = refreshed.CategoryOptions;
                 return View(model);
             }
 
-            TempData["SuccessMessage"] = $"Expense of ₹{model.Amount:N2} recorded successfully.";
+            TempData["SuccessMessage"] = $"₹{model.Amount:N2} expense add panniyaachu! ✅";
             return RedirectToAction("Index");
         }
 
@@ -75,7 +75,7 @@ namespace PocketGoal.Controllers
             var model = await _expenseService.GetEditViewModelAsync(id, userId.Value);
             if (model == null)
             {
-                TempData["ErrorMessage"] = "Expense not found or access denied.";
+                TempData["ErrorMessage"] = "Expense kidaikkala illa access panna mudiyala da.";
                 return RedirectToAction("Index");
             }
 
@@ -104,7 +104,7 @@ namespace PocketGoal.Controllers
             var (success, error) = await _expenseService.UpdateExpenseAsync(userId.Value, model);
             if (!success)
             {
-                ModelState.AddModelError(string.Empty, error ?? "Failed to update expense.");
+                ModelState.AddModelError(string.Empty, error ?? "Expense update panna mudiyala da.");
                 var categories = await _expenseService.GetCategoriesForUserAsync(userId.Value);
                 model.CategoryOptions = categories.Select(c => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
                 {
@@ -115,7 +115,7 @@ namespace PocketGoal.Controllers
                 return View(model);
             }
 
-            TempData["SuccessMessage"] = "Expense updated successfully.";
+            TempData["SuccessMessage"] = "Expense update panniyaachu! ✅";
             return RedirectToAction("Index");
         }
 
@@ -129,11 +129,11 @@ namespace PocketGoal.Controllers
             var success = await _expenseService.DeleteExpenseAsync(id, userId.Value);
             if (success)
             {
-                TempData["SuccessMessage"] = "Expense deleted successfully.";
+                TempData["SuccessMessage"] = "Expense delete panniyaachu.";
             }
             else
             {
-                TempData["ErrorMessage"] = "Expense not found or could not be deleted.";
+                TempData["ErrorMessage"] = "Expense kidaikkala illa delete panna mudiyala da.";
             }
 
             return RedirectToAction("Index");
@@ -148,12 +148,12 @@ namespace PocketGoal.Controllers
 
             if (!ModelState.IsValid)
             {
-                TempData["ErrorMessage"] = "Category name is required.";
+                TempData["ErrorMessage"] = "Category name compulsory da.";
                 return RedirectToAction("Index");
             }
 
             await _expenseService.CreateCustomCategoryAsync(userId.Value, model);
-            TempData["SuccessMessage"] = $"Custom category '{model.Name}' created!";
+            TempData["SuccessMessage"] = $"Custom category '{model.Name}' create panniyaachu! 🚀";
             return RedirectToAction("Index");
         }
     }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "vo3AYmV/5eY=",
+  "dgSpecHash": "Q9FQz4WGW+s=",
   "success": true,
-  "projectFilePath": "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal.Tests\\PocketGoal.Tests.csproj",
+  "projectFilePath": "D:\\PocketGoal\\PocketGoal\\PocketGoal.Tests\\PocketGoal.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\TSI\\.nuget\\packages\\coverlet.collector\\6.0.2\\coverlet.collector.6.0.2.nupkg.sha512",
     "C:\\Users\\TSI\\.nuget\\packages\\microsoft.codecoverage\\17.12.0\\microsoft.codecoverage.17.12.0.nupkg.sha512",

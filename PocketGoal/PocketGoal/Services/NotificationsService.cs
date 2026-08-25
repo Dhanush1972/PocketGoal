@@ -68,18 +68,18 @@ namespace PocketGoal.Services
 
         public async Task SendGoalCompletedAlertAsync(UserProfile user, SavingGoal goal)
         {
-            var subject = $"🎉 Congratulations! You reached your goal for {goal.GoalName}!";
+            var subject = $"🎉 Semma da! Un goal '{goal.GoalName}' reach panniyaachu!";
             var emailBody = $@"
                 <div style='font-family: sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;'>
-                    <h2 style='color: #10b981;'>🎉 Goal Achieved!</h2>
+                    <h2 style='color: #10b981;'>🎉 Goal Achieved Da!</h2>
                     <p>Hi <strong>{user.Name}</strong>,</p>
-                    <p>Incredible news! You have successfully saved <strong>₹{goal.CurrentSavedAmount:N2}</strong> for your goal <strong>{goal.GoalName}</strong>.</p>
-                    <p>Your target amount of ₹{goal.TargetAmount:N2} is now 100% funded. It's time to celebrate and make your purchase!</p>
+                    <p>Semma news! Nee <strong>{goal.GoalName}</strong> goal-kaga total <strong>₹{goal.CurrentSavedAmount:N2}</strong> successfully save pannita.</p>
+                    <p>Target amount ₹{goal.TargetAmount:N2} ippo 100% funded. Ippo celebrate panni un dream purchase panniko!</p>
                     <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'/>
-                    <p style='color: #64748b; font-size: 13px;'>PocketGoal - Personal Finance & Savings Tracker</p>
+                    <p style='color: #64748b; font-size: 13px;'>PocketGoal - Un Personal Finance & Savings Partner</p>
                 </div>";
 
-            var smsBody = $"PocketGoal: 🎉 Congrats {user.Name}! You have reached your saving goal of ₹{goal.TargetAmount:N0} for '{goal.GoalName}'! 100% completed!";
+            var smsBody = $"PocketGoal: 🎉 Semma da {user.Name}! '{goal.GoalName}' goal-kaga ₹{goal.TargetAmount:N0} full-ah save pannita. 100% completed!";
 
             await SendEmailNotificationAsync(user.Email, subject, emailBody);
             await SendSmsNotificationAsync(user.PhoneNumber, smsBody);
@@ -87,19 +87,19 @@ namespace PocketGoal.Services
 
         public async Task SendBehindPaceAlertAsync(UserProfile user, SavingGoal goal, decimal requiredMonthly)
         {
-            var subject = $"⚠️ Savings Alert: Stay on track for your {goal.GoalName}";
+            var subject = $"⚠️ Savings Alert: '{goal.GoalName}' goal-ku konjam speed-up pannuvom!";
             var emailBody = $@"
                 <div style='font-family: sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;'>
                     <h2 style='color: #f59e0b;'>⚠️ Goal Pace Alert</h2>
                     <p>Hi <strong>{user.Name}</strong>,</p>
-                    <p>You're slightly behind pace on your saving goal for <strong>{goal.GoalName}</strong>.</p>
-                    <p>To reach your target of ₹{goal.TargetAmount:N2} by {goal.TargetDate:MMM dd, yyyy}, we recommend setting aside <strong>₹{requiredMonthly:N2}/month</strong>.</p>
-                    <p>Every small deposit counts towards your target!</p>
+                    <p>Un <strong>{goal.GoalName}</strong> saving goal-la konjam slow-ah irukka da.</p>
+                    <p>{goal.TargetDate:MMM dd, yyyy}-kulla ₹{goal.TargetAmount:N2} target reach panna, indha month <strong>₹{requiredMonthly:N2}/month</strong> save pannu.</p>
+                    <p>Small small savings-um periya difference tharum, keep going!</p>
                     <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'/>
-                    <p style='color: #64748b; font-size: 13px;'>PocketGoal - Personal Finance & Savings Tracker</p>
+                    <p style='color: #64748b; font-size: 13px;'>PocketGoal - Un Personal Finance & Savings Partner</p>
                 </div>";
 
-            var smsBody = $"PocketGoal Alert: To stay on track for '{goal.GoalName}' by {goal.TargetDate:MMM yyyy}, save ₹{requiredMonthly:N0} this month. Keep going!";
+            var smsBody = $"PocketGoal Alert: '{goal.GoalName}' goal-ku on track-la irukka indha month ₹{requiredMonthly:N0} save pannu da. Keep going!";
 
             await SendEmailNotificationAsync(user.Email, subject, emailBody);
             await SendSmsNotificationAsync(user.PhoneNumber, smsBody);
@@ -107,19 +107,19 @@ namespace PocketGoal.Services
 
         public async Task SendMonthlyReminderAsync(UserProfile user, SavingGoal goal, decimal requiredMonthly)
         {
-            var subject = $"📅 Monthly Savings Reminder for {goal.GoalName}";
+            var subject = $"📅 Monthly Savings Check-in: {goal.GoalName}";
             var emailBody = $@"
                 <div style='font-family: sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;'>
                     <h2 style='color: #3b82f6;'>📅 Monthly Savings Check-in</h2>
                     <p>Hi <strong>{user.Name}</strong>,</p>
-                    <p>This is your friendly monthly reminder for your purchase goal <strong>{goal.GoalName}</strong>.</p>
-                    <p>Recommended monthly deposit: <strong>₹{requiredMonthly:N2}</strong>.</p>
-                    <p>Current progress: ₹{goal.CurrentSavedAmount:N2} of ₹{goal.TargetAmount:N2} ({(goal.TargetAmount > 0 ? (goal.CurrentSavedAmount / goal.TargetAmount * 100m) : 0):N1}%).</p>
+                    <p>Idhu un <strong>{goal.GoalName}</strong> purchase goal-kaga friendly monthly reminder.</p>
+                    <p>Indha month recommended deposit: <strong>₹{requiredMonthly:N2}</strong>.</p>
+                    <p>Ippo varaikkum progress: ₹{goal.CurrentSavedAmount:N2} of ₹{goal.TargetAmount:N2} ({(goal.TargetAmount > 0 ? (goal.CurrentSavedAmount / goal.TargetAmount * 100m) : 0):N1}%).</p>
                     <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'/>
-                    <p style='color: #64748b; font-size: 13px;'>PocketGoal - Personal Finance & Savings Tracker</p>
+                    <p style='color: #64748b; font-size: 13px;'>PocketGoal - Un Personal Finance & Savings Partner</p>
                 </div>";
 
-            var smsBody = $"PocketGoal Reminder: Save ₹{requiredMonthly:N0} this month for '{goal.GoalName}'. You are already ₹{goal.CurrentSavedAmount:N0} saved!";
+            var smsBody = $"PocketGoal: '{goal.GoalName}'-kaga indha month ₹{requiredMonthly:N0} save pannu da. Already ₹{goal.CurrentSavedAmount:N0} saved!";
 
             await SendEmailNotificationAsync(user.Email, subject, emailBody);
             await SendSmsNotificationAsync(user.PhoneNumber, smsBody);
@@ -127,18 +127,18 @@ namespace PocketGoal.Services
 
         public async Task SendUpcomingDeadlineReminderAsync(UserProfile user, SavingGoal goal, int daysRemaining, decimal remainingAmount)
         {
-            var subject = $"⏳ Upcoming Deadline: {goal.GoalName} target date in {daysRemaining} days";
+            var subject = $"⏳ Innum {daysRemaining} days dhaan irukku: {goal.GoalName}";
             var emailBody = $@"
                 <div style='font-family: sans-serif; max-width: 600px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;'>
-                    <h2 style='color: #6366f1;'>⏳ Target Deadline Approaching</h2>
+                    <h2 style='color: #6366f1;'>⏳ Target Date Close Aagudhu</h2>
                     <p>Hi <strong>{user.Name}</strong>,</p>
-                    <p>Your target date for <strong>{goal.GoalName}</strong> is approaching in <strong>{daysRemaining} days</strong> ({goal.TargetDate:MMM dd, yyyy}).</p>
-                    <p>Remaining amount needed to complete goal: <strong>₹{remainingAmount:N2}</strong>.</p>
+                    <p>Un <strong>{goal.GoalName}</strong> goal target date innum <strong>{daysRemaining} days</strong>-la varudhu ({goal.TargetDate:MMM dd, yyyy}).</p>
+                    <p>Goal mudikka balance needed: <strong>₹{remainingAmount:N2}</strong>.</p>
                     <hr style='border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;'/>
-                    <p style='color: #64748b; font-size: 13px;'>PocketGoal - Personal Finance & Savings Tracker</p>
+                    <p style='color: #64748b; font-size: 13px;'>PocketGoal - Un Personal Finance & Savings Partner</p>
                 </div>";
 
-            var smsBody = $"PocketGoal: Only {daysRemaining} days left until your '{goal.GoalName}' target date! Remaining amount: ₹{remainingAmount:N0}.";
+            var smsBody = $"PocketGoal: Innum {daysRemaining} days dhaan for '{goal.GoalName}' target date! Balance to save: ₹{remainingAmount:N0}.";
 
             await SendEmailNotificationAsync(user.Email, subject, emailBody);
             await SendSmsNotificationAsync(user.PhoneNumber, smsBody);
@@ -169,10 +169,10 @@ namespace PocketGoal.Services
                         GoalId = goal.Id,
                         GoalName = goal.GoalName,
                         Type = NotificationType.GoalCompleted,
-                        Title = $"Goal Completed: {goal.GoalName}",
-                        Subject = $"🎉 Congratulations! You reached your goal for {goal.GoalName}!",
-                        MessageBody = $"You have successfully saved the full ₹{goal.TargetAmount:N2} for {goal.GoalName}!",
-                        SmsBody = $"PocketGoal: 🎉 Congrats! You have completed your saving goal for '{goal.GoalName}'!",
+                        Title = $"Goal Mudinjadhu: {goal.GoalName} 🎉",
+                        Subject = $"🎉 Semma da! Un goal '{goal.GoalName}' reach panniyaachu!",
+                        MessageBody = $"Nee {goal.GoalName} goal-kaga full target ₹{goal.TargetAmount:N2} save pannita da!",
+                        SmsBody = $"PocketGoal: 🎉 Congrats! '{goal.GoalName}' goal-ah 100% complete pannita!",
                         UrgencyBadge = "bg-success",
                         GeneratedAt = DateTime.UtcNow
                     });
@@ -186,8 +186,8 @@ namespace PocketGoal.Services
                         GoalName = goal.GoalName,
                         Type = NotificationType.MonthlyReminder,
                         Title = $"Monthly Savings Plan: {goal.GoalName}",
-                        Subject = $"📅 Monthly Savings Reminder for {goal.GoalName}",
-                        MessageBody = $"Recommended monthly deposit for this month: ₹{monthlyReq:N2} to stay on track by {goal.TargetDate:MMM dd, yyyy}.",
+                        Subject = $"📅 Monthly Savings Check-in: {goal.GoalName}",
+                        MessageBody = $"Indha month recommended deposit: ₹{monthlyReq:N2} ({goal.TargetDate:MMM dd, yyyy}-kulla reach panna).",
                         SmsBody = $"PocketGoal: Save ₹{monthlyReq:N0} this month for '{goal.GoalName}' to hit your target by {goal.TargetDate:MMM yyyy}.",
                         UrgencyBadge = "bg-primary",
                         GeneratedAt = DateTime.UtcNow
@@ -201,10 +201,10 @@ namespace PocketGoal.Services
                             GoalId = goal.Id,
                             GoalName = goal.GoalName,
                             Type = NotificationType.UpcomingDeadline,
-                            Title = $"Target Approaching: {goal.GoalName}",
-                            Subject = $"⏳ Deadline in {daysRemaining} days for {goal.GoalName}",
-                            MessageBody = $"Only {daysRemaining} days left! You have ₹{remaining:N2} remaining to reach ₹{goal.TargetAmount:N2}.",
-                            SmsBody = $"PocketGoal: {daysRemaining} days left for '{goal.GoalName}'. ₹{remaining:N0} remaining.",
+                            Title = $"Target Date Nerungiduchu: {goal.GoalName} ⏰",
+                            Subject = $"⏳ Innum {daysRemaining} days dhaan irukku: {goal.GoalName}",
+                            MessageBody = $"Innum {daysRemaining} days dhaan irukku! ₹{goal.TargetAmount:N2} target-ku balance ₹{remaining:N2} to save.",
+                            SmsBody = $"PocketGoal: Innum {daysRemaining} days dhaan for '{goal.GoalName}'. Balance ₹{remaining:N0}.",
                             UrgencyBadge = "bg-warning text-dark",
                             GeneratedAt = DateTime.UtcNow
                         });
@@ -222,9 +222,9 @@ namespace PocketGoal.Services
                             GoalId = goal.Id,
                             GoalName = goal.GoalName,
                             Type = NotificationType.BehindPaceAlert,
-                            Title = $"Pace Alert: {goal.GoalName}",
-                            Subject = $"⚠️ Savings Alert: Catch up on your {goal.GoalName} goal",
-                            MessageBody = $"You are behind pace. Recommended boost: deposit ₹{monthlyReq:N2} to keep your target date {goal.TargetDate:MMM dd, yyyy}.",
+                            Title = $"Konjam Slow-ah Irukka: {goal.GoalName} ⚠️",
+                            Subject = $"⚠️ Savings Alert: '{goal.GoalName}' goal-ku konjam speed-up pannuvom!",
+                            MessageBody = $"Pace konjam slow-ah irukku. Target date {goal.TargetDate:MMM dd, yyyy}-kaga indha month ₹{monthlyReq:N2} save pannu da.",
                             SmsBody = $"PocketGoal: You're slightly behind for '{goal.GoalName}'. Save ₹{monthlyReq:N0} to stay on schedule.",
                             UrgencyBadge = "bg-danger",
                             GeneratedAt = DateTime.UtcNow
@@ -257,19 +257,19 @@ namespace PocketGoal.Services
             {
                 case NotificationType.MonthlyReminder:
                     await SendMonthlyReminderAsync(user, goal, monthlyReq);
-                    return (true, $"Monthly reminder sent to {user.Email} and {user.PhoneNumber} for '{goal.GoalName}'");
+                    return (true, $"Monthly reminder {user.Email} and {user.PhoneNumber}-ku anuppiyaachu ('{goal.GoalName}') 🚀");
 
                 case NotificationType.BehindPaceAlert:
                     await SendBehindPaceAlertAsync(user, goal, monthlyReq);
-                    return (true, $"Behind-pace alert sent to {user.Email} and {user.PhoneNumber} for '{goal.GoalName}'");
+                    return (true, $"Behind-pace alert {user.Email} and {user.PhoneNumber}-ku anuppiyaachu ('{goal.GoalName}') ⚠️");
 
                 case NotificationType.GoalCompleted:
                     await SendGoalCompletedAlertAsync(user, goal);
-                    return (true, $"Goal completion congratulatory alert sent to {user.Email} and {user.PhoneNumber} for '{goal.GoalName}'");
+                    return (true, $"Goal completion alert {user.Email} and {user.PhoneNumber}-ku anuppiyaachu ('{goal.GoalName}') 🎉");
 
                 case NotificationType.UpcomingDeadline:
                     await SendUpcomingDeadlineReminderAsync(user, goal, daysRemaining, remaining);
-                    return (true, $"Upcoming deadline reminder sent to {user.Email} and {user.PhoneNumber} for '{goal.GoalName}'");
+                    return (true, $"Upcoming deadline reminder {user.Email} and {user.PhoneNumber}-ku anuppiyaachu ('{goal.GoalName}') ⏳");
 
                 default:
                     return (false, "Unknown notification type.");

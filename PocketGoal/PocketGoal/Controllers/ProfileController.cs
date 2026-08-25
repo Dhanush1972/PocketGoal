@@ -53,13 +53,13 @@ namespace PocketGoal.Controllers
                 var (user, goal) = await _profileService.CreateOnboardingProfileAsync(model);
                 _profileContext.SetCurrentUserId(user.Id);
 
-                TempData["SuccessMessage"] = $"Welcome to PocketGoal, {user.Name}! Your goal '{goal.GoalName}' is ready to track.";
+                TempData["SuccessMessage"] = $"Welcome to PocketGoal, {user.Name}! Un goal '{goal.GoalName}' ready aayiduchu 🚀";
                 return RedirectToAction("Index", "Dashboard");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating onboarding profile");
-                ModelState.AddModelError(string.Empty, "An error occurred while setting up your profile. Please try again.");
+                ModelState.AddModelError(string.Empty, "Profile setup pannumbodhu error vandhuduchu da. Marubadiyum try pannunga.");
                 return View(model);
             }
         }
@@ -80,11 +80,11 @@ namespace PocketGoal.Controllers
             if (user != null)
             {
                 _profileContext.SetCurrentUserId(user.Id);
-                TempData["SuccessMessage"] = $"Switched profile to {user.Name}.";
+                TempData["SuccessMessage"] = $"Profile {user.Name}-ku switch panniyaachu!";
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            TempData["ErrorMessage"] = "Profile not found.";
+            TempData["ErrorMessage"] = "Profile kidaikkala da.";
             return RedirectToAction("Switch");
         }
 
@@ -94,7 +94,7 @@ namespace PocketGoal.Controllers
         {
             if (string.IsNullOrWhiteSpace(emailOrPhone))
             {
-                TempData["ErrorMessage"] = "Please enter an email or phone number.";
+                TempData["ErrorMessage"] = "Email illa phone number enter pannunga.";
                 return RedirectToAction("Switch");
             }
 
@@ -102,11 +102,11 @@ namespace PocketGoal.Controllers
             if (user != null)
             {
                 _profileContext.SetCurrentUserId(user.Id);
-                TempData["SuccessMessage"] = $"Welcome back, {user.Name}!";
+                TempData["SuccessMessage"] = $"Welcome back, {user.Name}! 👋";
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            TempData["ErrorMessage"] = "No profile found with that email or phone number.";
+            TempData["ErrorMessage"] = "Indha email/phone-la profile onnum illa da.";
             return RedirectToAction("Switch");
         }
 
@@ -115,7 +115,7 @@ namespace PocketGoal.Controllers
         public IActionResult Clear()
         {
             _profileContext.ClearCurrentUserId();
-            TempData["SuccessMessage"] = "You have cleared your active session.";
+            TempData["SuccessMessage"] = "Session clear panniyaachu.";
             return RedirectToAction("Onboarding");
         }
     }

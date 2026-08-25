@@ -11,25 +11,25 @@
                 <div class="brand-icon mx-auto mb-2" style="width: 48px; height: 48px; font-size: 1.4rem;">
                     <i class="bi bi-people-fill"></i>
                 </div>
-                <h3 class="fw-bold text-dark mb-1">Select Active Profile</h3>
-                <p class="text-muted small">Switch between tracking profiles or look up by email/phone</p>
+                <h3 class="fw-bold text-dark mb-1">Profile Select Pannunga</h3>
+                <p class="text-muted small">Tracking profile choose pannunga illa email/phone vechu thedunga</p>
             </div>
 
             <!-- Lookup by Email/Phone -->
             <form asp-action="LookupProfile" method="post" class="mb-4 p-3 bg-light rounded-3 border">
                 @Html.AntiForgeryToken()
-                <label class="form-label small fw-bold">Find by Email or Phone</label>
+                <label class="form-label small fw-bold">Email illa Phone vechu thedu</label>
                 <div class="input-group">
-                    <input type="text" name="emailOrPhone" class="form-control" placeholder="e.g. rahul@example.com or +919876543210" required />
+                    <input type="text" name="emailOrPhone" class="form-control" placeholder="e.g. rahul@example.com illa +919876543210" required />
                     <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-search"></i> Find
+                        <i class="bi bi-search"></i> Thedu
                     </button>
                 </div>
             </form>
 
             @if (Model != null && Model.Any())
             {
-                <h6 class="fw-bold text-muted small text-uppercase mb-3">Available Profiles on this System</h6>
+                <h6 class="fw-bold text-muted small text-uppercase mb-3">Indha System-la Irukka Profiles</h6>
                 <div class="list-group mb-4 shadow-sm">
                     @foreach (var user in Model)
                     {
@@ -64,7 +64,7 @@
                                 else
                                 {
                                     <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary btn-sm rounded-pill px-3">
-                                        Open Dashboard
+                                        Dashboard Open Pannu
                                     </a>
                                 }
                             </div>
@@ -75,7 +75,7 @@
 
             <div class="text-center pt-2">
                 <a asp-action="Onboarding" class="btn btn-outline-primary rounded-pill px-4">
-                    <i class="bi bi-plus-circle me-1"></i> Create New Profile & Goal
+                    <i class="bi bi-plus-circle me-1"></i> + Pudhu Profile & Goal Create Pannu
                 </a>
             </div>
         </div>

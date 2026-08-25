@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PocketGoal.Data;
+using PocketGoal.Helpers;
 using PocketGoal.Models;
 using PocketGoal.ViewModels;
 
@@ -19,6 +20,9 @@ namespace PocketGoal.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ILogger<SavingGoalService> _logger;
+
+        private static DateTime EnsureUtc(DateTime dt) =>
+            dt.Kind == DateTimeKind.Utc ? dt : DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
         public SavingGoalService(ApplicationDbContext dbContext, ILogger<SavingGoalService> logger)
         {
@@ -56,7 +60,7 @@ namespace PocketGoal.Services
                 GoalName = model.GoalName.Trim(),
                 Description = model.Description?.Trim(),
                 TargetAmount = model.TargetAmount,
-                TargetDate = model.TargetDate,
+                TargetDate = EnsureUtc(model.TargetDate),
                 CurrentSavedAmount = 0m,
                 Status = GoalStatus.Active,
                 CreatedAt = DateTime.UtcNow,
@@ -80,7 +84,7 @@ namespace PocketGoal.Services
             goal.GoalName = model.GoalName.Trim();
             goal.Description = model.Description?.Trim();
             goal.TargetAmount = model.TargetAmount;
-            goal.TargetDate = model.TargetDate;
+            goal.TargetDate = EnsureUtc(model.TargetDate);
             goal.Status = model.Status;
             goal.UpdatedAt = DateTime.UtcNow;
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj": {}
+    "D:\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj": {}
   },
   "projects": {
-    "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj": {
+    "D:\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj",
+        "projectUniqueName": "D:\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj",
         "projectName": "PocketGoal",
-        "projectPath": "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj",
+        "projectPath": "D:\\PocketGoal\\PocketGoal\\PocketGoal\\PocketGoal.csproj",
         "packagesPath": "C:\\Users\\TSI\\.nuget\\packages\\",
-        "outputPath": "D:\\Dhanush\\PocketGoal\\PocketGoal\\PocketGoal\\obj\\",
+        "outputPath": "D:\\PocketGoal\\PocketGoal\\PocketGoal\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

@@ -39,7 +39,7 @@ namespace PocketGoal.Controllers
             var goal = await _savingGoalService.GetGoalDetailsAsync(id, userId.Value);
             if (goal == null)
             {
-                TempData["ErrorMessage"] = "Goal not found or access denied.";
+                TempData["ErrorMessage"] = "Goal kidaikkala illa access panna mudiyala da.";
                 return RedirectToAction("Index");
             }
 
@@ -72,7 +72,7 @@ namespace PocketGoal.Controllers
             }
 
             var goal = await _savingGoalService.CreateGoalAsync(userId.Value, model);
-            TempData["SuccessMessage"] = $"Savings goal '{goal.GoalName}' created successfully!";
+            TempData["SuccessMessage"] = $"Savings goal '{goal.GoalName}' successfully create aayiduchu! 🚀";
             return RedirectToAction("Details", new { id = goal.Id });
         }
 
@@ -85,7 +85,7 @@ namespace PocketGoal.Controllers
             var goal = await _savingGoalService.GetGoalDetailsAsync(id, userId.Value);
             if (goal == null)
             {
-                TempData["ErrorMessage"] = "Goal not found or access denied.";
+                TempData["ErrorMessage"] = "Goal kidaikkala illa access panna mudiyala da.";
                 return RedirectToAction("Index");
             }
 
@@ -117,11 +117,11 @@ namespace PocketGoal.Controllers
             var success = await _savingGoalService.UpdateGoalAsync(userId.Value, model);
             if (!success)
             {
-                TempData["ErrorMessage"] = "Failed to update goal. It may not exist or you lack permission.";
+                TempData["ErrorMessage"] = "Goal update panna mudiyala da.";
                 return RedirectToAction("Index");
             }
 
-            TempData["SuccessMessage"] = $"Goal '{model.GoalName}' updated successfully.";
+            TempData["SuccessMessage"] = $"Goal '{model.GoalName}' successfully update aayiduchu ✅";
             return RedirectToAction("Details", new { id = model.Id });
         }
 
@@ -135,11 +135,11 @@ namespace PocketGoal.Controllers
             var success = await _savingGoalService.DeleteGoalAsync(id, userId.Value);
             if (success)
             {
-                TempData["SuccessMessage"] = "Goal and its savings history have been deleted.";
+                TempData["SuccessMessage"] = "Goal and adhoda savings history delete panniyaachu.";
             }
             else
             {
-                TempData["ErrorMessage"] = "Goal not found or cannot be deleted.";
+                TempData["ErrorMessage"] = "Goal kidaikkala illa delete panna mudiyala da.";
             }
 
             return RedirectToAction("Index");

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PocketGoal.Data;
+using PocketGoal.Helpers;
 using PocketGoal.Models;
 using PocketGoal.ViewModels;
 
@@ -24,6 +25,9 @@ namespace PocketGoal.Services
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ILogger<ExpenseService> _logger;
+
+        private static DateTime EnsureUtc(DateTime dt) =>
+            dt.Kind == DateTimeKind.Utc ? dt : DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
         public ExpenseService(ApplicationDbContext dbContext, ILogger<ExpenseService> logger)
         {
@@ -223,7 +227,7 @@ namespace PocketGoal.Services
                 UserId = userId,
                 CategoryId = model.CategoryId,
                 Amount = model.Amount,
-                ExpenseDate = model.ExpenseDate.ToUniversalTime(),
+                ExpenseDate = EnsureUtc(model.ExpenseDate),
                 Description = model.Description?.Trim(),
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
@@ -252,7 +256,7 @@ namespace PocketGoal.Services
 
             expense.CategoryId = model.CategoryId;
             expense.Amount = model.Amount;
-            expense.ExpenseDate = model.ExpenseDate.ToUniversalTime();
+            expense.ExpenseDate = EnsureUtc(model.ExpenseDate);
             expense.Description = model.Description?.Trim();
             expense.UpdatedAt = DateTime.UtcNow;
 

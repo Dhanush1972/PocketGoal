@@ -238,5 +238,50 @@ namespace PocketGoal.Tests
             Assert.NotNull(updatedGoal);
             Assert.Equal(10000m, updatedGoal.CurrentSavedAmount);
         }
+
+        [Fact]
+        public async Task CreateGoalAsync_And_UpdateGoalAsync_SetsUtcKindOnUnspecifiedDateTime()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var service = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var userId = Guid.NewGuid();
+
+            var unspecifiedDate = new DateTime(2026, 12, 31, 0, 0, 0, DateTimeKind.Unspecified);
+
+            // Act: Create
+            var createdGoal = await service.CreateGoalAsync(userId, new SavingGoalCreateEditViewModel
+            {
+                GoalName = "Emergency Fund",
+                TargetAmount = 100000m,
+                TargetDate = unspecifiedDate
+            });
+
+            // Assert Create
+            Assert.Equal(DateTimeKind.Utc, createdGoal.TargetDate.Kind);
+            Assert.Equal(2026, createdGoal.TargetDate.Year);
+            Assert.Equal(12, createdGoal.TargetDate.Month);
+            Assert.Equal(31, createdGoal.TargetDate.Day);
+
+            // Act: Update with another Unspecified DateTime
+            var updatedDate = new DateTime(2027, 6, 15, 0, 0, 0, DateTimeKind.Unspecified);
+            var updateResult = await service.UpdateGoalAsync(userId, new SavingGoalCreateEditViewModel
+            {
+                Id = createdGoal.Id,
+                GoalName = "Emergency Fund Updated",
+                TargetAmount = 120000m,
+                TargetDate = updatedDate,
+                Status = GoalStatus.Active
+            });
+
+            // Assert Update
+            Assert.True(updateResult);
+            var refreshedGoal = await db.SavingGoals.FindAsync(createdGoal.Id);
+            Assert.NotNull(refreshedGoal);
+            Assert.Equal(DateTimeKind.Utc, refreshedGoal.TargetDate.Kind);
+            Assert.Equal(2027, refreshedGoal.TargetDate.Year);
+            Assert.Equal(6, refreshedGoal.TargetDate.Month);
+            Assert.Equal(15, refreshedGoal.TargetDate.Day);
+        }
     }
 }

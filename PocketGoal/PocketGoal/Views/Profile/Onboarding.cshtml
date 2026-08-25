@@ -1,6 +1,6 @@
 @model PocketGoal.ViewModels.OnboardingViewModel
 @{
-    ViewData["Title"] = "Get Started - Create Your Savings Goal";
+    ViewData["Title"] = "Get Started - Set Your Saving Goal";
 }
 
 <div class="row justify-content-center my-2">
@@ -11,9 +11,9 @@
                 <div class="d-inline-flex align-items-center justify-content-center bg-white text-primary rounded-circle mb-3 shadow-sm" style="width: 56px; height: 56px; font-size: 1.6rem;">
                     <i class="bi bi-piggy-bank-fill"></i>
                 </div>
-                <h1 class="h3 fw-bold mb-2">Welcome to PocketGoal</h1>
+                <h1 class="h3 fw-bold mb-2">PocketGoal-ku Welcome! 👋</h1>
                 <p class="mb-0 opacity-90 mx-auto" style="max-width: 580px;">
-                    Set your purchase goal, plan your monthly deposits, and track your daily expenses seamlessly—no complicated passwords required.
+                    Un dream purchase target set pannu, monthly savings plan ready pannu, daily expenses easy-ah track pannu — no complicated passwords required!
                 </p>
             </div>
 
@@ -27,7 +27,7 @@
                     <div class="mb-4">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.9rem;">1</span>
-                            <h5 class="fw-bold mb-0 text-dark">Your Profile Details</h5>
+                            <h5 class="fw-bold mb-0 text-dark">Un Profile Details</h5>
                         </div>
 
                         <div class="row g-3">
@@ -66,7 +66,7 @@
                     <div class="mb-4">
                         <div class="d-flex align-items-center gap-2 mb-3">
                             <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.9rem;">2</span>
-                            <h5 class="fw-bold mb-0 text-dark">What are you saving for?</h5>
+                            <h5 class="fw-bold mb-0 text-dark">Enna vanga pora? (What are you saving for?)</h5>
                         </div>
 
                         <div class="row g-3">
@@ -74,7 +74,7 @@
                                 <label asp-for="GoalName" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-muted"><i class="bi bi-laptop"></i></span>
-                                    <input asp-for="GoalName" class="form-control" placeholder="e.g. Gaming Laptop, Bike, Europe Trip" id="goalNameInput" />
+                                    <input asp-for="GoalName" class="form-control" placeholder="e.g. Gaming Laptop, Bike, Goa Trip" id="goalNameInput" />
                                 </div>
                                 <span asp-validation-for="GoalName" class="text-danger small"></span>
                             </div>
@@ -112,7 +112,7 @@
                                 <label asp-for="InitialSavings" class="form-label"></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light text-muted fw-bold">₹</span>
-                                    <input asp-for="InitialSavings" class="form-control" type="number" step="100" min="0" placeholder="0 (if already saved some)" id="initialSavingsInput" />
+                                    <input asp-for="InitialSavings" class="form-control" type="number" step="100" min="0" placeholder="0 (already konjam save pannirundha)" id="initialSavingsInput" />
                                 </div>
                                 <span asp-validation-for="InitialSavings" class="text-danger small"></span>
                             </div>
@@ -129,7 +129,7 @@
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                             <div class="fw-bold text-dark d-flex align-items-center gap-2">
                                 <i class="bi bi-calculator text-primary fs-5"></i>
-                                <span>Estimated Savings Breakdown</span>
+                                <span>Estimated Savings Breakdown 📊</span>
                             </div>
                             <span class="badge bg-primary-light text-primary border px-3 py-1 fw-bold" id="previewGoalTitle">Gaming Laptop</span>
                         </div>
@@ -143,19 +143,19 @@
                             </div>
                             <div class="col-6 col-md-3">
                                 <div class="p-2 bg-white rounded-3 border">
-                                    <div class="text-muted small">Remaining to Save</div>
+                                    <div class="text-muted small">Balance to Save</div>
                                     <div class="h5 fw-bold text-primary mb-0" id="previewRemaining">₹120,000</div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
                                 <div class="p-2 bg-white rounded-3 border">
-                                    <div class="text-muted small">Required / Month</div>
+                                    <div class="text-muted small">Monthly Target</div>
                                     <div class="h5 fw-bold text-success mb-0" id="previewMonthly">₹30,000</div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
                                 <div class="p-2 bg-white rounded-3 border">
-                                    <div class="text-muted small">Required / Day</div>
+                                    <div class="text-muted small">Daily Target</div>
                                     <div class="h5 fw-bold text-secondary mb-0" id="previewDaily">₹1,000</div>
                                 </div>
                             </div>
@@ -164,10 +164,10 @@
 
                     <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3 pt-2">
                         <a asp-action="Switch" class="text-muted text-decoration-none small">
-                            <i class="bi bi-person-check me-1"></i> Already have a profile? Select profile
+                            <i class="bi bi-person-check me-1"></i> Already profile irukka? Switch pannunga
                         </a>
                         <button type="submit" class="btn btn-primary btn-lg px-4 shadow">
-                            <i class="bi bi-rocket-takeoff-fill me-2"></i> Launch My Savings Tracker
+                            <i class="bi bi-rocket-takeoff-fill me-2"></i> Savings Start Pannuvom! 🚀
                         </button>
                     </div>
                 </form>

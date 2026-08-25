@@ -10,8 +10,8 @@
                 <div class="stat-icon bg-success-light text-success mx-auto mb-2" style="width: 52px; height: 52px; font-size: 1.5rem;">
                     <i class="bi bi-wallet2"></i>
                 </div>
-                <h3 class="fw-bold text-dark mb-1">Record Savings Deposit</h3>
-                <p class="text-muted small mb-0">Contributing towards: <strong class="text-primary">@Model.GoalName</strong></p>
+                <h3 class="fw-bold text-dark mb-1">Savings Deposit Add Pannu</h3>
+                <p class="text-muted small mb-0">Goal-kaga contribute panrom: <strong class="text-primary">@Model.GoalName</strong></p>
             </div>
 
             <!-- Current Progress Banner -->
@@ -27,7 +27,7 @@
                     <div class="progress-bar bg-success" role="progressbar" style="width: @pct%;" aria-valuenow="@pct" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <div class="text-end mt-1">
-                    <span class="text-muted small">Remaining: <strong class="text-dark">₹@Model.RemainingAmount.ToString("N0")</strong></span>
+                    <span class="text-muted small">Balance to save: <strong class="text-dark">₹@Model.RemainingAmount.ToString("N0")</strong></span>
                 </div>
             </div>
 
@@ -57,14 +57,14 @@
 
                 <div class="mb-4">
                     <label asp-for="Notes" class="form-label"></label>
-                    <input asp-for="Notes" class="form-control" placeholder="e.g. Monthly salary saving, Freelance bonus, Diwali gift" />
+                    <input asp-for="Notes" class="form-control" placeholder="e.g. Monthly salary savings, Freelance bonus, Cashback" />
                     <span asp-validation-for="Notes" class="text-danger small"></span>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center">
                     <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@Model.SavingGoalId" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
                     <button type="submit" class="btn btn-success rounded-pill px-4 shadow">
-                        <i class="bi bi-plus-lg me-1"></i> Add Deposit
+                        <i class="bi bi-plus-lg me-1"></i> + Deposit Add Pannu ✅
                     </button>
                 </div>
             </form>

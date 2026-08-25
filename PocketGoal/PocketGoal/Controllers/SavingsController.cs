@@ -31,7 +31,7 @@ namespace PocketGoal.Controllers
             var goal = await _savingGoalService.GetGoalDetailsAsync(goalId, userId.Value);
             if (goal == null)
             {
-                TempData["ErrorMessage"] = "Goal not found.";
+                TempData["ErrorMessage"] = "Goal kidaikkala da.";
                 return RedirectToAction("Index", "SavingGoals");
             }
 
@@ -63,11 +63,11 @@ namespace PocketGoal.Controllers
             var (success, errorMessage, saving) = await _savingsService.AddSavingAsync(userId.Value, model);
             if (!success)
             {
-                ModelState.AddModelError(string.Empty, errorMessage ?? "Failed to record savings.");
+                ModelState.AddModelError(string.Empty, errorMessage ?? "Savings record panna mudiyala da.");
                 return View(model);
             }
 
-            TempData["SuccessMessage"] = $"₹{model.Amount:N2} added to your savings for '{model.GoalName}'!";
+            TempData["SuccessMessage"] = $"Semma! ₹{model.Amount:N2} '{model.GoalName}' goal-kaga add panniyaachu! 🎉";
             return RedirectToAction("Details", "SavingGoals", new { id = model.SavingGoalId });
         }
 
@@ -81,11 +81,11 @@ namespace PocketGoal.Controllers
             var success = await _savingsService.DeleteSavingAsync(id, userId.Value);
             if (success)
             {
-                TempData["SuccessMessage"] = "Saving deposit transaction deleted.";
+                TempData["SuccessMessage"] = "Saving deposit transaction delete panniyaachu.";
             }
             else
             {
-                TempData["ErrorMessage"] = "Transaction not found or could not be deleted.";
+                TempData["ErrorMessage"] = "Transaction kidaikkala illa delete panna mudiyala da.";
             }
 
             return RedirectToAction("Details", "SavingGoals", new { id = goalId });

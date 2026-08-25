@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PocketGoal.Data;
+using PocketGoal.Helpers;
 using PocketGoal.Models;
 using PocketGoal.ViewModels;
 
@@ -17,6 +18,9 @@ namespace PocketGoal.Services
         private readonly ApplicationDbContext _dbContext;
         private readonly INotificationsService _notificationsService;
         private readonly ILogger<SavingsService> _logger;
+
+        private static DateTime EnsureUtc(DateTime dt) =>
+            dt.Kind == DateTimeKind.Utc ? dt : DateTime.SpecifyKind(dt, DateTimeKind.Utc);
 
         public SavingsService(
             ApplicationDbContext dbContext,
@@ -50,7 +54,7 @@ namespace PocketGoal.Services
                 Id = Guid.NewGuid(),
                 SavingGoalId = goal.Id,
                 Amount = model.Amount,
-                SavedDate = model.SavedDate.ToUniversalTime(),
+                SavedDate = EnsureUtc(model.SavedDate),
                 Notes = model.Notes?.Trim(),
                 CreatedAt = DateTime.UtcNow
             };

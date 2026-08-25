@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PocketGoal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+74d9fdf4a0e3352e924c73f2c6de0fe131d85892")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a4d582b4c754b6a23a3c9022567245b786699dfc")]
 [assembly: System.Reflection.AssemblyProductAttribute("PocketGoal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PocketGoal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

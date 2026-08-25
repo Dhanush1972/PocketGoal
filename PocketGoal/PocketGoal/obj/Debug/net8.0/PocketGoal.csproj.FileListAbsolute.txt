@@ -340,4 +340,3 @@ d:\PocketGoal\PocketGoal\PocketGoal\obj\Debug\net8.0\refint\PocketGoal.dll
 d:\PocketGoal\PocketGoal\PocketGoal\obj\Debug\net8.0\PocketGoal.pdb
 d:\PocketGoal\PocketGoal\PocketGoal\obj\Debug\net8.0\PocketGoal.genruntimeconfig.cache
 d:\PocketGoal\PocketGoal\PocketGoal\obj\Debug\net8.0\ref\PocketGoal.dll
-D:\Dhanush\PocketGoal\PocketGoal\PocketGoal\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

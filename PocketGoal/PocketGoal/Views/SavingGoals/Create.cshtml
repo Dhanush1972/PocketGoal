@@ -5,12 +5,12 @@
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
-        <div class="stat-card p-4 p-md-5">
+        <div class="stat-card p-3 p-sm-4 p-md-5">
             <div class="text-center mb-4">
                 <div class="brand-icon mx-auto mb-2" style="width: 48px; height: 48px; font-size: 1.4rem;">
                     <i class="bi bi-bullseye"></i>
                 </div>
-                <h3 class="fw-bold text-dark mb-1">Pudhu Saving Goal Create Pannu</h3>
+                <h3 class="fw-bold text-dark mb-1">Create Saving Goal</h3>
                 <p class="text-muted small">Un target purchase and time plan set pannu</p>
             </div>
 
@@ -20,7 +20,7 @@
 
                 <div class="mb-3">
                     <label asp-for="GoalName" class="form-label"></label> <span class="text-danger">*</span>
-                    <input asp-for="GoalName" class="form-control" placeholder="e.g. iPhone 16 Pro, Bike Down Payment, Goa Trip" />
+                    <input asp-for="GoalName" class="form-control" />
                     <span asp-validation-for="GoalName" class="text-danger small"></span>
                 </div>
 
@@ -28,7 +28,7 @@
                     <label asp-for="TargetAmount" class="form-label"></label> <span class="text-danger">*</span>
                     <div class="input-group">
                         <span class="input-group-text bg-light fw-bold">₹</span>
-                        <input asp-for="TargetAmount" class="form-control" type="number" step="100" min="1" placeholder="80000" />
+                        <input asp-for="TargetAmount" class="form-control" type="number" step="100" min="1" />
                     </div>
                     <span asp-validation-for="TargetAmount" class="text-danger small"></span>
                 </div>
@@ -41,14 +41,14 @@
 
                 <div class="mb-4">
                     <label asp-for="Description" class="form-label"></label>
-                    <textarea asp-for="Description" class="form-control" rows="2" placeholder="Optional notes (e.g. Diwali discount target, specific model)"></textarea>
+                    <textarea asp-for="Description" class="form-control" rows="2" placeholder="Optional notes or details"></textarea>
                     <span asp-validation-for="Description" class="text-danger small"></span>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center">
-                    <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                <div class="d-flex flex-column-reverse flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 text-center">Cancel</a>
                     <button type="submit" class="btn btn-primary rounded-pill px-4 shadow">
-                        <i class="bi bi-check-lg me-1"></i> Goal Save Pannu 🚀
+                        <i class="bi bi-check-lg me-1"></i> Save Goal 🚀
                     </button>
                 </div>
             </form>

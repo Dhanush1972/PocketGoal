@@ -319,6 +319,18 @@ body {
 }
 
 /* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .app-navbar .navbar-collapse {
+        padding-top: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 0.5rem;
+    }
+    .app-navbar .nav-link {
+        padding: 0.65rem 0.9rem !important;
+    }
+}
+
 @media (max-width: 768px) {
     .circular-progress-container {
         width: 200px;
@@ -329,5 +341,49 @@ body {
     }
     .stat-card {
         padding: 1.1rem;
+        border-radius: var(--radius-sm);
+    }
+    .stat-card h3 {
+        font-size: 1.45rem;
+    }
+    .btn {
+        min-height: 40px;
+    }
+    .onboarding-hero {
+        padding: 2.25rem 1.25rem;
+        border-radius: 16px 16px 0 0;
+    }
+    .onboarding-card {
+        border-radius: 16px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .circular-progress-container {
+        width: 170px;
+        height: 170px;
+    }
+    .progress-pct-text {
+        font-size: 1.35rem;
+    }
+    .stat-card {
+        padding: 0.9rem;
+    }
+    .stat-card h3 {
+        font-size: 1.25rem;
+        word-break: break-word;
+    }
+    .stat-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.15rem;
+    }
+    .btn-sm {
+        min-height: 34px;
+        padding: 0.35rem 0.75rem;
+    }
+    .table td, .table th {
+        padding: 0.65rem 0.5rem;
+        font-size: 0.85rem;
     }
 }

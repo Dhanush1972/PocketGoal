@@ -5,12 +5,12 @@
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
-        <div class="stat-card p-4 p-md-5">
+        <div class="stat-card p-3 p-sm-4 p-md-5">
             <div class="text-center mb-4">
                 <div class="brand-icon mx-auto mb-2" style="width: 48px; height: 48px; font-size: 1.4rem;">
                     <i class="bi bi-pencil-square"></i>
                 </div>
-                <h3 class="fw-bold text-dark mb-1">Saving Goal Edit Pannu</h3>
+                <h3 class="fw-bold text-dark mb-1">Edit Saving Goal</h3>
                 <p class="text-muted small">Un goal target and timeline update pannikonga</p>
             </div>
 
@@ -44,22 +44,22 @@
                     <label asp-for="Status" class="form-label"></label>
                     <select asp-for="Status" class="form-select">
                         <option value="1">Active</option>
-                        <option value="2">Completed (Mudinjadhu)</option>
-                        <option value="3">Paused (Konjam Break)</option>
+                        <option value="2">Completed</option>
+                        <option value="3">Paused</option>
                         <option value="4">Cancelled</option>
                     </select>
                 </div>
 
                 <div class="mb-4">
                     <label asp-for="Description" class="form-label"></label>
-                    <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+                    <textarea asp-for="Description" class="form-control" rows="2" placeholder="Optional notes or details"></textarea>
                     <span asp-validation-for="Description" class="text-danger small"></span>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center">
-                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                <div class="d-flex flex-column-reverse flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2">
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary rounded-pill px-4 text-center">Cancel</a>
                     <button type="submit" class="btn btn-primary rounded-pill px-4 shadow">
-                        <i class="bi bi-check-lg me-1"></i> Goal Update Pannu ✅
+                        <i class="bi bi-check-lg me-1"></i> Update Goal ✅
                     </button>
                 </div>
             </form>

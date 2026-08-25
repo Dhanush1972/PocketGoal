@@ -13,7 +13,7 @@
 <div class="row g-4">
     <!-- Reminders List -->
     <div class="col-lg-8">
-        <div class="stat-card p-4">
+        <div class="stat-card p-3 p-sm-4">
             <h5 class="fw-bold text-dark mb-3">
                 <i class="bi bi-bell-fill text-primary me-2"></i> Active Goal Reminders
             </h5>
@@ -24,7 +24,7 @@
                     @foreach (var item in Model.GeneratedReminders)
                     {
                         <div class="p-3 rounded-3 border bg-white shadow-sm">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-1">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="badge @item.UrgencyBadge">
                                         @item.Type
@@ -45,14 +45,14 @@
                                 <div class="text-dark small">@item.SmsBody</div>
                             </div>
 
-                            <div class="d-flex justify-content-end gap-2">
-                                <form asp-action="Trigger" method="post" class="d-inline">
+                            <div class="d-flex justify-content-end">
+                                <form asp-action="Trigger" method="post" class="d-inline w-100 w-sm-auto text-end">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="GoalId" value="@item.GoalId" />
                                     <input type="hidden" name="Type" value="@item.Type" />
                                     <input type="hidden" name="Channel" value="@PocketGoal.Models.NotificationChannel.Both" />
-                                    <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                        <i class="bi bi-send-fill me-1"></i> Test Notification Anuppu 🚀
+                                    <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3 w-100 w-sm-auto">
+                                        <i class="bi bi-send-fill me-1"></i> Send Test Notification 🚀
                                     </button>
                                 </form>
                             </div>
@@ -73,7 +73,7 @@
 
     <!-- Notification Provider & Channel Settings -->
     <div class="col-lg-4">
-        <div class="stat-card p-4 mb-4">
+        <div class="stat-card p-3 p-sm-4 mb-4">
             <h5 class="fw-bold text-dark mb-3">
                 <i class="bi bi-sliders text-primary me-2"></i> Delivery Channels
             </h5>

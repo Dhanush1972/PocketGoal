@@ -5,11 +5,11 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
-        <h2 class="fw-bold text-dark mb-1">Un Saving Goals</h2>
+        <h2 class="fw-bold text-dark mb-1">Your Saving Goals</h2>
         <p class="text-muted mb-0">Un target purchases, savings progress, and monthly plan ellam inga paathuko.</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm">
-        <i class="bi bi-plus-circle me-1"></i> + Pudhu Goal Create Pannu
+    <a asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0">
+        <i class="bi bi-plus-circle me-1"></i> + Create New Goal
     </a>
 </div>
 
@@ -19,10 +19,10 @@
         @foreach (var goal in Model)
         {
             <div class="col-md-6 col-lg-4">
-                <div class="stat-card d-flex flex-column justify-content-between">
+                <div class="stat-card d-flex flex-column justify-content-between p-3 p-sm-4">
                     <div>
                         <!-- Header -->
-                        <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-1">
                             <div>
                                 <h5 class="fw-bold text-dark mb-1">@goal.GoalName</h5>
                                 <div class="text-muted small">Target: @goal.TargetDate.ToString("MMM dd, yyyy")</div>
@@ -30,7 +30,7 @@
                             <div>
                                 @if (goal.PaceStatus == PocketGoal.Models.GoalPaceStatus.Completed)
                                 {
-                                    <span class="badge-pace-completed"><i class="bi bi-check-circle-fill"></i> Mudinjadhu! 🎉</span>
+                                    <span class="badge-pace-completed"><i class="bi bi-check-circle-fill"></i> Completed 🎉</span>
                                 }
                                 else if (goal.PaceStatus == PocketGoal.Models.GoalPaceStatus.OnTrack)
                                 {
@@ -38,11 +38,11 @@
                                 }
                                 else if (goal.PaceStatus == PocketGoal.Models.GoalPaceStatus.Behind)
                                 {
-                                    <span class="badge-pace-behind"><i class="bi bi-exclamation-triangle-fill"></i> Konjam Slow ⚠️</span>
+                                    <span class="badge-pace-behind"><i class="bi bi-exclamation-triangle-fill"></i> Behind Pace ⚠️</span>
                                 }
                                 else
                                 {
-                                    <span class="badge-pace-overdue"><i class="bi bi-clock-history"></i> Date Aachu ⏰</span>
+                                    <span class="badge-pace-overdue"><i class="bi bi-clock-history"></i> Past Due ⏰</span>
                                 }
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                             <div class="progress" style="height: 10px; border-radius: 5px;">
                                 <div class="progress-bar @(goal.IsCompleted ? "bg-success" : "bg-primary")" role="progressbar" style="width: @goal.ProgressPercentage%;" aria-valuenow="@goal.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mt-1">
+                            <div class="d-flex justify-content-between align-items-center mt-1 flex-wrap gap-1">
                                 <span class="text-muted small">@goal.ProgressPercentage.ToString("N1")% funded</span>
                                 <span class="text-muted small">Balance: ₹@goal.RemainingAmount.ToString("N0")</span>
                             </div>
@@ -73,14 +73,14 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="d-flex justify-content-between align-items-center pt-3 border-top gap-2">
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top gap-2 flex-wrap flex-sm-nowrap">
                         <a asp-action="Details" asp-route-id="@goal.Id" class="btn btn-outline-primary btn-sm rounded-pill px-3 flex-grow-1">
-                            Plan & History Paaru
+                            View Plan & History
                         </a>
                         @if (!goal.IsCompleted)
                         {
                             <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-success btn-sm rounded-pill px-3">
-                                + Save
+                                + Deposit
                             </a>
                         }
                     </div>
@@ -91,14 +91,14 @@
 }
 else
 {
-    <div class="text-center py-5 stat-card">
+    <div class="text-center py-5 stat-card p-4">
         <div class="brand-icon mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.6rem;">
             <i class="bi bi-bullseye"></i>
         </div>
-        <h4 class="fw-bold text-dark">Innum Goal Onnum Add Pannala Da</h4>
+        <h4 class="fw-bold text-dark">No Saving Goals Yet</h4>
         <p class="text-muted">Enna vanga poriyo adha target set panni savings start pannuvoma?</p>
         <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow">
-            <i class="bi bi-plus-lg me-1"></i> First Goal Create Pannu 🚀
+            <i class="bi bi-plus-lg me-1"></i> Create Your First Goal 🚀
         </a>
     </div>
 }

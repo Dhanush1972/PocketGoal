@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PocketGoal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f44a2c73b61c1f1a34636ba580e01f18ea3a0ca0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c91e3922296ae35ccbeeddc5adcd9dea237b823")]
 [assembly: System.Reflection.AssemblyProductAttribute("PocketGoal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PocketGoal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

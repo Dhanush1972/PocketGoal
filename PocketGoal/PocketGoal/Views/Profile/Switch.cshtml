@@ -4,15 +4,15 @@
     var activeId = (Guid?)ViewBag.ActiveProfileId;
 }
 
-<div class="row justify-content-center my-4">
+<div class="row justify-content-center my-2 my-md-4">
     <div class="col-md-8 col-lg-6">
-        <div class="stat-card p-3 p-sm-4">
+        <div class="stat-card p-3 p-sm-4 p-md-5">
             <div class="text-center mb-4">
-                <div class="brand-icon mx-auto mb-2" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                <div class="brand-icon mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.5rem;">
                     <i class="bi bi-people-fill"></i>
                 </div>
                 <h3 class="fw-bold text-dark mb-1">Select Profile</h3>
-                <p class="text-muted small">Tracking profile choose pannunga illa email/phone vechu thedunga</p>
+                <p class="text-muted small mb-0">Tracking profile choose pannunga illa email/phone vechu thedunga</p>
             </div>
 
             <!-- Lookup by Email/Phone -->
@@ -20,31 +20,32 @@
                 @Html.AntiForgeryToken()
                 <label class="form-label small fw-bold">Search by Email or Phone Number</label>
                 <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
                     <input type="text" name="emailOrPhone" class="form-control" placeholder="Enter email or phone number" required />
                     <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-search"></i> Search
+                        Search
                     </button>
                 </div>
             </form>
 
             @if (Model != null && Model.Any())
             {
-                <h6 class="fw-bold text-muted small text-uppercase mb-3">Available Profiles</h6>
-                <div class="list-group mb-4 shadow-sm">
+                <h6 class="fw-bold text-muted small text-uppercase mb-3" style="letter-spacing: 0.04em;">Available Profiles</h6>
+                <div class="d-flex flex-column gap-2 mb-4">
                     @foreach (var user in Model)
                     {
                         var isActive = activeId.HasValue && activeId.Value == user.Id;
-                        <div class="list-group-item list-group-item-action d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between p-3 gap-2 @(isActive ? "border-primary bg-primary-light" : "")">
+                        <div class="p-3 rounded-3 border bg-white d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 @(isActive ? "border-primary bg-primary-light shadow-xs" : "")">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 42px; height: 42px;">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 42px; height: 42px; font-size: 1rem;">
                                     @user.Name.Substring(0, Math.Min(1, user.Name.Length)).ToUpper()
                                 </div>
                                 <div class="text-truncate">
-                                    <div class="fw-bold text-dark">
-                                        @user.Name
+                                    <div class="fw-bold text-dark d-flex align-items-center gap-2">
+                                        <span>@user.Name</span>
                                         @if (isActive)
                                         {
-                                            <span class="badge bg-primary ms-1">Active</span>
+                                            <span class="badge bg-primary text-white" style="font-size: 0.7rem;">Active</span>
                                         }
                                     </div>
                                     <div class="text-muted small text-truncate">@user.Email &bull; @user.PhoneNumber</div>
@@ -73,7 +74,7 @@
                 </div>
             }
 
-            <div class="text-center pt-2">
+            <div class="text-center pt-2 border-top">
                 <a asp-action="Onboarding" class="btn btn-outline-primary rounded-pill px-4 w-100 w-sm-auto">
                     <i class="bi bi-plus-circle me-1"></i> + Create New Profile & Goal
                 </a>
@@ -81,3 +82,4 @@
         </div>
     </div>
 </div>
+

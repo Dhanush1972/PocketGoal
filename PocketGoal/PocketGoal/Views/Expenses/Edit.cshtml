@@ -3,11 +3,11 @@
     ViewData["Title"] = "Edit Expense";
 }
 
-<div class="row justify-content-center">
+<div class="row justify-content-center my-2 my-md-4">
     <div class="col-md-8 col-lg-6">
         <div class="stat-card p-3 p-sm-4 p-md-5">
             <div class="text-center mb-4">
-                <div class="stat-icon bg-light text-primary mx-auto mb-2" style="width: 52px; height: 52px; font-size: 1.5rem;">
+                <div class="stat-icon bg-primary-light text-primary mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.5rem;">
                     <i class="bi bi-pencil-square"></i>
                 </div>
                 <h3 class="fw-bold text-dark mb-1">Edit Expense</h3>
@@ -17,7 +17,7 @@
             <form asp-action="Edit" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="Id" />
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
 
                 <div class="mb-3">
                     <label asp-for="CategoryId" class="form-label"></label> <span class="text-danger">*</span>
@@ -28,7 +28,7 @@
                 <div class="mb-3">
                     <label asp-for="Amount" class="form-label"></label> <span class="text-danger">*</span>
                     <div class="input-group">
-                        <span class="input-group-text bg-light fw-bold">₹</span>
+                        <span class="input-group-text fw-bold">₹</span>
                         <input asp-for="Amount" class="form-control" type="number" step="1" min="1" />
                     </div>
                     <span asp-validation-for="Amount" class="text-danger small"></span>
@@ -36,7 +36,10 @@
 
                 <div class="mb-3">
                     <label asp-for="ExpenseDate" class="form-label"></label> <span class="text-danger">*</span>
-                    <input asp-for="ExpenseDate" class="form-control" type="date" value="@Model.ExpenseDate.ToString("yyyy-MM-dd")" />
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                        <input asp-for="ExpenseDate" class="form-control" type="date" value="@Model.ExpenseDate.ToString("yyyy-MM-dd")" />
+                    </div>
                     <span asp-validation-for="ExpenseDate" class="text-danger small"></span>
                 </div>
 
@@ -46,7 +49,7 @@
                     <span asp-validation-for="Description" class="text-danger small"></span>
                 </div>
 
-                <div class="d-flex flex-column-reverse flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2">
+                <div class="d-flex flex-column-reverse flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2 pt-2">
                     <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 text-center">Cancel</a>
                     <button type="submit" class="btn btn-primary rounded-pill px-4 shadow">
                         <i class="bi bi-check-lg me-1"></i> Update Expense ✅
@@ -60,3 +63,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

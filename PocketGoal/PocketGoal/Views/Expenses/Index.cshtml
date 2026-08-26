@@ -4,13 +4,14 @@
     var months = new[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 }
 
+<!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <h2 class="fw-bold text-dark mb-1">Expense Tracker 💸</h2>
         <p class="text-muted mb-0">Un daily and monthly spending categories-ah track pannu.</p>
     </div>
     <div class="d-flex gap-2 flex-wrap flex-sm-nowrap w-100 w-sm-auto">
-        <button type="button" class="btn btn-outline-secondary rounded-pill px-3 flex-grow-1 flex-sm-grow-0" data-bs-toggle="modal" data-bs-target="#customCategoryModal">
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 flex-grow-1 flex-sm-grow-0" data-bs-toggle="modal" data-bs-target="#customCategoryModal">
             <i class="bi bi-folder-plus me-1"></i> + New Category
         </button>
         <a asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0">
@@ -23,28 +24,28 @@
 <div class="row g-3 mb-4">
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="text-muted small fw-bold text-uppercase mb-1">This Month Spending</div>
+            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">This Month</div>
             <h3 class="fw-bold text-danger mb-0">₹@Model.CurrentMonthTotal.ToString("N2")</h3>
             <span class="text-muted small">@months[Model.SelectedMonth - 1] @Model.SelectedYear</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="text-muted small fw-bold text-uppercase mb-1">Today's Expenses</div>
+            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">Today</div>
             <h3 class="fw-bold text-dark mb-0">₹@Model.TodayTotal.ToString("N2")</h3>
             <span class="text-muted small">@DateTime.UtcNow.ToString("MMM dd")</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="text-muted small fw-bold text-uppercase mb-1">Last Month</div>
+            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">Last Month</div>
             <h3 class="fw-bold text-muted mb-0">₹@Model.PreviousMonthTotal.ToString("N2")</h3>
             <span class="text-muted small">Comparison baseline</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="text-muted small fw-bold text-uppercase mb-1">Total Expenses</div>
+            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">Total All-Time</div>
             <h3 class="fw-bold text-dark mb-0">₹@Model.AllTimeTotal.ToString("N2")</h3>
             <span class="text-muted small">All-time tracked</span>
         </div>
@@ -55,15 +56,15 @@
 <div class="stat-card p-3 mb-4">
     <form method="get" class="row g-2 align-items-center">
         <div class="col-md-4">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text bg-light"><i class="bi bi-calendar3"></i></span>
-                <select name="month" class="form-select form-select-sm">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+                <select name="month" class="form-select">
                     @for (int i = 1; i <= 12; i++)
                     {
                         <option value="@i" selected="@(Model.SelectedMonth == i)">@months[i - 1]</option>
                     }
                 </select>
-                <select name="year" class="form-select form-select-sm">
+                <select name="year" class="form-select">
                     @for (int y = DateTime.UtcNow.Year - 2; y <= DateTime.UtcNow.Year + 1; y++)
                     {
                         <option value="@y" selected="@(Model.SelectedYear == y)">@y</option>
@@ -73,9 +74,9 @@
         </div>
 
         <div class="col-md-5">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text bg-light"><i class="bi bi-funnel"></i> Category</span>
-                <select name="categoryId" class="form-select form-select-sm">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-funnel"></i></span>
+                <select name="categoryId" class="form-select">
                     <option value="">All Categories</option>
                     @foreach (var opt in Model.CategoryOptions)
                     {
@@ -100,14 +101,14 @@
         <div class="stat-card p-3 p-sm-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="fw-bold text-dark mb-0">Expense Transactions</h5>
-                <span class="badge bg-light text-dark border">@Model.Expenses.Count items</span>
+                <span class="badge bg-light text-dark border px-2 py-1">@Model.Expenses.Count items</span>
             </div>
 
             @if (Model.Expenses.Any())
             {
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
                                 <th>Category</th>
                                 <th>Date</th>
@@ -122,7 +123,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="category-icon-box" style="background-color: @(exp.CategoryColor)15; color: @exp.CategoryColor; width: 32px; height: 32px; font-size: 0.9rem;">
+                                            <div class="category-icon-box" style="background-color: @(exp.CategoryColor)15; color: @exp.CategoryColor; width: 34px; height: 34px; font-size: 0.95rem;">
                                                 <i class="bi @exp.CategoryIcon"></i>
                                             </div>
                                             <span class="fw-semibold text-dark small">@exp.CategoryName</span>
@@ -139,12 +140,12 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="d-inline-flex gap-2">
-                                            <a asp-action="Edit" asp-route-id="@exp.Id" class="text-secondary" title="Edit">
+                                            <a asp-action="Edit" asp-route-id="@exp.Id" class="text-secondary p-1" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             <form asp-action="Delete" asp-route-id="@exp.Id" method="post" class="d-inline" onsubmit="return confirm('Indha expense record-ah delete panna poriya?');">
                                                 @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-link text-danger p-0" title="Delete">
+                                                <button type="submit" class="btn btn-link text-danger p-1" title="Delete">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -161,7 +162,7 @@
                 <div class="text-center py-5">
                     <i class="bi bi-receipt-cutoff text-muted display-4"></i>
                     <h6 class="fw-bold text-dark mt-3">No Expenses Found</h6>
-                    <p class="text-muted small">Selected filter or month-la expenses onnum record aagala.</p>
+                    <p class="text-muted small mb-3">Selected filter or month-la expenses onnum record aagala.</p>
                     <a asp-action="Create" class="btn btn-outline-primary btn-sm rounded-pill px-3">
                         + Add Expense
                     </a>
@@ -193,7 +194,7 @@
                                     <span class="text-muted" style="font-size: 0.75rem;">(@cat.PercentageOfTotal%)</span>
                                 </div>
                             </div>
-                            <div class="progress" style="height: 6px; border-radius: 3px;">
+                            <div class="progress" style="height: 6px;">
                                 <div class="progress-bar" role="progressbar" style="width: @cat.PercentageOfTotal%; background-color: @cat.CategoryColor;" aria-valuenow="@cat.PercentageOfTotal" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
@@ -211,10 +212,10 @@
 <!-- Modal: Create Custom Category -->
 <div class="modal fade" id="customCategoryModal" tabindex="-1" aria-labelledby="customCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
+        <div class="modal-content border-0">
             <div class="modal-header">
                 <h5 class="modal-title fw-bold" id="customCategoryModalLabel">Create Custom Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form asp-action="CreateCategory" method="post">
                 @Html.AntiForgeryToken()
@@ -234,12 +235,15 @@
                             <option value="bi-gift">Gifts</option>
                             <option value="bi-camera">Photography</option>
                             <option value="bi-wrench">Repairs & Maintenance</option>
+                            <option value="bi-car-front">Transport / Fuel</option>
+                            <option value="bi-heart-pulse">Health / Medical</option>
+                            <option value="bi-book">Books / Education</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Theme Color</label>
-                        <input type="color" name="ColorHex" class="form-control form-control-color w-100" value="#6366f1" />
+                        <input type="color" name="ColorHex" class="form-control form-control-color w-100" value="#6366f1" style="height: 42px;" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -250,3 +254,4 @@
         </div>
     </div>
 </div>
+

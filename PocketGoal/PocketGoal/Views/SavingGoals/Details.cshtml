@@ -3,11 +3,12 @@
     ViewData["Title"] = Model.GoalName + " - Goal Details";
 }
 
+<!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-1">
-                <li class="breadcrumb-item"><a asp-action="Index">Goals</a></li>
+            <ol class="breadcrumb mb-1 small">
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-primary fw-semibold"><i class="bi bi-arrow-left me-1"></i> Goals</a></li>
                 <li class="breadcrumb-item active" aria-current="page">@Model.GoalName</li>
             </ol>
         </nav>
@@ -31,8 +32,8 @@
     <div class="col-lg-7">
         <div class="stat-card p-3 p-sm-4">
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                <span class="badge bg-light text-dark border">
-                    <i class="bi bi-calendar3 me-1"></i> Target Date: @Model.TargetDate.ToString("MMMM dd, yyyy")
+                <span class="badge bg-light text-dark border px-2 py-1">
+                    <i class="bi bi-calendar3 me-1 text-primary"></i> Target: @Model.TargetDate.ToString("MMMM dd, yyyy")
                 </span>
                 <div>
                     @if (Model.PaceStatus == PocketGoal.Models.GoalPaceStatus.Completed)
@@ -56,7 +57,7 @@
 
             @if (!string.IsNullOrEmpty(Model.Description))
             {
-                <p class="text-muted mb-4">@Model.Description</p>
+                <p class="text-muted mb-4 small">@Model.Description</p>
             }
 
             <!-- Progress Bar -->
@@ -64,40 +65,40 @@
                 <div class="d-flex justify-content-between align-items-baseline mb-2 flex-wrap gap-1">
                     <div>
                         <span class="h4 fw-bold text-dark mb-0">₹@Model.CurrentSavedAmount.ToString("N2")</span>
-                        <span class="text-muted"> of ₹@Model.TargetAmount.ToString("N2")</span>
+                        <span class="text-muted small"> of ₹@Model.TargetAmount.ToString("N2")</span>
                     </div>
                     <span class="h5 fw-bold text-primary mb-0">@Model.ProgressPercentage.ToString("N1")%</span>
                 </div>
-                <div class="progress" style="height: 14px; border-radius: 7px;">
+                <div class="progress" style="height: 10px;">
                     <div class="progress-bar @(Model.IsCompleted ? "bg-success" : "bg-primary")" role="progressbar" style="width: @Model.ProgressPercentage%;" aria-valuenow="@Model.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-2 small text-muted flex-wrap gap-1">
-                    <span>Balance: <strong>₹@Model.RemainingAmount.ToString("N2")</strong></span>
-                    <span>Innum @Model.DaysRemaining days dhaan irukku</span>
+                    <span>Balance to save: <strong class="text-dark">₹@Model.RemainingAmount.ToString("N2")</strong></span>
+                    <span><i class="bi bi-hourglass-split text-warning me-1"></i> Innum @Model.DaysRemaining days dhaan irukku</span>
                 </div>
             </div>
 
             <!-- Savings Schedule Breakdown -->
-            <h6 class="fw-bold text-dark text-uppercase small mb-3">Required Savings Plan</h6>
+            <h6 class="fw-bold text-dark text-uppercase small mb-3" style="letter-spacing: 0.04em;">Required Savings Plan</h6>
             <div class="row g-3 text-center">
                 <div class="col-12 col-sm-4">
                     <div class="p-3 bg-light rounded-3 border">
                         <div class="text-muted small">Monthly Deposit</div>
-                        <div class="h5 fw-bold text-success mb-0">₹@Model.RequiredMonthlySaving.ToString("N0")</div>
+                        <div class="h5 fw-bold text-success mb-0 mt-1">₹@Model.RequiredMonthlySaving.ToString("N0")</div>
                         <div class="text-muted" style="font-size: 0.75rem;">(@Model.MonthsRemaining months)</div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-4">
                     <div class="p-3 bg-light rounded-3 border">
                         <div class="text-muted small">Weekly Deposit</div>
-                        <div class="h5 fw-bold text-primary mb-0">₹@Model.RequiredWeeklySaving.ToString("N0")</div>
+                        <div class="h5 fw-bold text-primary mb-0 mt-1">₹@Model.RequiredWeeklySaving.ToString("N0")</div>
                         <div class="text-muted" style="font-size: 0.75rem;">(7-day target)</div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-4">
                     <div class="p-3 bg-light rounded-3 border">
                         <div class="text-muted small">Daily Deposit</div>
-                        <div class="h5 fw-bold text-secondary mb-0">₹@Model.RequiredDailySaving.ToString("N0")</div>
+                        <div class="h5 fw-bold text-secondary mb-0 mt-1">₹@Model.RequiredDailySaving.ToString("N0")</div>
                         <div class="text-muted" style="font-size: 0.75rem;">(Daily micro-saving)</div>
                     </div>
                 </div>
@@ -105,7 +106,7 @@
         </div>
     </div>
 
-    <!-- Quick Deposit & Notification Trigger Box -->
+    <!-- Quick Deposit & Goal Management Box -->
     <div class="col-lg-5">
         <div class="stat-card p-3 p-sm-4 mb-4">
             <h5 class="fw-bold text-dark mb-3"><i class="bi bi-wallet2 text-success me-2"></i> Quick Deposit 💰</h5>
@@ -119,7 +120,7 @@
                 <div class="mb-3">
                     <label class="form-label small fw-bold">Deposit Amount (₹)</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light fw-bold">₹</span>
+                        <span class="input-group-text fw-bold">₹</span>
                         <input type="number" name="Amount" class="form-control" value="@(Model.RequiredMonthlySaving > 0 ? Math.Min(Model.RequiredMonthlySaving, Model.RemainingAmount) : Math.Min(1000m, Model.RemainingAmount))" min="1" step="100" required />
                     </div>
                 </div>
@@ -159,14 +160,14 @@
         <h5 class="fw-bold text-dark mb-0">
             <i class="bi bi-receipt text-primary me-2"></i> Savings History Log 📜
         </h5>
-        <span class="badge bg-light text-dark border">@Model.SavingsHistory.Count deposits recorded</span>
+        <span class="badge bg-light text-dark border px-2 py-1">@Model.SavingsHistory.Count deposits recorded</span>
     </div>
 
     @if (Model.SavingsHistory.Any())
     {
         <div class="table-responsive">
             <table class="table table-hover align-middle">
-                <thead class="table-light">
+                <thead>
                     <tr>
                         <th>Date</th>
                         <th>Amount</th>
@@ -186,7 +187,7 @@
                                 <span class="fw-bold text-success">+₹@sav.Amount.ToString("N2")</span>
                             </td>
                             <td>
-                                <span class="text-muted">@(string.IsNullOrEmpty(sav.Notes) ? "—" : sav.Notes)</span>
+                                <span class="text-muted small">@(string.IsNullOrEmpty(sav.Notes) ? "—" : sav.Notes)</span>
                             </td>
                             <td class="text-end">
                                 <form asp-controller="Savings" asp-action="Delete" asp-route-id="@sav.Id" asp-route-goalId="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Indha deposit record-ah delete panna poriya?');">
@@ -210,3 +211,4 @@
         </div>
     }
 </div>
+

@@ -3,6 +3,7 @@
     ViewData["Title"] = "Savings Reminders & Notifications";
 }
 
+<!-- Page Header -->
 <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <div>
         <h2 class="fw-bold text-dark mb-1">Savings Reminders & Notifications 🔔</h2>
@@ -23,10 +24,10 @@
                 <div class="d-flex flex-column gap-3">
                     @foreach (var item in Model.GeneratedReminders)
                     {
-                        <div class="p-3 rounded-3 border bg-white shadow-sm">
+                        <div class="p-3 rounded-3 border bg-white shadow-xs">
                             <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-1">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="badge @item.UrgencyBadge">
+                                    <span class="badge @item.UrgencyBadge" style="font-size: 0.75rem; border-radius: var(--pg-radius-pill);">
                                         @item.Type
                                     </span>
                                     <strong class="text-dark">@item.Title</strong>
@@ -35,13 +36,13 @@
                             </div>
 
                             <div class="p-3 bg-light rounded-2 border mb-3">
-                                <div class="text-muted small fw-bold mb-1"><i class="bi bi-envelope me-1"></i> Email Preview (@Model.User.Email):</div>
-                                <div class="text-dark small mb-2"><strong>@item.Subject</strong></div>
+                                <div class="text-muted small fw-bold mb-1"><i class="bi bi-envelope me-1 text-primary"></i> Email Preview (@Model.User.Email):</div>
+                                <div class="text-dark small mb-1 fw-bold">@item.Subject</div>
                                 <div class="text-muted small">@item.MessageBody</div>
 
                                 <hr class="my-2 opacity-25" />
 
-                                <div class="text-muted small fw-bold mb-1"><i class="bi bi-chat-dots me-1"></i> SMS Preview (@Model.User.PhoneNumber):</div>
+                                <div class="text-muted small fw-bold mb-1"><i class="bi bi-chat-dots me-1 text-primary"></i> SMS Preview (@Model.User.PhoneNumber):</div>
                                 <div class="text-dark small">@item.SmsBody</div>
                             </div>
 
@@ -86,7 +87,7 @@
                     </div>
                     <span class="badge bg-success-light text-success border">Active</span>
                 </div>
-                <div class="text-muted small">Target: <strong>@Model.User.Email</strong></div>
+                <div class="text-muted small">Target: <strong class="text-dark">@Model.User.Email</strong></div>
                 <div class="text-muted" style="font-size: 0.75rem;">Provider: @Model.EmailProviderName</div>
             </div>
 
@@ -98,7 +99,7 @@
                     </div>
                     <span class="badge bg-success-light text-success border">Active</span>
                 </div>
-                <div class="text-muted small">Target: <strong>@Model.User.PhoneNumber</strong></div>
+                <div class="text-muted small">Target: <strong class="text-dark">@Model.User.PhoneNumber</strong></div>
                 <div class="text-muted" style="font-size: 0.75rem;">Provider: @Model.SmsProviderName</div>
             </div>
 
@@ -108,3 +109,4 @@
         </div>
     </div>
 </div>
+

@@ -4,6 +4,7 @@
     var primary = Model.PrimaryGoal;
 }
 
+<!-- Page Header -->
 <div class="row g-3 mb-4 align-items-center">
     <div class="col-md-7">
         <h2 class="fw-bold text-dark mb-1">
@@ -14,12 +15,14 @@
     <div class="col-md-5 text-md-end d-flex gap-2 justify-content-start justify-content-md-end flex-wrap">
         @if (primary != null)
         {
-            <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@primary.Id" class="btn btn-success rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0">
-                <i class="bi bi-plus-circle-fill me-1"></i> + Add Deposit
+            <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@primary.Id" class="btn btn-success rounded-pill px-3 flex-grow-1 flex-sm-grow-0">
+                <i class="bi bi-plus-circle-fill"></i>
+                <span>+ Add Deposit</span>
             </a>
         }
-        <a asp-controller="Expenses" asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0">
-            <i class="bi bi-dash-circle-fill me-1"></i> + Add Expense
+        <a asp-controller="Expenses" asp-action="Create" class="btn btn-primary rounded-pill px-3 flex-grow-1 flex-sm-grow-0">
+            <i class="bi bi-dash-circle-fill"></i>
+            <span>+ Add Expense</span>
         </a>
     </div>
 </div>
@@ -27,12 +30,12 @@
 <!-- Active Reminders Banner (if any) -->
 @if (Model.ActiveReminders.Any())
 {
-    <div class="mb-4">
+    <div class="mb-4 d-flex flex-column gap-2">
         @foreach (var rem in Model.ActiveReminders)
         {
-            <div class="alert alert-light border shadow-sm rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 mb-2">
+            <div class="alert alert-light border shadow-sm d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 mb-0" style="border-radius: var(--pg-radius-md);">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="rounded-circle @rem.BadgeClass text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px; font-size: 1.1rem;">
+                    <div class="rounded-circle @rem.BadgeClass text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; font-size: 1.15rem;">
                         <i class="bi @rem.Icon"></i>
                     </div>
                     <div>
@@ -41,7 +44,7 @@
                     </div>
                 </div>
                 <a asp-controller="Notifications" asp-action="Index" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
-                    View
+                    View Alert
                 </a>
             </div>
         }
@@ -53,7 +56,7 @@
     <div class="col-6 col-lg-3">
         <div class="stat-card">
             <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-muted small fw-bold text-uppercase">Total Savings</span>
+                <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.04em;">Total Savings</span>
                 <div class="stat-icon bg-success-light text-success">
                     <i class="bi bi-wallet2"></i>
                 </div>
@@ -66,20 +69,20 @@
     <div class="col-6 col-lg-3">
         <div class="stat-card">
             <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-muted small fw-bold text-uppercase">Total Target</span>
+                <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.04em;">Total Target</span>
                 <div class="stat-icon bg-primary-light text-primary">
                     <i class="bi bi-bullseye"></i>
                 </div>
             </div>
             <h3 class="fw-bold text-dark mb-1">₹@Model.TotalTargetAllGoals.ToString("N0")</h3>
-            <span class="text-muted small">Balance to save: ₹@Model.TotalRemainingAllGoals.ToString("N0")</span>
+            <span class="text-muted small">Balance: ₹@Model.TotalRemainingAllGoals.ToString("N0")</span>
         </div>
     </div>
 
     <div class="col-6 col-lg-3">
         <div class="stat-card">
             <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-muted small fw-bold text-uppercase">This Month Expenses</span>
+                <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.04em;">This Month</span>
                 <div class="stat-icon bg-danger-light text-danger">
                     <i class="bi bi-credit-card-2-front"></i>
                 </div>
@@ -92,7 +95,7 @@
     <div class="col-6 col-lg-3">
         <div class="stat-card">
             <div class="d-flex align-items-center justify-content-between mb-2">
-                <span class="text-muted small fw-bold text-uppercase">Active Goals</span>
+                <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.04em;">Active Goals</span>
                 <div class="stat-icon bg-warning-light text-warning">
                     <i class="bi bi-flag-fill"></i>
                 </div>
@@ -109,7 +112,7 @@
         <div class="stat-card p-3 p-sm-4">
             <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
                 <div>
-                    <span class="badge bg-primary-light text-primary border fw-bold px-2 py-1 mb-1">Main Savings Goal ⭐</span>
+                    <span class="badge bg-primary-light text-primary border px-2 py-1 mb-1 fw-bold" style="font-size: 0.75rem;">Main Savings Goal ⭐</span>
                     <h4 class="fw-bold text-dark mb-0">@(primary != null ? primary.GoalName : "No Active Goal")</h4>
                 </div>
                 @if (primary != null)
@@ -162,7 +165,7 @@
                             <div class="circular-inner-content">
                                 <div class="progress-pct-text">@primary.ProgressPercentage.ToString("N1")%</div>
                                 <div class="text-muted small fw-semibold">Saved</div>
-                                <div class="badge bg-light text-dark border mt-1 text-wrap">
+                                <div class="badge bg-light text-dark border mt-1 text-wrap px-2 py-1">
                                     ₹@primary.CurrentSavedAmount.ToString("N0") / ₹@primary.TargetAmount.ToString("N0")
                                 </div>
                             </div>
@@ -172,34 +175,34 @@
                     <!-- Pacing & Saving Requirements -->
                     <div class="col-md-6">
                         <div class="p-3 bg-light rounded-3 border mb-3">
-                            <div class="text-muted small fw-bold text-uppercase mb-1">Monthly Savings Target</div>
+                            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">Monthly Target</div>
                             <div class="h3 fw-bold text-success mb-1">
                                 ₹@primary.RequiredMonthlySaving.ToString("N0")
                                 <span class="text-muted fs-6 fw-normal">/ month</span>
                             </div>
                             <div class="text-muted small">
-                                Balance to save: <strong>₹@primary.RemainingAmount.ToString("N0")</strong>
+                                Balance to save: <strong class="text-dark">₹@primary.RemainingAmount.ToString("N0")</strong>
                             </div>
                         </div>
 
                         <div class="row g-2 mb-3 text-center">
                             <div class="col-6">
                                 <div class="p-2 bg-white rounded-2 border">
-                                    <div class="text-muted small">Weekly Target</div>
+                                    <div class="text-muted small">Weekly</div>
                                     <div class="fw-bold text-dark">₹@primary.RequiredWeeklySaving.ToString("N0")</div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="p-2 bg-white rounded-2 border">
-                                    <div class="text-muted small">Daily Target</div>
+                                    <div class="text-muted small">Daily</div>
                                     <div class="fw-bold text-dark">₹@primary.RequiredDailySaving.ToString("N0")</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center flex-wrap gap-1 text-muted small px-1">
-                            <div><i class="bi bi-calendar3 me-1"></i> Target: @primary.TargetDate.ToString("MMM dd, yyyy")</div>
-                            <div><i class="bi bi-hourglass-split me-1"></i> Innum @primary.DaysRemaining days dhaan</div>
+                            <div><i class="bi bi-calendar3 me-1 text-primary"></i> Target: @primary.TargetDate.ToString("MMM dd, yyyy")</div>
+                            <div><i class="bi bi-hourglass-split me-1 text-warning"></i> Innum @primary.DaysRemaining days dhaan</div>
                         </div>
                     </div>
                 </div>
@@ -216,9 +219,11 @@
             else
             {
                 <div class="text-center py-5">
-                    <i class="bi bi-plus-circle text-muted display-4"></i>
-                    <h5 class="fw-bold text-dark mt-3">No Active Goals Yet</h5>
-                    <p class="text-muted">Un dream purchase-ku ippo goal set panni progress track panna start pannu.</p>
+                    <div class="brand-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.5rem;">
+                        <i class="bi bi-bullseye"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mt-2">No Active Goals Yet</h5>
+                    <p class="text-muted small mb-3">Un dream purchase-ku ippo goal set panni progress track panna start pannu.</p>
                     <a asp-controller="SavingGoals" asp-action="Create" class="btn btn-primary rounded-pill px-4">
                         <i class="bi bi-plus-lg me-1"></i> + Create New Goal
                     </a>
@@ -234,7 +239,7 @@
                 <h5 class="fw-bold text-dark mb-0">
                     <i class="bi bi-pie-chart text-primary me-2"></i> This Month Expenses
                 </h5>
-                <a asp-controller="Expenses" asp-action="Index" class="btn btn-link btn-sm text-decoration-none p-0">
+                <a asp-controller="Expenses" asp-action="Index" class="btn btn-link btn-sm text-decoration-none p-0 text-primary fw-semibold">
                     View All <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
@@ -267,7 +272,7 @@
                                     <div class="text-muted" style="font-size: 0.75rem;">@cat.PercentageOfTotal%</div>
                                 </div>
                             </div>
-                            <div class="progress" style="height: 6px; border-radius: 4px;">
+                            <div class="progress" style="height: 6px;">
                                 <div class="progress-bar" role="progressbar" style="width: @cat.PercentageOfTotal%; background-color: @cat.CategoryColor;" aria-valuenow="@cat.PercentageOfTotal" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
@@ -312,7 +317,7 @@
                 <div class="d-flex flex-column gap-3">
                     @foreach (var goal in Model.AllGoals)
                     {
-                        <div class="p-3 rounded-3 border bg-white shadow-sm">
+                        <div class="p-3 rounded-3 border bg-white shadow-xs">
                             <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-1">
                                 <div>
                                     <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@goal.Id" class="fw-bold text-dark text-decoration-none">
@@ -326,17 +331,17 @@
                                 </div>
                             </div>
 
-                            <div class="progress mb-2" style="height: 8px; border-radius: 4px;">
+                            <div class="progress mb-2" style="height: 8px;">
                                 <div class="progress-bar bg-success" role="progressbar" style="width: @goal.ProgressPercentage%;" aria-valuenow="@goal.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 small">
                                 <span class="text-muted">@goal.ProgressPercentage.ToString("N1")% saved &bull; Balance: ₹@goal.RemainingAmount.ToString("N0")</span>
                                 <div class="d-flex gap-2">
-                                    <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-sm btn-outline-success py-0 px-2 rounded-pill">
+                                    <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-sm btn-outline-success py-1 px-2 rounded-pill">
                                         + Deposit
                                     </a>
-                                    <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@goal.Id" class="btn btn-sm btn-outline-secondary py-0 px-2 rounded-pill">
+                                    <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@goal.Id" class="btn btn-sm btn-outline-secondary py-1 px-2 rounded-pill">
                                         View
                                     </a>
                                 </div>
@@ -347,7 +352,9 @@
             }
             else
             {
-                <p class="text-muted mb-0">Innum goal onnum add pannala da.</p>
+                <div class="text-center py-4 bg-light rounded-3">
+                    <p class="text-muted small mb-0">Innum goal onnum add pannala da.</p>
+                </div>
             }
         </div>
     </div>
@@ -385,7 +392,7 @@
                             {
                                 <div class="d-flex align-items-center justify-content-between p-2 rounded-2 border-bottom">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="category-icon-box" style="background-color: @(exp.CategoryColor)15; color: @exp.CategoryColor; width: 32px; height: 32px; font-size: 0.9rem;">
+                                        <div class="category-icon-box" style="background-color: @(exp.CategoryColor)15; color: @exp.CategoryColor; width: 34px; height: 34px; font-size: 0.95rem;">
                                             <i class="bi @exp.CategoryIcon"></i>
                                         </div>
                                         <div>
@@ -413,7 +420,7 @@
                             {
                                 <div class="d-flex align-items-center justify-content-between p-2 rounded-2 border-bottom">
                                     <div class="d-flex align-items-center gap-2">
-                                        <div class="category-icon-box bg-success-light text-success" style="width: 32px; height: 32px; font-size: 0.9rem;">
+                                        <div class="category-icon-box bg-success-light text-success" style="width: 34px; height: 34px; font-size: 0.95rem;">
                                             <i class="bi bi-wallet-fill"></i>
                                         </div>
                                         <div>
@@ -435,3 +442,4 @@
         </div>
     </div>
 </div>
+

@@ -3,32 +3,35 @@
     ViewData["Title"] = "Edit Saving Goal";
 }
 
-<div class="row justify-content-center">
+<div class="row justify-content-center my-2 my-md-4">
     <div class="col-md-8 col-lg-6">
         <div class="stat-card p-3 p-sm-4 p-md-5">
             <div class="text-center mb-4">
-                <div class="brand-icon mx-auto mb-2" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                <div class="brand-icon mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.45rem;">
                     <i class="bi bi-pencil-square"></i>
                 </div>
                 <h3 class="fw-bold text-dark mb-1">Edit Saving Goal</h3>
-                <p class="text-muted small">Un goal target and timeline update pannikonga</p>
+                <p class="text-muted small mb-0">Un goal target and timeline update pannikonga</p>
             </div>
 
             <form asp-action="Edit" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" asp-for="Id" />
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3" role="alert"></div>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
 
                 <div class="mb-3">
                     <label asp-for="GoalName" class="form-label"></label> <span class="text-danger">*</span>
-                    <input asp-for="GoalName" class="form-control" />
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                        <input asp-for="GoalName" class="form-control" />
+                    </div>
                     <span asp-validation-for="GoalName" class="text-danger small"></span>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="TargetAmount" class="form-label"></label> <span class="text-danger">*</span>
                     <div class="input-group">
-                        <span class="input-group-text bg-light fw-bold">₹</span>
+                        <span class="input-group-text fw-bold">₹</span>
                         <input asp-for="TargetAmount" class="form-control" type="number" step="100" min="1" />
                     </div>
                     <span asp-validation-for="TargetAmount" class="text-danger small"></span>
@@ -36,7 +39,10 @@
 
                 <div class="mb-3">
                     <label asp-for="TargetDate" class="form-label"></label> <span class="text-danger">*</span>
-                    <input asp-for="TargetDate" class="form-control" type="date" value="@Model.TargetDate.ToString("yyyy-MM-dd")" />
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                        <input asp-for="TargetDate" class="form-control" type="date" value="@Model.TargetDate.ToString("yyyy-MM-dd")" />
+                    </div>
                     <span asp-validation-for="TargetDate" class="text-danger small"></span>
                 </div>
 
@@ -56,7 +62,7 @@
                     <span asp-validation-for="Description" class="text-danger small"></span>
                 </div>
 
-                <div class="d-flex flex-column-reverse flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2">
+                <div class="d-flex flex-column-reverse flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2 pt-2">
                     <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary rounded-pill px-4 text-center">Cancel</a>
                     <button type="submit" class="btn btn-primary rounded-pill px-4 shadow">
                         <i class="bi bi-check-lg me-1"></i> Update Goal ✅
@@ -70,3 +76,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

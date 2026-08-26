@@ -173,13 +173,15 @@ namespace PocketGoal.Tests
         {
             // Arrange
             var db = CreateInMemoryDbContext();
-            var service = new UserProfileService(db, NullLogger<UserProfileService>.Instance);
+            var service = new UserProfileService(db, new PasswordHasherService(), NullLogger<UserProfileService>.Instance);
 
             var onboarding = new OnboardingViewModel
             {
                 Name = "Rohit Verma",
                 Email = "rohit@test.com",
                 PhoneNumber = "+919123456789",
+                Password = "Password123!",
+                ConfirmPassword = "Password123!",
                 GoalName = "Electric Scooter",
                 TargetPrice = 90000m,
                 SavingPeriodMonths = 6,

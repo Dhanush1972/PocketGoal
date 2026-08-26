@@ -19,6 +19,18 @@ namespace PocketGoal.ViewModels
         [RegularExpression(@"^[0-9+\-\s]{8,15}$", ErrorMessage = "Please enter a valid phone number")]
         public string PhoneNumber { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Please create a password for your profile")]
+        [Display(Name = "Password")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please confirm your password")]
+        [Display(Name = "Confirm Password")]
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Passwords do not match")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "What are you planning to buy?")]
         [Display(Name = "What are you planning to buy?")]
         [StringLength(150, ErrorMessage = "Goal name cannot exceed 150 characters")]

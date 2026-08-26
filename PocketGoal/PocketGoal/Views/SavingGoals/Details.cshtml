@@ -20,7 +20,7 @@
             @if (!Model.IsCompleted)
             {
                 <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@Model.Id" class="btn btn-success btn-sm rounded-pill px-3 flex-grow-1 flex-sm-grow-0" aria-label="Add deposit to @Model.GoalName">
-                    <i class="bi bi-plus-circle me-1"></i> + Add Deposit
+                    <i class="bi bi-plus-circle me-1"></i> Add Deposit
                 </a>
             }
         </div>
@@ -145,7 +145,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-success w-100 rounded-pill py-2 shadow-sm" data-loading-text="Adding Deposit..." @(Model.IsCompleted ? "disabled" : "")>
-                    <i class="bi bi-check2-circle me-1"></i> @(Model.IsCompleted ? "Goal Already Completed! 🎉" : "+ Add Deposit")
+                    <i class="bi bi-check2-circle me-1"></i> @(Model.IsCompleted ? "Goal Already Completed! 🎉" : "Add Deposit")
                 </button>
             </form>
         </div>
@@ -237,7 +237,7 @@
             @if (!Model.IsCompleted)
             {
                 <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@Model.Id" class="btn btn-success btn-sm rounded-pill px-4">
-                    <i class="bi bi-plus-lg me-1"></i> + Add First Deposit
+                    <i class="bi bi-plus-lg me-1"></i> Add First Deposit
                 </a>
             }
         </div>

@@ -9,7 +9,7 @@
         <p class="text-muted mb-0">Un target purchases, savings progress, and monthly plan ellam inga paathuko.</p>
     </div>
     <a asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0" aria-label="Create New Saving Goal">
-        <i class="bi bi-plus-circle me-1"></i> + Create New Goal
+        <i class="bi bi-plus-circle me-1"></i> Create New Goal
     </a>
 </div>
 
@@ -99,7 +99,7 @@
                         @if (!goal.IsCompleted)
                         {
                             <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-success btn-sm rounded-pill px-3 flex-grow-1 flex-sm-grow-0" aria-label="Add deposit to @goal.GoalName">
-                                <i class="bi bi-plus-lg me-1"></i> + Deposit
+                                <i class="bi bi-plus-lg me-1"></i> Deposit
                             </a>
                         }
                     </div>

@@ -23,7 +23,7 @@ namespace PocketGoal.Controllers
         [HttpGet]
         public IActionResult Onboarding()
         {
-            // If user already has an active profile, redirect to dashboard
+            // If user already has an active authenticated profile, redirect to dashboard
             var activeId = _profileContext.GetCurrentUserId();
             if (activeId.HasValue)
             {
@@ -51,7 +51,7 @@ namespace PocketGoal.Controllers
             try
             {
                 var (user, goal) = await _profileService.CreateOnboardingProfileAsync(model);
-                _profileContext.SetCurrentUserId(user.Id);
+                await _profileContext.SignInAsync(user);
 
                 TempData["SuccessMessage"] = $"Welcome to PocketGoal, {user.Name}! Un goal '{goal.GoalName}' ready aayiduchu 🚀";
                 return RedirectToAction("Index", "Dashboard");
@@ -68,29 +68,42 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Switch()
         {
             var profiles = await _profileService.GetAllProfilesAsync();
-            ViewBag.ActiveProfileId = _profileContext.GetCurrentUserId();
-            return View(profiles);
+            var activeId = _profileContext.GetCurrentUserId();
+
+            var viewModel = new ProfileSwitchViewModel
+            {
+                AvailableProfiles = profiles,
+                ActiveProfileId = activeId
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SelectProfile(Guid profileId)
+        public async Task<IActionResult> SelectProfile(Guid profileId, string switchPassword)
         {
-            var user = await _profileService.GetUserProfileAsync(profileId);
-            if (user != null)
+            if (profileId == Guid.Empty)
             {
-                _profileContext.SetCurrentUserId(user.Id);
+                TempData["ErrorMessage"] = "Profile select pannunga.";
+                return RedirectToAction("Switch");
+            }
+
+            var (success, user, errorMessage) = await _profileService.ValidateProfileSwitchAsync(profileId, switchPassword);
+            if (success && user != null)
+            {
+                await _profileContext.SignInAsync(user);
                 TempData["SuccessMessage"] = $"Profile {user.Name}-ku switch panniyaachu!";
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            TempData["ErrorMessage"] = "Profile kidaikkala da.";
+            TempData["ErrorMessage"] = errorMessage ?? "Profile switch panna mudila. Sariyaana password enter pannunga.";
             return RedirectToAction("Switch");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LookupProfile(string emailOrPhone)
+        public async Task<IActionResult> LookupProfile(string emailOrPhone, string lookupPassword)
         {
             if (string.IsNullOrWhiteSpace(emailOrPhone))
             {
@@ -98,25 +111,31 @@ namespace PocketGoal.Controllers
                 return RedirectToAction("Switch");
             }
 
-            var user = await _profileService.FindByEmailOrPhoneAsync(emailOrPhone);
-            if (user != null)
+            if (string.IsNullOrWhiteSpace(lookupPassword))
             {
-                _profileContext.SetCurrentUserId(user.Id);
+                TempData["ErrorMessage"] = "Password enter pannunga.";
+                return RedirectToAction("Switch");
+            }
+
+            var (success, user, errorMessage) = await _profileService.AuthenticateAsync(emailOrPhone, lookupPassword);
+            if (success && user != null)
+            {
+                await _profileContext.SignInAsync(user);
                 TempData["SuccessMessage"] = $"Welcome back, {user.Name}! 👋";
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            TempData["ErrorMessage"] = "Indha email/phone-la profile onnum illa da.";
+            TempData["ErrorMessage"] = errorMessage ?? "Indha credentials-la profile kidaikkala da.";
             return RedirectToAction("Switch");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Clear()
+        public async Task<IActionResult> Clear()
         {
-            _profileContext.ClearCurrentUserId();
-            TempData["SuccessMessage"] = "Session clear panniyaachu.";
-            return RedirectToAction("Onboarding");
+            await _profileContext.SignOutAsync();
+            TempData["SuccessMessage"] = "Successfully signed out / session clear panniyaachu.";
+            return RedirectToAction("Switch");
         }
     }
 }

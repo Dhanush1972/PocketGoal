@@ -17,12 +17,12 @@
         {
             <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@primary.Id" class="btn btn-success rounded-pill px-3 flex-grow-1 flex-sm-grow-0">
                 <i class="bi bi-plus-circle-fill"></i>
-                <span>+ Add Deposit</span>
+                <span>Add Deposit</span>
             </a>
         }
         <a asp-controller="Expenses" asp-action="Create" class="btn btn-primary rounded-pill px-3 flex-grow-1 flex-sm-grow-0">
             <i class="bi bi-dash-circle-fill"></i>
-            <span>+ Add Expense</span>
+            <span>Add Expense</span>
         </a>
     </div>
 </div>
@@ -212,7 +212,7 @@
                         <i class="bi bi-journal-text me-1"></i> View Details & History
                     </a>
                     <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@primary.Id" class="btn btn-success btn-sm rounded-pill px-3">
-                        <i class="bi bi-plus-lg me-1"></i> + Add Deposit
+                        <i class="bi bi-plus-lg me-1"></i> Add Deposit
                     </a>
                 </div>
             }
@@ -225,7 +225,7 @@
                     <h5 class="fw-bold text-dark mt-2">No Active Goals Yet</h5>
                     <p class="text-muted small mb-3">Un dream purchase-ku ippo goal set panni progress track panna start pannu.</p>
                     <a asp-controller="SavingGoals" asp-action="Create" class="btn btn-primary rounded-pill px-4">
-                        <i class="bi bi-plus-lg me-1"></i> + Create New Goal
+                        <i class="bi bi-plus-lg me-1"></i> Create New Goal
                     </a>
                 </div>
             }
@@ -285,7 +285,7 @@
                     <i class="bi bi-receipt text-muted fs-2"></i>
                     <p class="text-muted small mt-2 mb-2">Indha month innum expense onnum record pannala da.</p>
                     <a asp-controller="Expenses" asp-action="Create" class="btn btn-outline-primary btn-sm rounded-pill">
-                        <i class="bi bi-plus-lg me-1"></i> + Add Expense
+                        <i class="bi bi-plus-lg me-1"></i> Add Expense
                     </a>
                 </div>
             }
@@ -308,7 +308,7 @@
                     <i class="bi bi-card-checklist text-primary me-2"></i> Your Saving Goals
                 </h5>
                 <a asp-controller="SavingGoals" asp-action="Create" class="btn btn-primary btn-sm rounded-pill px-3">
-                    <i class="bi bi-plus-lg me-1"></i> + New Goal
+                    <i class="bi bi-plus-lg me-1"></i> New Goal
                 </a>
             </div>
 
@@ -356,7 +356,7 @@
                     <i class="bi bi-bullseye text-muted fs-3"></i>
                     <p class="text-muted small mt-2 mb-2">Innum goal onnum add pannala da.</p>
                     <a asp-controller="SavingGoals" asp-action="Create" class="btn btn-outline-primary btn-sm rounded-pill">
-                        <i class="bi bi-plus-lg me-1"></i> + Create Goal
+                        <i class="bi bi-plus-lg me-1"></i> Create Goal
                     </a>
                 </div>
             }
@@ -415,7 +415,7 @@
                             <i class="bi bi-receipt text-muted fs-3"></i>
                             <p class="text-muted small mt-2 mb-2">Innum expenses onnum record pannala da.</p>
                             <a asp-controller="Expenses" asp-action="Create" class="btn btn-outline-primary btn-sm rounded-pill">
-                                <i class="bi bi-plus-lg me-1"></i> + Record Expense
+                                <i class="bi bi-plus-lg me-1"></i> Record Expense
                             </a>
                         </div>
                     }
@@ -451,7 +451,7 @@
                             @if (primary != null)
                             {
                                 <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@primary.Id" class="btn btn-outline-success btn-sm rounded-pill">
-                                    <i class="bi bi-plus-lg me-1"></i> + Add Deposit
+                                    <i class="bi bi-plus-lg me-1"></i> Add Deposit
                                 </a>
                             }
                         </div>

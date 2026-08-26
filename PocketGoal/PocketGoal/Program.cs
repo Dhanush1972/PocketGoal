@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PocketGoal.Data;
 using PocketGoal.Services;
@@ -27,6 +28,20 @@ builder.Services.AddSession(options =>
     options.Cookie.Name = ".PocketGoal.Session";
 });
 
+// Configure ASP.NET Core Cookie Authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = ".PocketGoal.Auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.LoginPath = "/Profile/Switch";
+        options.LogoutPath = "/Profile/Clear";
+        options.AccessDeniedPath = "/Profile/Switch";
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+        options.SlidingExpiration = true;
+    });
+
 // Configure Database (PostgreSQL / Supabase or In-Memory fallback for testing)
 var connectionString = builder.Configuration.GetConnectionString("PocketGoalDb") ??
                        builder.Configuration.GetConnectionString("SaveTrackDb");
@@ -47,6 +62,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 // Register Application Services
+builder.Services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
 builder.Services.AddScoped<IProfileContextService, ProfileContextService>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddScoped<ISavingGoalService, SavingGoalService>();
@@ -89,6 +105,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

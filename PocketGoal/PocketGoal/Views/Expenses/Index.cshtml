@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Expense Tracker";
     var months = new[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+    var isFiltered = Model.SelectedCategoryId.HasValue || Model.SelectedMonth != DateTime.UtcNow.Month || Model.SelectedYear != DateTime.UtcNow.Year;
 }
 
 <!-- Page Header -->
@@ -14,7 +15,7 @@
         <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3 flex-grow-1 flex-sm-grow-0" data-bs-toggle="modal" data-bs-target="#customCategoryModal">
             <i class="bi bi-folder-plus me-1"></i> + New Category
         </button>
-        <a asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0">
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0" aria-label="Add New Expense">
             <i class="bi bi-plus-circle me-1"></i> + Add Expense
         </a>
     </div>
@@ -58,13 +59,13 @@
         <div class="col-md-4">
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
-                <select name="month" class="form-select">
+                <select name="month" class="form-select" aria-label="Filter by month">
                     @for (int i = 1; i <= 12; i++)
                     {
                         <option value="@i" selected="@(Model.SelectedMonth == i)">@months[i - 1]</option>
                     }
                 </select>
-                <select name="year" class="form-select">
+                <select name="year" class="form-select" aria-label="Filter by year">
                     @for (int y = DateTime.UtcNow.Year - 2; y <= DateTime.UtcNow.Year + 1; y++)
                     {
                         <option value="@y" selected="@(Model.SelectedYear == y)">@y</option>
@@ -76,7 +77,7 @@
         <div class="col-md-5">
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-funnel"></i></span>
-                <select name="categoryId" class="form-select">
+                <select name="categoryId" class="form-select" aria-label="Filter by category">
                     <option value="">All Categories</option>
                     @foreach (var opt in Model.CategoryOptions)
                     {
@@ -90,7 +91,12 @@
             <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 flex-grow-1 flex-md-grow-0">
                 <i class="bi bi-filter"></i> Filter
             </button>
-            <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3 flex-grow-1 flex-md-grow-0">Reset</a>
+            @if (isFiltered)
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3 flex-grow-1 flex-md-grow-0" title="Reset all filters">
+                    <i class="bi bi-x-circle me-1"></i> Reset
+                </a>
+            }
         </div>
     </form>
 </div>
@@ -140,12 +146,18 @@
                                     </td>
                                     <td class="text-end">
                                         <div class="d-inline-flex gap-2">
-                                            <a asp-action="Edit" asp-route-id="@exp.Id" class="text-secondary p-1" title="Edit">
+                                            <a asp-action="Edit" asp-route-id="@exp.Id" class="btn btn-link text-secondary p-2" aria-label="Edit expense of ₹@exp.Amount.ToString("N2")" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <form asp-action="Delete" asp-route-id="@exp.Id" method="post" class="d-inline" onsubmit="return confirm('Indha expense record-ah delete panna poriya?');">
+                                            <form asp-action="Delete" asp-route-id="@exp.Id" method="post" class="d-inline">
                                                 @Html.AntiForgeryToken()
-                                                <button type="submit" class="btn btn-link text-danger p-1" title="Delete">
+                                                <button type="button" class="btn btn-link text-danger p-2" 
+                                                        data-bs-confirm="true"
+                                                        data-confirm-title="Delete Expense"
+                                                        data-confirm-message="Indha <strong>₹@exp.Amount.ToString("N2") (@exp.CategoryName)</strong> expense record-ah delete panna poriya?"
+                                                        data-confirm-btn-text="Yes, Delete Expense"
+                                                        aria-label="Delete expense of ₹@exp.Amount.ToString("N2")"
+                                                        title="Delete">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -163,9 +175,17 @@
                     <i class="bi bi-receipt-cutoff text-muted display-4"></i>
                     <h6 class="fw-bold text-dark mt-3">No Expenses Found</h6>
                     <p class="text-muted small mb-3">Selected filter or month-la expenses onnum record aagala.</p>
-                    <a asp-action="Create" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                        + Add Expense
-                    </a>
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <a asp-action="Create" class="btn btn-primary btn-sm rounded-pill px-4">
+                            <i class="bi bi-plus-lg me-1"></i> + Add Expense
+                        </a>
+                        @if (isFiltered)
+                        {
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                                Clear All Filters
+                            </a>
+                        }
+                    </div>
                 </div>
             }
         </div>
@@ -195,7 +215,7 @@
                                 </div>
                             </div>
                             <div class="progress" style="height: 6px;">
-                                <div class="progress-bar" role="progressbar" style="width: @cat.PercentageOfTotal%; background-color: @cat.CategoryColor;" aria-valuenow="@cat.PercentageOfTotal" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar" role="progressbar" style="width: @cat.PercentageOfTotal%; background-color: @cat.CategoryColor;" aria-valuenow="@cat.PercentageOfTotal" aria-valuemin="0" aria-valuemax="100" aria-label="Category @cat.CategoryName percentage"></div>
                             </div>
                         </div>
                     }
@@ -221,13 +241,13 @@
                 @Html.AntiForgeryToken()
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label">Category Name</label> <span class="text-danger">*</span>
-                        <input type="text" name="Name" class="form-control" placeholder="Enter category name" required />
+                        <label class="form-label" for="customCategoryName">Category Name</label> <span class="text-danger">*</span>
+                        <input type="text" id="customCategoryName" name="Name" class="form-control" placeholder="e.g. Subscriptions, Gadgets, Pets" required autofocus />
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Icon (Bootstrap Icons class)</label>
-                        <select name="Icon" class="form-select">
+                        <label class="form-label" for="customCategoryIcon">Icon</label>
+                        <select id="customCategoryIcon" name="Icon" class="form-select">
                             <option value="bi-tag">Tag (Default)</option>
                             <option value="bi-controller">Gaming</option>
                             <option value="bi-house">Rent / Housing</option>
@@ -242,16 +262,28 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Theme Color</label>
-                        <input type="color" name="ColorHex" class="form-control form-control-color w-100" value="#6366f1" style="height: 42px;" />
+                        <label class="form-label" for="categoryColorInput">Theme Color</label>
+                        <!-- Quick Color Swatches -->
+                        <div class="color-swatches-grid mb-2">
+                            <button type="button" class="color-swatch-btn active" style="background-color: #6366f1;" data-color="#6366f1" aria-label="Indigo"></button>
+                            <button type="button" class="color-swatch-btn" style="background-color: #0ea5e9;" data-color="#0ea5e9" aria-label="Sky Blue"></button>
+                            <button type="button" class="color-swatch-btn" style="background-color: #10b981;" data-color="#10b981" aria-label="Emerald Green"></button>
+                            <button type="button" class="color-swatch-btn" style="background-color: #f59e0b;" data-color="#f59e0b" aria-label="Amber"></button>
+                            <button type="button" class="color-swatch-btn" style="background-color: #ef4444;" data-color="#ef4444" aria-label="Red"></button>
+                            <button type="button" class="color-swatch-btn" style="background-color: #ec4899;" data-color="#ec4899" aria-label="Pink"></button>
+                            <button type="button" class="color-swatch-btn" style="background-color: #8b5cf6;" data-color="#8b5cf6" aria-label="Purple"></button>
+                            <button type="button" class="color-swatch-btn" style="background-color: #14b8a6;" data-color="#14b8a6" aria-label="Teal"></button>
+                        </div>
+                        <input type="color" id="categoryColorInput" name="ColorHex" class="form-control form-control-color w-100" value="#6366f1" style="height: 38px;" />
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4">Create Category 🚀</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4" data-loading-text="Creating Category...">Create Category 🚀</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 

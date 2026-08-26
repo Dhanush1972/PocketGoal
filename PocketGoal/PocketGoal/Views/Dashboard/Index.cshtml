@@ -338,10 +338,10 @@
                             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 small">
                                 <span class="text-muted">@goal.ProgressPercentage.ToString("N1")% saved &bull; Balance: ₹@goal.RemainingAmount.ToString("N0")</span>
                                 <div class="d-flex gap-2">
-                                    <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-sm btn-outline-success py-1 px-2 rounded-pill">
+                                    <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-sm btn-outline-success py-1 px-2 rounded-pill" aria-label="Deposit to @goal.GoalName">
                                         + Deposit
                                     </a>
-                                    <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@goal.Id" class="btn btn-sm btn-outline-secondary py-1 px-2 rounded-pill">
+                                    <a asp-controller="SavingGoals" asp-action="Details" asp-route-id="@goal.Id" class="btn btn-sm btn-outline-secondary py-1 px-2 rounded-pill" aria-label="View @goal.GoalName">
                                         View
                                     </a>
                                 </div>
@@ -353,7 +353,11 @@
             else
             {
                 <div class="text-center py-4 bg-light rounded-3">
-                    <p class="text-muted small mb-0">Innum goal onnum add pannala da.</p>
+                    <i class="bi bi-bullseye text-muted fs-3"></i>
+                    <p class="text-muted small mt-2 mb-2">Innum goal onnum add pannala da.</p>
+                    <a asp-controller="SavingGoals" asp-action="Create" class="btn btn-outline-primary btn-sm rounded-pill">
+                        <i class="bi bi-plus-lg me-1"></i> + Create Goal
+                    </a>
                 </div>
             }
         </div>
@@ -371,12 +375,12 @@
             <!-- Nav tabs -->
             <ul class="nav nav-pills nav-fill mb-3 bg-light p-1 rounded-3" id="activityTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active py-1 small rounded-3" id="expenses-tab" data-bs-toggle="tab" data-bs-target="#expenses-pane" type="button" role="tab">
+                    <button class="nav-link active py-1 small rounded-3" id="expenses-tab" data-bs-toggle="tab" data-bs-target="#expenses-pane" type="button" role="tab" aria-controls="expenses-pane" aria-selected="true">
                         Recent Expenses
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link py-1 small rounded-3" id="savings-tab" data-bs-toggle="tab" data-bs-target="#savings-pane" type="button" role="tab">
+                    <button class="nav-link py-1 small rounded-3" id="savings-tab" data-bs-toggle="tab" data-bs-target="#savings-pane" type="button" role="tab" aria-controls="savings-pane" aria-selected="false">
                         Recent Savings
                     </button>
                 </li>
@@ -384,7 +388,7 @@
 
             <div class="tab-content" id="activityTabsContent">
                 <!-- Expenses Pane -->
-                <div class="tab-pane fade show active" id="expenses-pane" role="tabpanel">
+                <div class="tab-pane fade show active" id="expenses-pane" role="tabpanel" aria-labelledby="expenses-tab">
                     @if (Model.RecentExpenses.Any())
                     {
                         <div class="d-flex flex-column gap-2">
@@ -407,12 +411,18 @@
                     }
                     else
                     {
-                        <p class="text-muted small text-center py-3">Innum expenses onnum record pannala da.</p>
+                        <div class="text-center py-4">
+                            <i class="bi bi-receipt text-muted fs-3"></i>
+                            <p class="text-muted small mt-2 mb-2">Innum expenses onnum record pannala da.</p>
+                            <a asp-controller="Expenses" asp-action="Create" class="btn btn-outline-primary btn-sm rounded-pill">
+                                <i class="bi bi-plus-lg me-1"></i> + Record Expense
+                            </a>
+                        </div>
                     }
                 </div>
 
                 <!-- Savings Pane -->
-                <div class="tab-pane fade" id="savings-pane" role="tabpanel">
+                <div class="tab-pane fade" id="savings-pane" role="tabpanel" aria-labelledby="savings-tab">
                     @if (Model.RecentSavings.Any())
                     {
                         <div class="d-flex flex-column gap-2">
@@ -435,11 +445,21 @@
                     }
                     else
                     {
-                        <p class="text-muted small text-center py-3">Innum savings deposit onnum record pannala da.</p>
+                        <div class="text-center py-4">
+                            <i class="bi bi-wallet2 text-muted fs-3"></i>
+                            <p class="text-muted small mt-2 mb-2">Innum savings deposit onnum record pannala da.</p>
+                            @if (primary != null)
+                            {
+                                <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@primary.Id" class="btn btn-outline-success btn-sm rounded-pill">
+                                    <i class="bi bi-plus-lg me-1"></i> + Add Deposit
+                                </a>
+                            }
+                        </div>
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 

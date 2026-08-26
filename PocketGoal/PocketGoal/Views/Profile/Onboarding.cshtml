@@ -35,7 +35,7 @@
                                 <label asp-for="Name" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                    <input asp-for="Name" class="form-control" placeholder="e.g. Dhanush" />
+                                    <input asp-for="Name" class="form-control" placeholder="e.g. Dhanush" autofocus />
                                 </div>
                                 <span asp-validation-for="Name" class="text-danger small"></span>
                             </div>
@@ -44,7 +44,7 @@
                                 <label asp-for="Email" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                    <input asp-for="Email" class="form-control" type="email" placeholder="name@example.com" />
+                                    <input asp-for="Email" class="form-control" type="email" inputmode="email" placeholder="name@example.com" />
                                 </div>
                                 <span asp-validation-for="Email" class="text-danger small"></span>
                             </div>
@@ -53,7 +53,7 @@
                                 <label asp-for="PhoneNumber" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                                    <input asp-for="PhoneNumber" class="form-control" placeholder="9876543210" />
+                                    <input asp-for="PhoneNumber" class="form-control" type="tel" inputmode="tel" placeholder="9876543210" />
                                 </div>
                                 <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                             </div>
@@ -83,7 +83,7 @@
                                 <label asp-for="TargetPrice" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text fw-bold">₹</span>
-                                    <input asp-for="TargetPrice" class="form-control" type="number" step="100" min="100" id="targetPriceInput" placeholder="80000" />
+                                    <input asp-for="TargetPrice" class="form-control" type="number" inputmode="numeric" step="100" min="100" id="targetPriceInput" placeholder="80000" />
                                 </div>
                                 <span asp-validation-for="TargetPrice" class="text-danger small"></span>
                             </div>
@@ -112,7 +112,7 @@
                                 <label asp-for="InitialSavings" class="form-label"></label>
                                 <div class="input-group">
                                     <span class="input-group-text fw-bold">₹</span>
-                                    <input asp-for="InitialSavings" class="form-control" type="number" step="100" min="0" placeholder="0" id="initialSavingsInput" />
+                                    <input asp-for="InitialSavings" class="form-control" type="number" inputmode="numeric" step="100" min="0" placeholder="0" id="initialSavingsInput" />
                                 </div>
                                 <span asp-validation-for="InitialSavings" class="text-danger small"></span>
                             </div>
@@ -166,7 +166,7 @@
                         <a asp-action="Switch" class="text-muted text-decoration-none small text-center text-sm-start">
                             <i class="bi bi-person-check me-1 text-primary"></i> Already profile irukka? Switch pannunga
                         </a>
-                        <button type="submit" class="btn btn-primary btn-lg px-4 shadow w-100 w-sm-auto">
+                        <button type="submit" class="btn btn-primary btn-lg px-4 shadow w-100 w-sm-auto" data-loading-text="Setting up Profile...">
                             <i class="bi bi-rocket-takeoff-fill me-2"></i> Start Saving Now 🚀
                         </button>
                     </div>

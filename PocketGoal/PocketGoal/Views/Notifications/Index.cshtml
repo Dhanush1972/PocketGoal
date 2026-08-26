@@ -52,7 +52,7 @@
                                     <input type="hidden" name="GoalId" value="@item.GoalId" />
                                     <input type="hidden" name="Type" value="@item.Type" />
                                     <input type="hidden" name="Channel" value="@PocketGoal.Models.NotificationChannel.Both" />
-                                    <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3 w-100 w-sm-auto">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3 w-100 w-sm-auto" data-loading-text="Sending Alert...">
                                         <i class="bi bi-send-fill me-1"></i> Send Test Notification 🚀
                                     </button>
                                 </form>
@@ -66,7 +66,10 @@
                 <div class="text-center py-5 bg-light rounded-3">
                     <i class="bi bi-check-circle text-success display-4"></i>
                     <h5 class="fw-bold text-dark mt-3">All Caught Up! 🎉</h5>
-                    <p class="text-muted small mb-0">Pending pacing alerts or urgent deadlines onnum illa da.</p>
+                    <p class="text-muted small mb-3">Pending pacing alerts or urgent deadlines onnum illa da. Un savings goals ellam track-la pogudhu.</p>
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                        <i class="bi bi-pie-chart-fill me-1"></i> Go to Dashboard
+                    </a>
                 </div>
             }
         </div>

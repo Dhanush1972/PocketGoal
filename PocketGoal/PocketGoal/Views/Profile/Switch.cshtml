@@ -18,11 +18,11 @@
             <!-- Lookup by Email/Phone -->
             <form asp-action="LookupProfile" method="post" class="mb-4 p-3 bg-light rounded-3 border">
                 @Html.AntiForgeryToken()
-                <label class="form-label small fw-bold">Search by Email or Phone Number</label>
+                <label class="form-label small fw-bold" for="profileSearchInput">Search by Email or Phone Number</label>
                 <div class="input-group">
                     <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="text" name="emailOrPhone" class="form-control" placeholder="Enter email or phone number" required />
-                    <button class="btn btn-primary" type="submit">
+                    <input type="text" id="profileSearchInput" name="emailOrPhone" class="form-control" placeholder="Enter email or phone number" required autofocus />
+                    <button class="btn btn-primary" type="submit" data-loading-text="Searching...">
                         Search
                     </button>
                 </div>
@@ -57,7 +57,7 @@
                                     <form asp-action="SelectProfile" method="post" class="d-inline">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="profileId" value="@user.Id" />
-                                        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3 w-100 w-sm-auto">
+                                        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3 w-100 w-sm-auto" data-loading-text="Switching..." aria-label="Switch to @user.Name's profile">
                                             Select
                                         </button>
                                     </form>
@@ -73,6 +73,13 @@
                     }
                 </div>
             }
+            else
+            {
+                <div class="text-center py-4 bg-light rounded-3 mb-4">
+                    <i class="bi bi-person-x text-muted fs-3"></i>
+                    <p class="text-muted small mt-2 mb-0">No profiles found. Create your first profile below!</p>
+                </div>
+            }
 
             <div class="text-center pt-2 border-top">
                 <a asp-action="Onboarding" class="btn btn-outline-primary rounded-pill px-4 w-100 w-sm-auto">
@@ -82,4 +89,5 @@
         </div>
     </div>
 </div>
+
 

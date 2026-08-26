@@ -714,3 +714,214 @@ h1, h2, h3, h4, h5, h6,
         font-size: 0.825rem;
     }
 }
+
+/* ==========================================================================
+   Interactive UX Enhancements (Chips, Modals, Loading, Accessibility)
+   ========================================================================== */
+
+/* Quick Amount & Date Preset Chips */
+.quick-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.45rem;
+}
+
+.quick-chip {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--pg-radius-pill);
+    background-color: var(--pg-surface-subtle);
+    border: 1px solid var(--pg-border);
+    color: var(--pg-text-body);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.quick-chip:hover {
+    background-color: var(--pg-primary-light);
+    border-color: var(--pg-primary-border);
+    color: var(--pg-primary);
+    transform: translateY(-1px);
+}
+
+.quick-chip:active, .quick-chip.active {
+    background-color: var(--pg-primary);
+    border-color: var(--pg-primary);
+    color: #ffffff;
+}
+
+.quick-chip-success:hover {
+    background-color: var(--pg-success-light);
+    border-color: var(--pg-success-border);
+    color: var(--pg-success-text);
+}
+
+.quick-chip-success:active, .quick-chip-success.active {
+    background-color: var(--pg-success);
+    border-color: var(--pg-success);
+    color: #ffffff;
+}
+
+/* Milestone Badges */
+.badge-milestone {
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--pg-radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.01em;
+}
+
+.badge-milestone-quarter {
+    background-color: #f0f9ff;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+}
+
+.badge-milestone-half {
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.badge-milestone-near {
+    background-color: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+/* Breadcrumbs */
+.pg-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.pg-breadcrumb a {
+    color: var(--pg-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s ease;
+}
+
+.pg-breadcrumb a:hover {
+    color: var(--pg-primary-hover);
+    text-decoration: underline;
+}
+
+.pg-breadcrumb-separator {
+    color: var(--pg-text-subtle);
+    font-size: 0.75rem;
+}
+
+.pg-breadcrumb-current {
+    color: var(--pg-text-muted);
+    font-weight: 600;
+}
+
+/* Toast / Alert Transitions & Timers */
+.pg-alert-banner {
+    position: relative;
+    overflow: hidden;
+}
+
+.pg-alert-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.15);
+    width: 100%;
+    animation: pgAlertProgress 5s linear forwards;
+}
+
+@keyframes pgAlertProgress {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* Color Presets for Category Modal */
+.color-swatches-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.color-swatch-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px var(--pg-border);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.color-swatch-btn:hover {
+    transform: scale(1.15);
+}
+
+.color-swatch-btn.active {
+    box-shadow: 0 0 0 2px var(--pg-primary);
+    transform: scale(1.15);
+}
+
+/* Loading state for buttons */
+.btn.is-submitting {
+    pointer-events: none;
+    opacity: 0.85;
+    cursor: not-allowed;
+}
+
+/* Destructive Confirmation Modal */
+.modal-danger-header {
+    background-color: var(--pg-danger-light);
+    border-bottom: 1px solid var(--pg-danger-border);
+}
+
+.modal-danger-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #fee2e2;
+    color: var(--pg-danger);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Enhanced Focus & Accessibility Outline */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--pg-primary);
+    outline-offset: 2px;
+}
+
+/* Step progress cues */
+.step-indicator-badge {
+    width: 30px;
+    height: 30px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}

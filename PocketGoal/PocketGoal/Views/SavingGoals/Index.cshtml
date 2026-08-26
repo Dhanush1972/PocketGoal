@@ -8,7 +8,7 @@
         <h2 class="fw-bold text-dark mb-1">Your Saving Goals 🎯</h2>
         <p class="text-muted mb-0">Un target purchases, savings progress, and monthly plan ellam inga paathuko.</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0">
+    <a asp-action="Create" class="btn btn-primary rounded-pill px-3 shadow-sm flex-grow-1 flex-sm-grow-0" aria-label="Create New Saving Goal">
         <i class="bi bi-plus-circle me-1"></i> + Create New Goal
     </a>
 </div>
@@ -22,7 +22,7 @@
                 <div class="stat-card d-flex flex-column justify-content-between p-3 p-sm-4">
                     <div>
                         <!-- Header -->
-                        <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-1">
+                        <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-1">
                             <div>
                                 <h5 class="fw-bold text-dark mb-1">@goal.GoalName</h5>
                                 <div class="text-muted small"><i class="bi bi-calendar3 me-1 text-primary"></i> Target: @goal.TargetDate.ToString("MMM dd, yyyy")</div>
@@ -47,6 +47,25 @@
                             </div>
                         </div>
 
+                        <!-- Milestone Cues (if in progress) -->
+                        @if (!goal.IsCompleted)
+                        {
+                            <div class="mb-3">
+                                @if (goal.ProgressPercentage >= 75)
+                                {
+                                    <span class="badge-milestone badge-milestone-near"><i class="bi bi-stars"></i> Over 75% — Almost there! 🏁</span>
+                                }
+                                else if (goal.ProgressPercentage >= 50)
+                                {
+                                    <span class="badge-milestone badge-milestone-half"><i class="bi bi-trophy-fill"></i> 50% Halfway Mark Reached! 🌟</span>
+                                }
+                                else if (goal.ProgressPercentage >= 25)
+                                {
+                                    <span class="badge-milestone badge-milestone-quarter"><i class="bi bi-lightning-charge-fill"></i> 25% Crossed — Solid start! 🔥</span>
+                                }
+                            </div>
+                        }
+
                         <!-- Progress Bar -->
                         <div class="mb-3">
                             <div class="d-flex justify-content-between align-items-baseline mb-1">
@@ -54,7 +73,7 @@
                                 <span class="text-muted small">of ₹@goal.TargetAmount.ToString("N0")</span>
                             </div>
                             <div class="progress" style="height: 8px;">
-                                <div class="progress-bar @(goal.IsCompleted ? "bg-success" : "bg-primary")" role="progressbar" style="width: @goal.ProgressPercentage%;" aria-valuenow="@goal.ProgressPercentage" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar @(goal.IsCompleted ? "bg-success" : "bg-primary")" role="progressbar" style="width: @goal.ProgressPercentage%;" aria-valuenow="@goal.ProgressPercentage" aria-valuemin="0" aria-valuemax="100" aria-label="Progress for @goal.GoalName"></div>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-2 flex-wrap gap-1">
                                 <span class="text-muted small fw-semibold">@goal.ProgressPercentage.ToString("N1")% saved</span>
@@ -74,12 +93,12 @@
 
                     <!-- Actions -->
                     <div class="d-flex justify-content-between align-items-center pt-3 border-top gap-2 flex-wrap flex-sm-nowrap">
-                        <a asp-action="Details" asp-route-id="@goal.Id" class="btn btn-outline-primary btn-sm rounded-pill px-3 flex-grow-1">
+                        <a asp-action="Details" asp-route-id="@goal.Id" class="btn btn-outline-primary btn-sm rounded-pill px-3 flex-grow-1" aria-label="View plan for @goal.GoalName">
                             <i class="bi bi-journal-text me-1"></i> View Plan
                         </a>
                         @if (!goal.IsCompleted)
                         {
-                            <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-success btn-sm rounded-pill px-3 flex-grow-1 flex-sm-grow-0">
+                            <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-success btn-sm rounded-pill px-3 flex-grow-1 flex-sm-grow-0" aria-label="Add deposit to @goal.GoalName">
                                 <i class="bi bi-plus-lg me-1"></i> + Deposit
                             </a>
                         }
@@ -91,15 +110,50 @@
 }
 else
 {
-    <div class="text-center py-5 stat-card p-4">
-        <div class="brand-icon mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.6rem;">
+    <div class="stat-card p-4 p-md-5 text-center">
+        <div class="brand-icon mx-auto mb-3" style="width: 60px; height: 60px; font-size: 1.75rem;">
             <i class="bi bi-bullseye"></i>
         </div>
-        <h4 class="fw-bold text-dark">No Saving Goals Yet</h4>
-        <p class="text-muted small mb-3">Enna vanga poriyo adha target set panni savings start pannuvoma?</p>
-        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow">
-            <i class="bi bi-plus-lg me-1"></i> Create Your First Goal 🚀
+        <h3 class="fw-bold text-dark mb-2">No Saving Goals Yet</h3>
+        <p class="text-muted mb-4 mx-auto" style="max-width: 520px;">
+            Un dream purchase or savings target-ku goal set pannu. PocketGoal automatic-ah daily and monthly target compute pannum.
+        </p>
+
+        <!-- 3-Step Beginner Guide -->
+        <div class="row g-3 text-start justify-content-center mb-4">
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 border h-100">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">1</span>
+                        <strong class="text-dark small">Choose What to Buy</strong>
+                    </div>
+                    <p class="text-muted small mb-0">E.g., Laptop, Bike, Goa Trip, or Emergency Fund.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 border h-100">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">2</span>
+                        <strong class="text-dark small">Set Date & Price</strong>
+                    </div>
+                    <p class="text-muted small mb-0">Target amount and timeline choose pannunga.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 border h-100">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">3</span>
+                        <strong class="text-dark small">Track Progress & Pace</strong>
+                    </div>
+                    <p class="text-muted small mb-0">Deposits add panni pacing on-track-ah maintain pannu!</p>
+                </div>
+            </div>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary btn-lg rounded-pill px-4 shadow">
+            <i class="bi bi-rocket-takeoff-fill me-2"></i> Create Your First Goal Now 🚀
         </a>
     </div>
 }
+
 

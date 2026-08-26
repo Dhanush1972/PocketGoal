@@ -5,6 +5,15 @@
 
 <div class="row justify-content-center my-2 my-md-4">
     <div class="col-md-8 col-lg-6">
+        <!-- Breadcrumb -->
+        <div class="pg-breadcrumb mb-3">
+            <a asp-action="Index"><i class="bi bi-bullseye"></i> Saving Goals</a>
+            <span class="pg-breadcrumb-separator"><i class="bi bi-chevron-right"></i></span>
+            <a asp-action="Details" asp-route-id="@Model.Id">@Model.GoalName</a>
+            <span class="pg-breadcrumb-separator"><i class="bi bi-chevron-right"></i></span>
+            <span class="pg-breadcrumb-current">Edit Goal</span>
+        </div>
+
         <div class="stat-card p-3 p-sm-4 p-md-5">
             <div class="text-center mb-4">
                 <div class="brand-icon mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.45rem;">
@@ -23,7 +32,7 @@
                     <label asp-for="GoalName" class="form-label"></label> <span class="text-danger">*</span>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-tag"></i></span>
-                        <input asp-for="GoalName" class="form-control" />
+                        <input asp-for="GoalName" class="form-control" autofocus />
                     </div>
                     <span asp-validation-for="GoalName" class="text-danger small"></span>
                 </div>
@@ -32,7 +41,7 @@
                     <label asp-for="TargetAmount" class="form-label"></label> <span class="text-danger">*</span>
                     <div class="input-group">
                         <span class="input-group-text fw-bold">₹</span>
-                        <input asp-for="TargetAmount" class="form-control" type="number" step="100" min="1" />
+                        <input asp-for="TargetAmount" class="form-control" type="number" inputmode="numeric" step="100" min="1" />
                     </div>
                     <span asp-validation-for="TargetAmount" class="text-danger small"></span>
                 </div>
@@ -64,7 +73,7 @@
 
                 <div class="d-flex flex-column-reverse flex-sm-row justify-content-between align-items-stretch align-items-sm-center gap-2 pt-2">
                     <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary rounded-pill px-4 text-center">Cancel</a>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4 shadow">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 shadow" data-loading-text="Updating Goal...">
                         <i class="bi bi-check-lg me-1"></i> Update Goal ✅
                     </button>
                 </div>
@@ -76,4 +85,5 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
 

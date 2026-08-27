@@ -13,7 +13,7 @@
 
 <div class="row g-4">
     <!-- Reminders List -->
-    <div class="col-lg-8">
+    <div class="col-12 col-lg-8">
         <div class="stat-card p-3 p-sm-4">
             <h5 class="fw-bold text-dark mb-3">
                 <i class="bi bi-bell-fill text-primary me-2"></i> Active Goal Reminders
@@ -25,25 +25,25 @@
                     @foreach (var item in Model.GeneratedReminders)
                     {
                         <div class="p-3 rounded-3 border bg-white shadow-xs">
-                            <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-1">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge @item.UrgencyBadge" style="font-size: 0.75rem; border-radius: var(--pg-radius-pill);">
+                            <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1 flex-wrap">
+                                    <span class="badge @item.UrgencyBadge flex-shrink-0" style="font-size: 0.75rem; border-radius: var(--pg-radius-pill);">
                                         @item.Type
                                     </span>
-                                    <strong class="text-dark">@item.Title</strong>
+                                    <strong class="text-dark text-truncate">@item.Title</strong>
                                 </div>
-                                <span class="text-muted small">@item.GeneratedAt.ToString("MMM dd, yyyy")</span>
+                                <span class="text-muted small flex-shrink-0">@item.GeneratedAt.ToString("MMM dd, yyyy")</span>
                             </div>
 
                             <div class="p-3 bg-light rounded-2 border mb-3">
                                 <div class="text-muted small fw-bold mb-1"><i class="bi bi-envelope me-1 text-primary"></i> Email Preview (@Model.User.Email):</div>
-                                <div class="text-dark small mb-1 fw-bold">@item.Subject</div>
-                                <div class="text-muted small">@item.MessageBody</div>
+                                <div class="text-dark small mb-1 fw-bold text-break">@item.Subject</div>
+                                <div class="text-muted small text-break">@item.MessageBody</div>
 
                                 <hr class="my-2 opacity-25" />
 
                                 <div class="text-muted small fw-bold mb-1"><i class="bi bi-chat-dots me-1 text-primary"></i> SMS Preview (@Model.User.PhoneNumber):</div>
-                                <div class="text-dark small">@item.SmsBody</div>
+                                <div class="text-dark small text-break">@item.SmsBody</div>
                             </div>
 
                             <div class="d-flex justify-content-end">
@@ -76,7 +76,7 @@
     </div>
 
     <!-- Notification Provider & Channel Settings -->
-    <div class="col-lg-4">
+    <div class="col-12 col-lg-4">
         <div class="stat-card p-3 p-sm-4 mb-4">
             <h5 class="fw-bold text-dark mb-3">
                 <i class="bi bi-sliders text-primary me-2"></i> Delivery Channels
@@ -84,25 +84,25 @@
 
             <div class="mb-3 p-3 bg-light rounded-3 border">
                 <div class="d-flex align-items-center justify-content-between mb-1">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-envelope-check text-primary fs-5"></i>
-                        <span class="fw-bold text-dark small">Email Notifications</span>
+                    <div class="d-flex align-items-center gap-2 min-w-0">
+                        <i class="bi bi-envelope-check text-primary fs-5 flex-shrink-0"></i>
+                        <span class="fw-bold text-dark small text-truncate">Email Notifications</span>
                     </div>
-                    <span class="badge bg-success-light text-success border">Active</span>
+                    <span class="badge bg-success-light text-success border flex-shrink-0">Active</span>
                 </div>
-                <div class="text-muted small">Target: <strong class="text-dark">@Model.User.Email</strong></div>
+                <div class="text-muted small text-truncate">Target: <strong class="text-dark">@Model.User.Email</strong></div>
                 <div class="text-muted" style="font-size: 0.75rem;">Provider: @Model.EmailProviderName</div>
             </div>
 
             <div class="mb-3 p-3 bg-light rounded-3 border">
                 <div class="d-flex align-items-center justify-content-between mb-1">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="bi bi-phone-vibrate text-primary fs-5"></i>
-                        <span class="fw-bold text-dark small">SMS / Phone Alerts</span>
+                    <div class="d-flex align-items-center gap-2 min-w-0">
+                        <i class="bi bi-phone-vibrate text-primary fs-5 flex-shrink-0"></i>
+                        <span class="fw-bold text-dark small text-truncate">SMS / Phone Alerts</span>
                     </div>
-                    <span class="badge bg-success-light text-success border">Active</span>
+                    <span class="badge bg-success-light text-success border flex-shrink-0">Active</span>
                 </div>
-                <div class="text-muted small">Target: <strong class="text-dark">@Model.User.PhoneNumber</strong></div>
+                <div class="text-muted small text-truncate">Target: <strong class="text-dark">@Model.User.PhoneNumber</strong></div>
                 <div class="text-muted" style="font-size: 0.75rem;">Provider: @Model.SmsProviderName</div>
             </div>
 

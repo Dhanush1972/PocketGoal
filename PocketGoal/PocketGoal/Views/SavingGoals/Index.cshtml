@@ -18,16 +18,16 @@
     <div class="row g-4">
         @foreach (var goal in Model)
         {
-            <div class="col-md-6 col-lg-4">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="stat-card d-flex flex-column justify-content-between p-3 p-sm-4">
                     <div>
                         <!-- Header -->
-                        <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-1">
-                            <div>
-                                <h5 class="fw-bold text-dark mb-1">@goal.GoalName</h5>
-                                <div class="text-muted small"><i class="bi bi-calendar3 me-1 text-primary"></i> Target: @goal.TargetDate.ToString("MMM dd, yyyy")</div>
+                        <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+                            <div class="min-w-0 flex-grow-1">
+                                <h5 class="fw-bold text-dark mb-1 text-truncate">@goal.GoalName</h5>
+                                <div class="text-muted small text-truncate"><i class="bi bi-calendar3 me-1 text-primary"></i> Target: @goal.TargetDate.ToString("MMM dd, yyyy")</div>
                             </div>
-                            <div>
+                            <div class="flex-shrink-0">
                                 @if (goal.PaceStatus == PocketGoal.Models.GoalPaceStatus.Completed)
                                 {
                                     <span class="badge-pace-completed"><i class="bi bi-check-circle-fill"></i> Completed 🎉</span>
@@ -121,7 +121,7 @@ else
 
         <!-- 3-Step Beginner Guide -->
         <div class="row g-3 text-start justify-content-center mb-4">
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
                 <div class="p-3 bg-light rounded-3 border h-100">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">1</span>
@@ -130,7 +130,7 @@ else
                     <p class="text-muted small mb-0">E.g., Laptop, Bike, Goa Trip, or Emergency Fund.</p>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
                 <div class="p-3 bg-light rounded-3 border h-100">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">2</span>
@@ -139,7 +139,7 @@ else
                     <p class="text-muted small mb-0">Target amount and timeline choose pannunga.</p>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-12 col-md-4">
                 <div class="p-3 bg-light rounded-3 border h-100">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <span class="badge bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">3</span>

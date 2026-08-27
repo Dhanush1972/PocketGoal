@@ -6,7 +6,7 @@
 }
 
 <div class="row justify-content-center my-2 my-md-4">
-    <div class="col-md-8 col-lg-6">
+    <div class="col-12 col-md-8 col-lg-6">
         <div class="stat-card p-3 p-sm-4 p-md-5">
             <div class="text-center mb-4">
                 <div class="brand-icon mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.5rem;">
@@ -49,22 +49,22 @@
                     {
                         var isActive = activeId.HasValue && activeId.Value == user.Id;
                         <div class="p-3 rounded-3 border bg-white d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 @(isActive ? "border-primary bg-primary-light shadow-xs" : "")">
-                            <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center gap-3 min-w-0 flex-grow-1">
                                 <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 42px; height: 42px; font-size: 1rem;">
                                     @user.Name.Substring(0, Math.Min(1, user.Name.Length)).ToUpper()
                                 </div>
-                                <div class="text-truncate">
+                                <div class="min-w-0 flex-grow-1">
                                     <div class="fw-bold text-dark d-flex align-items-center gap-2">
-                                        <span>@user.Name</span>
+                                        <span class="text-truncate">@user.Name</span>
                                         @if (isActive)
                                         {
-                                            <span class="badge bg-primary text-white" style="font-size: 0.7rem;">Active</span>
+                                            <span class="badge bg-primary text-white flex-shrink-0" style="font-size: 0.7rem;">Active</span>
                                         }
                                     </div>
                                     <div class="text-muted small text-truncate">@user.Email &bull; @user.PhoneNumber</div>
                                 </div>
                             </div>
-                            <div class="w-100 w-sm-auto text-end">
+                            <div class="w-100 w-sm-auto text-end flex-shrink-0">
                                 @if (!isActive)
                                 {
                                     <button type="button" 
@@ -108,7 +108,7 @@
 
 <!-- Modal for Profile Password Authentication -->
 <div class="modal fade" id="profilePasswordModal" tabindex="-1" aria-labelledby="profilePasswordModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+    <div class="modal-dialog modal-dialog-centered mx-auto" style="max-width: 420px; width: 92%;">
         <div class="modal-content border-0 shadow">
             <div class="modal-header border-0 pb-0">
                 <h5 class="modal-title fw-bold text-dark" id="profilePasswordModalTitle">

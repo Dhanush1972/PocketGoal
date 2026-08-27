@@ -22,33 +22,33 @@
 </div>
 
 <!-- Summary Stat Cards -->
-<div class="row g-3 mb-4">
+<div class="row g-2 g-sm-3 mb-4">
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">This Month</div>
-            <h3 class="fw-bold text-danger mb-0">₹@Model.CurrentMonthTotal.ToString("N2")</h3>
-            <span class="text-muted small">@months[Model.SelectedMonth - 1] @Model.SelectedYear</span>
+            <div class="text-muted small fw-bold text-uppercase mb-1 text-truncate" style="letter-spacing: 0.03em;">This Month</div>
+            <h3 class="fw-bold text-danger mb-0 text-break">₹@Model.CurrentMonthTotal.ToString("N2")</h3>
+            <span class="text-muted small d-block text-truncate">@months[Model.SelectedMonth - 1] @Model.SelectedYear</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">Today</div>
-            <h3 class="fw-bold text-dark mb-0">₹@Model.TodayTotal.ToString("N2")</h3>
-            <span class="text-muted small">@DateTime.UtcNow.ToString("MMM dd")</span>
+            <div class="text-muted small fw-bold text-uppercase mb-1 text-truncate" style="letter-spacing: 0.03em;">Today</div>
+            <h3 class="fw-bold text-dark mb-0 text-break">₹@Model.TodayTotal.ToString("N2")</h3>
+            <span class="text-muted small d-block text-truncate">@DateTime.UtcNow.ToString("MMM dd")</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">Last Month</div>
-            <h3 class="fw-bold text-muted mb-0">₹@Model.PreviousMonthTotal.ToString("N2")</h3>
-            <span class="text-muted small">Comparison baseline</span>
+            <div class="text-muted small fw-bold text-uppercase mb-1 text-truncate" style="letter-spacing: 0.03em;">Last Month</div>
+            <h3 class="fw-bold text-muted mb-0 text-break">₹@Model.PreviousMonthTotal.ToString("N2")</h3>
+            <span class="text-muted small d-block text-truncate">Comparison baseline</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="stat-card">
-            <div class="text-muted small fw-bold text-uppercase mb-1" style="letter-spacing: 0.03em;">Total All-Time</div>
-            <h3 class="fw-bold text-dark mb-0">₹@Model.AllTimeTotal.ToString("N2")</h3>
-            <span class="text-muted small">All-time tracked</span>
+            <div class="text-muted small fw-bold text-uppercase mb-1 text-truncate" style="letter-spacing: 0.03em;">Total All-Time</div>
+            <h3 class="fw-bold text-dark mb-0 text-break">₹@Model.AllTimeTotal.ToString("N2")</h3>
+            <span class="text-muted small d-block text-truncate">All-time tracked</span>
         </div>
     </div>
 </div>
@@ -56,7 +56,7 @@
 <!-- Filters Bar -->
 <div class="stat-card p-3 mb-4">
     <form method="get" class="row g-2 align-items-center">
-        <div class="col-md-4">
+        <div class="col-12 col-md-4">
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
                 <select name="month" class="form-select" aria-label="Filter by month">
@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <div class="col-md-5">
+        <div class="col-12 col-md-5">
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-funnel"></i></span>
                 <select name="categoryId" class="form-select" aria-label="Filter by category">
@@ -87,13 +87,13 @@
             </div>
         </div>
 
-        <div class="col-md-3 text-md-end d-flex gap-2 justify-content-start justify-content-md-end">
+        <div class="col-12 col-md-3 text-md-end d-flex gap-2 justify-content-start justify-content-md-end flex-wrap flex-sm-nowrap">
             <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 flex-grow-1 flex-md-grow-0">
                 <i class="bi bi-filter"></i> Filter
             </button>
             @if (isFiltered)
             {
-                <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3 flex-grow-1 flex-md-grow-0" title="Reset all filters">
+                <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3 flex-grow-1 flex-md-grow-0 text-center" title="Reset all filters">
                     <i class="bi bi-x-circle me-1"></i> Reset
                 </a>
             }
@@ -103,7 +103,7 @@
 
 <div class="row g-4">
     <!-- Expense Table -->
-    <div class="col-lg-8">
+    <div class="col-12 col-lg-8">
         <div class="stat-card p-3 p-sm-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="fw-bold text-dark mb-0">Expense Transactions</h5>
@@ -128,24 +128,24 @@
                             {
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <div class="category-icon-box" style="background-color: @(exp.CategoryColor)15; color: @exp.CategoryColor; width: 34px; height: 34px; font-size: 0.95rem;">
+                                        <div class="d-flex align-items-center gap-2 min-w-0">
+                                            <div class="category-icon-box flex-shrink-0" style="background-color: @(exp.CategoryColor)15; color: @exp.CategoryColor; width: 34px; height: 34px; font-size: 0.95rem;">
                                                 <i class="bi @exp.CategoryIcon"></i>
                                             </div>
-                                            <span class="fw-semibold text-dark small">@exp.CategoryName</span>
+                                            <span class="fw-semibold text-dark small text-truncate">@exp.CategoryName</span>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="text-muted small">@exp.ExpenseDate.ToString("MMM dd, yyyy")</span>
+                                        <span class="text-muted small text-nowrap">@exp.ExpenseDate.ToString("MMM dd, yyyy")</span>
                                     </td>
                                     <td>
                                         <span class="text-dark small">@(string.IsNullOrEmpty(exp.Description) ? "—" : exp.Description)</span>
                                     </td>
                                     <td class="text-end">
-                                        <span class="fw-bold text-danger">₹@exp.Amount.ToString("N2")</span>
+                                        <span class="fw-bold text-danger text-nowrap">₹@exp.Amount.ToString("N2")</span>
                                     </td>
                                     <td class="text-end">
-                                        <div class="d-inline-flex gap-2">
+                                        <div class="d-inline-flex gap-2 flex-nowrap">
                                             <a asp-action="Edit" asp-route-id="@exp.Id" class="btn btn-link text-secondary p-2" aria-label="Edit expense of ₹@exp.Amount.ToString("N2")" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
@@ -192,7 +192,7 @@
     </div>
 
     <!-- Category Breakdown Column -->
-    <div class="col-lg-4">
+    <div class="col-12 col-lg-4">
         <div class="stat-card p-3 p-sm-4">
             <h5 class="fw-bold text-dark mb-3">
                 <i class="bi bi-pie-chart text-primary me-2"></i> Category Breakdown
@@ -205,11 +205,11 @@
                     {
                         <div>
                             <div class="d-flex align-items-center justify-content-between mb-1">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="category-dot" style="background-color: @cat.CategoryColor;"></span>
-                                    <span class="fw-semibold text-dark small">@cat.CategoryName</span>
+                                <div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
+                                    <span class="category-dot flex-shrink-0" style="background-color: @cat.CategoryColor;"></span>
+                                    <span class="fw-semibold text-dark small text-truncate">@cat.CategoryName</span>
                                 </div>
-                                <div class="text-end">
+                                <div class="text-end flex-shrink-0 ms-2">
                                     <span class="fw-bold text-dark small">₹@cat.TotalAmount.ToString("N0")</span>
                                     <span class="text-muted" style="font-size: 0.75rem;">(@cat.PercentageOfTotal%)</span>
                                 </div>

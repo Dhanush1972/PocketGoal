@@ -626,6 +626,11 @@ h1, h2, h3, h4, h5, h6,
     font-size: 0.85rem;
 }
 
+/* Utility Helpers */
+.min-w-0 {
+    min-width: 0 !important;
+}
+
 /* Responsive Rules & Mobile Polishing */
 @media (max-width: 991.98px) {
     .app-navbar .navbar-collapse {
@@ -669,6 +674,11 @@ h1, h2, h3, h4, h5, h6,
         font-size: 0.9rem;
     }
     
+    .container {
+        padding-left: 0.85rem;
+        padding-right: 0.85rem;
+    }
+    
     .circular-progress-container {
         width: 160px;
         height: 160px;
@@ -679,28 +689,37 @@ h1, h2, h3, h4, h5, h6,
     }
     
     .stat-card {
-        padding: 0.95rem;
+        padding: 0.875rem;
     }
     
     .stat-card h3 {
-        font-size: 1.25rem;
+        font-size: 1.15rem;
+        word-break: break-word;
     }
     
     .stat-icon {
-        width: 38px;
-        height: 38px;
-        font-size: 1.1rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1.05rem;
         border-radius: var(--pg-radius-sm);
     }
     
+    .badge-pace-ontrack,
+    .badge-pace-behind,
+    .badge-pace-completed,
+    .badge-pace-overdue {
+        font-size: 0.725rem;
+        padding: 0.25rem 0.55rem;
+    }
+    
     .btn {
-        min-height: 42px;
+        min-height: 40px;
         font-size: 0.875rem;
     }
     
     .btn-sm {
-        min-height: 36px;
-        padding: 0.35rem 0.75rem;
+        min-height: 34px;
+        padding: 0.3rem 0.7rem;
         font-size: 0.8rem;
     }
     
@@ -712,6 +731,40 @@ h1, h2, h3, h4, h5, h6,
     .table tbody td {
         padding: 0.65rem 0.5rem;
         font-size: 0.825rem;
+    }
+    
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 380px) {
+    .circular-progress-container {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .progress-pct-text {
+        font-size: 1.2rem;
+    }
+    
+    .stat-card {
+        padding: 0.75rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.05rem;
+    }
+    
+    .stat-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.95rem;
+    }
+    
+    .quick-chip {
+        font-size: 0.725rem;
+        padding: 0.2rem 0.5rem;
     }
 }
 

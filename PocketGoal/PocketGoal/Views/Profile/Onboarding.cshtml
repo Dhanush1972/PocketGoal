@@ -31,7 +31,7 @@
                         </div>
 
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            <div class="col-12 col-md-4">
                                 <label asp-for="Name" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person"></i></span>
@@ -40,7 +40,7 @@
                                 <span asp-validation-for="Name" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-12 col-md-4">
                                 <label asp-for="Email" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-envelope"></i></span>
@@ -49,7 +49,7 @@
                                 <span asp-validation-for="Email" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-12 col-md-4">
                                 <label asp-for="PhoneNumber" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-telephone"></i></span>
@@ -58,7 +58,7 @@
                                 <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <label asp-for="Password" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-lock"></i></span>
@@ -67,7 +67,7 @@
                                 <span asp-validation-for="Password" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <label asp-for="ConfirmPassword" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
@@ -88,7 +88,7 @@
                         </div>
 
                         <div class="row g-3">
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <label asp-for="GoalName" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-bullseye"></i></span>
@@ -97,7 +97,7 @@
                                 <span asp-validation-for="GoalName" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <label asp-for="TargetPrice" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text fw-bold">₹</span>
@@ -106,7 +106,7 @@
                                 <span asp-validation-for="TargetPrice" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <label asp-for="SavingPeriodMonths" class="form-label"></label> <span class="text-danger">*</span>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
@@ -126,7 +126,7 @@
                                 <span asp-validation-for="SavingPeriodMonths" class="text-danger small"></span>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-6">
                                 <label asp-for="InitialSavings" class="form-label"></label>
                                 <div class="input-group">
                                     <span class="input-group-text fw-bold">₹</span>
@@ -149,32 +149,32 @@
                                 <i class="bi bi-calculator text-primary fs-5"></i>
                                 <span>Estimated Savings Breakdown 📊</span>
                             </div>
-                            <span class="badge bg-primary-light text-primary border px-3 py-1 fw-bold" id="previewGoalTitle">Your Goal</span>
+                            <span class="badge bg-primary-light text-primary border px-3 py-1 fw-bold text-truncate" id="previewGoalTitle">Your Goal</span>
                         </div>
 
-                        <div class="row g-3 text-center">
+                        <div class="row g-2 g-sm-3 text-center">
                             <div class="col-6 col-md-3">
                                 <div class="p-2 bg-white rounded-3 border">
-                                    <div class="text-muted small">Target Price</div>
-                                    <div class="h5 fw-bold text-dark mb-0 mt-1" id="previewTargetPrice">₹0</div>
+                                    <div class="text-muted small text-truncate">Target Price</div>
+                                    <div class="h5 fw-bold text-dark mb-0 mt-1 text-break" id="previewTargetPrice">₹0</div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
                                 <div class="p-2 bg-white rounded-3 border">
-                                    <div class="text-muted small">Balance to Save</div>
-                                    <div class="h5 fw-bold text-primary mb-0 mt-1" id="previewRemaining">₹0</div>
+                                    <div class="text-muted small text-truncate">Balance to Save</div>
+                                    <div class="h5 fw-bold text-primary mb-0 mt-1 text-break" id="previewRemaining">₹0</div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
                                 <div class="p-2 bg-white rounded-3 border">
-                                    <div class="text-muted small">Monthly Target</div>
-                                    <div class="h5 fw-bold text-success mb-0 mt-1" id="previewMonthly">₹0</div>
+                                    <div class="text-muted small text-truncate">Monthly Target</div>
+                                    <div class="h5 fw-bold text-success mb-0 mt-1 text-break" id="previewMonthly">₹0</div>
                                 </div>
                             </div>
                             <div class="col-6 col-md-3">
                                 <div class="p-2 bg-white rounded-3 border">
-                                    <div class="text-muted small">Daily Target</div>
-                                    <div class="h5 fw-bold text-secondary mb-0 mt-1" id="previewDaily">₹0</div>
+                                    <div class="text-muted small text-truncate">Daily Target</div>
+                                    <div class="h5 fw-bold text-secondary mb-0 mt-1 text-break" id="previewDaily">₹0</div>
                                 </div>
                             </div>
                         </div>

@@ -24,28 +24,28 @@
 <!-- Summary Stat Cards -->
 <div class="row g-2 g-sm-3 mb-4">
     <div class="col-6 col-lg-3">
-        <div class="stat-card">
+        <div class="stat-card h-100">
             <div class="text-muted small fw-bold text-uppercase mb-1 text-truncate" style="letter-spacing: 0.03em;">This Month</div>
             <h3 class="fw-bold text-danger mb-0 text-break">₹@Model.CurrentMonthTotal.ToString("N2")</h3>
             <span class="text-muted small d-block text-truncate">@months[Model.SelectedMonth - 1] @Model.SelectedYear</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card">
+        <div class="stat-card h-100">
             <div class="text-muted small fw-bold text-uppercase mb-1 text-truncate" style="letter-spacing: 0.03em;">Today</div>
             <h3 class="fw-bold text-dark mb-0 text-break">₹@Model.TodayTotal.ToString("N2")</h3>
             <span class="text-muted small d-block text-truncate">@DateTime.UtcNow.ToString("MMM dd")</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card">
+        <div class="stat-card h-100">
             <div class="text-muted small fw-bold text-uppercase mb-1 text-truncate" style="letter-spacing: 0.03em;">Last Month</div>
             <h3 class="fw-bold text-muted mb-0 text-break">₹@Model.PreviousMonthTotal.ToString("N2")</h3>
             <span class="text-muted small d-block text-truncate">Comparison baseline</span>
         </div>
     </div>
     <div class="col-6 col-lg-3">
-        <div class="stat-card">
+        <div class="stat-card h-100">
             <div class="text-muted small fw-bold text-uppercase mb-1 text-truncate" style="letter-spacing: 0.03em;">Total All-Time</div>
             <h3 class="fw-bold text-dark mb-0 text-break">₹@Model.AllTimeTotal.ToString("N2")</h3>
             <span class="text-muted small d-block text-truncate">All-time tracked</span>

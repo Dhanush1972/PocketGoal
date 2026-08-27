@@ -15,12 +15,12 @@
             @if (Model.ShowRequestId)
             {
                 <div class="p-3 bg-light rounded-3 border mb-4 text-start">
-                    <span class="text-muted small"><strong>Request ID:</strong> <code>@Model.RequestId</code></span>
+                    <span class="text-muted small text-break"><strong>Request ID:</strong> <code class="text-break">@Model.RequestId</code></span>
                 </div>
             }
 
             <div class="d-flex justify-content-center gap-2">
-                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary rounded-pill px-4">
+                <a asp-controller="Dashboard" asp-action="Index" class="btn btn-primary rounded-pill px-4 w-100 w-sm-auto">
                     <i class="bi bi-house-door me-1"></i> Return to Dashboard
                 </a>
             </div>

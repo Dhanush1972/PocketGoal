@@ -105,9 +105,9 @@
     <!-- Expense Table -->
     <div class="col-12 col-lg-8">
         <div class="stat-card p-3 p-sm-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <h5 class="fw-bold text-dark mb-0">Expense Transactions</h5>
-                <span class="badge bg-light text-dark border px-2 py-1">@Model.Expenses.Count items</span>
+                <span class="badge bg-light text-dark border px-2 py-1 flex-shrink-0">@Model.Expenses.Count items</span>
             </div>
 
             @if (Model.Expenses.Any())
@@ -139,7 +139,7 @@
                                         <span class="text-muted small text-nowrap">@exp.ExpenseDate.ToString("MMM dd, yyyy")</span>
                                     </td>
                                     <td>
-                                        <span class="text-dark small">@(string.IsNullOrEmpty(exp.Description) ? "—" : exp.Description)</span>
+                                        <span class="text-dark small text-break" style="max-width: 200px; display: inline-block;">@(string.IsNullOrEmpty(exp.Description) ? "—" : exp.Description)</span>
                                     </td>
                                     <td class="text-end">
                                         <span class="fw-bold text-danger text-nowrap">₹@exp.Amount.ToString("N2")</span>
@@ -204,13 +204,13 @@
                     @foreach (var cat in Model.CategorySummaries)
                     {
                         <div>
-                            <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-1">
                                 <div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
                                     <span class="category-dot flex-shrink-0" style="background-color: @cat.CategoryColor;"></span>
                                     <span class="fw-semibold text-dark small text-truncate">@cat.CategoryName</span>
                                 </div>
                                 <div class="text-end flex-shrink-0 ms-2">
-                                    <span class="fw-bold text-dark small">₹@cat.TotalAmount.ToString("N0")</span>
+                                    <span class="fw-bold text-dark small text-nowrap">₹@cat.TotalAmount.ToString("N0")</span>
                                     <span class="text-muted" style="font-size: 0.75rem;">(@cat.PercentageOfTotal%)</span>
                                 </div>
                             </div>

@@ -235,7 +235,7 @@
     <!-- Category Expense Breakdown -->
     <div class="col-12 col-lg-5">
         <div class="stat-card p-3 p-sm-4">
-            <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
                 <h5 class="fw-bold text-dark mb-0">
                     <i class="bi bi-pie-chart text-primary me-2"></i> This Month Expenses
                 </h5>
@@ -247,9 +247,9 @@
             @if (Model.TopExpenseCategories.Any())
             {
                 <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-baseline mb-2">
+                    <div class="d-flex justify-content-between align-items-baseline mb-2 flex-wrap gap-1">
                         <span class="text-muted small">Total Spent This Month</span>
-                        <span class="h5 fw-bold text-danger mb-0">₹@Model.CurrentMonthExpenses.ToString("N2")</span>
+                        <span class="h5 fw-bold text-danger mb-0 text-break">₹@Model.CurrentMonthExpenses.ToString("N2")</span>
                     </div>
                 </div>
 
@@ -257,7 +257,7 @@
                     @foreach (var cat in Model.TopExpenseCategories)
                     {
                         <div>
-                            <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="d-flex align-items-center justify-content-between mb-1 flex-wrap gap-1">
                                 <div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
                                     <div class="category-icon-box flex-shrink-0" style="background-color: @(cat.CategoryColor)15; color: @cat.CategoryColor;">
                                         <i class="bi @cat.CategoryIcon"></i>
@@ -268,7 +268,7 @@
                                     </div>
                                 </div>
                                 <div class="text-end flex-shrink-0 ms-2">
-                                    <div class="fw-bold text-dark small">₹@cat.TotalAmount.ToString("N0")</div>
+                                    <div class="fw-bold text-dark small text-nowrap">₹@cat.TotalAmount.ToString("N0")</div>
                                     <div class="text-muted" style="font-size: 0.75rem;">@cat.PercentageOfTotal%</div>
                                 </div>
                             </div>
@@ -326,8 +326,8 @@
                                     <div class="text-muted small">Target: @goal.TargetDate.ToString("MMM dd, yyyy")</div>
                                 </div>
                                 <div class="text-end flex-shrink-0 ms-2">
-                                    <span class="fw-bold text-dark">₹@goal.CurrentSavedAmount.ToString("N0")</span>
-                                    <span class="text-muted small"> / ₹@goal.TargetAmount.ToString("N0")</span>
+                                    <span class="fw-bold text-dark text-nowrap">₹@goal.CurrentSavedAmount.ToString("N0")</span>
+                                    <span class="text-muted small text-nowrap"> / ₹@goal.TargetAmount.ToString("N0")</span>
                                 </div>
                             </div>
 
@@ -336,8 +336,8 @@
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 small">
-                                <span class="text-muted text-truncate">@goal.ProgressPercentage.ToString("N1")% saved &bull; Balance: ₹@goal.RemainingAmount.ToString("N0")</span>
-                                <div class="d-flex gap-2 flex-shrink-0">
+                                <span class="text-muted text-truncate min-w-0 flex-grow-1">@goal.ProgressPercentage.ToString("N1")% saved &bull; Balance: ₹@goal.RemainingAmount.ToString("N0")</span>
+                                <div class="d-flex gap-2 flex-shrink-0 ms-auto">
                                     <a asp-controller="Savings" asp-action="Add" asp-route-goalId="@goal.Id" class="btn btn-sm btn-outline-success py-1 px-2 rounded-pill" aria-label="Deposit to @goal.GoalName">
                                         <i class="bi bi-plus-lg me-1"></i> Deposit
                                     </a>
@@ -366,7 +366,7 @@
     <!-- Recent Transactions Activity -->
     <div class="col-12 col-lg-5">
         <div class="stat-card p-3 p-sm-4">
-            <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
                 <h5 class="fw-bold text-dark mb-0">
                     <i class="bi bi-clock-history text-primary me-2"></i> Recent Activity
                 </h5>

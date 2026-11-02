@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pocketgoal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pocketgoal
+  template:
+    metadata:
+      labels:
+        app: pocketgoal
+    spec:
+      containers:
+      - name: pocketgoal
+        image: ghcr.io/dhanush1972/pocketgoal:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ConnectionStrings__PocketGoalDb
+          valueFrom:
+            secretKeyRef:
+              name: pocketgoal-db
+              key: ConnectionStrings__PocketGoalDb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pocketgoal
+spec:
+  selector:
+    app: pocketgoal
+  ports:
+  - port: 80
+    targetPort: 8080

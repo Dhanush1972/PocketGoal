@@ -1,0 +1,71 @@
+<!-- PocketGoal AI Floating Chatbot Widget -->
+<div id="pgChatWidget" class="pg-chat-container" aria-label="PocketGoal AI Assistant">
+    <!-- Chat Launcher Button -->
+    <button type="button" id="pgChatToggleBtn" class="pg-chat-launcher shadow-lg" aria-label="Open PocketGoal AI Assistant" title="Chat with PocketGoal AI">
+        <span class="launcher-icon-closed"><i class="bi bi-stars"></i></span>
+        <span class="launcher-icon-opened d-none"><i class="bi bi-x-lg"></i></span>
+        <span class="pg-chat-badge pulse-dot" title="AI ready"></span>
+    </button>
+
+    <!-- Chat Panel Window -->
+    <div id="pgChatPanel" class="pg-chat-panel shadow-xl d-none" role="dialog" aria-labelledby="pgChatTitle">
+        <!-- Header -->
+        <div class="pg-chat-header d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+            <div class="d-flex align-items-center gap-2">
+                <div class="pg-chat-avatar">
+                    <i class="bi bi-robot"></i>
+                </div>
+                <div>
+                    <h6 class="mb-0 fw-bold text-dark lh-sm" id="pgChatTitle">PocketGoal AI</h6>
+                    <span class="pg-chat-status text-success small d-flex align-items-center gap-1">
+                        <span class="pg-status-dot"></span> Online &bull; Gemini
+                    </span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-1">
+                <button type="button" class="btn btn-sm btn-icon text-muted" id="pgChatClearBtn" title="Clear conversation" aria-label="Clear chat">
+                    <i class="bi bi-arrow-clockwise"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-icon text-muted" id="pgChatCloseBtn" title="Minimize chat" aria-label="Close chat">
+                    <i class="bi bi-dash-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="pg-chat-body px-3 py-3" id="pgChatMessages" tabindex="0">
+            <!-- Messages rendered dynamically via chat.js -->
+        </div>
+
+        <!-- Quick Prompts / Suggestion Chips -->
+        <div class="pg-chat-suggestions px-3 py-2 border-top bg-light" id="pgChatSuggestions">
+            <div class="small text-muted fw-semibold mb-1" style="font-size: 0.72rem;">TRY SUGGESTIONS:</div>
+            <div class="d-flex gap-1 flex-wrap">
+                <button type="button" class="btn btn-xs pg-chip" data-prompt="Add expense: lunch, 250">
+                    <i class="bi bi-plus-circle me-1"></i> Lunch ₹250
+                </button>
+                <button type="button" class="btn btn-xs pg-chip" data-prompt="I spent 1200 on groceries yesterday">
+                    <i class="bi bi-cart me-1"></i> Groceries ₹1200
+                </button>
+                <button type="button" class="btn btn-xs pg-chip" data-prompt="Suggest a laptop under 60000">
+                    <i class="bi bi-search me-1"></i> Laptop &lt; ₹60k
+                </button>
+                <button type="button" class="btn btn-xs pg-chip" data-prompt="Add 5000 to my savings">
+                    <i class="bi bi-piggy-bank me-1"></i> Save ₹5000
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Input Footer -->
+        <div class="pg-chat-footer p-2 border-top bg-white">
+            <form id="pgChatForm" class="d-flex align-items-center gap-2 m-0" onsubmit="return false;">
+                <input type="text" id="pgChatInput" class="form-control form-control-sm border-0 shadow-none px-2"
+                       placeholder="Type your expense, goal or savings..." autocomplete="off" maxlength="300" />
+                <button type="submit" id="pgChatSendBtn" class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                        style="width: 34px; height: 34px; min-width: 34px;" title="Send message" aria-label="Send">
+                    <i class="bi bi-send-fill" style="font-size: 0.85rem;"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

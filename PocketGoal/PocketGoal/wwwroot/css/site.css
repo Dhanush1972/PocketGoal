@@ -68,7 +68,7 @@ html {
 }
 
 body {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Tamil', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: var(--pg-bg);
     color: var(--pg-text-body);
     line-height: 1.55;
@@ -784,6 +784,12 @@ h1, h2, h3, h4, h5, h6,
 }
 
 @media (max-width: 768px) {
+    /* Prevent floating AI launcher button from covering bottom content */
+    footer.footer,
+    main {
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+
     .circular-progress-container {
         width: 190px;
         height: 190px;
@@ -1169,4 +1175,39 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+/* Accessible Common Modal Styling */
+.pg-common-modal {
+    z-index: 1075 !important;
+}
+
+.modal-backdrop.show {
+    z-index: 1070 !important;
+}
+
+.modal-info-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--pg-primary-light, #eef2ff);
+    color: var(--pg-primary, #4f46e5);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.modal-success-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--pg-success-light, #ecfdf5);
+    color: var(--pg-success, #10b981);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
 }

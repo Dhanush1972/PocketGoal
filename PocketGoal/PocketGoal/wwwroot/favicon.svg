@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="pgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#3730a3" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#1e1b4b" flood-opacity="0.3" />
+    </filter>
+  </defs>
+  <!-- Background Tile -->
+  <rect width="512" height="512" rx="128" fill="url(#pgGrad)" />
+  
+  <!-- Outer Glow / Accent ring -->
+  <circle cx="390" cy="122" r="32" fill="url(#accentGrad)" />
+  <circle cx="390" cy="122" r="14" fill="#ffffff" />
+
+  <!-- Wallet Body -->
+  <g filter="url(#shadow)">
+    <rect x="96" y="160" width="320" height="224" rx="40" fill="#ffffff" />
+    <!-- Top inner seam / credit card line -->
+    <path d="M144 160 L144 144 C144 132 154 122 166 122 L346 122 C358 122 368 132 368 144 L368 160" fill="none" stroke="#e0e7ff" stroke-width="12" stroke-linecap="round" />
+    <!-- Wallet Flap -->
+    <path d="M260 224 L396 224 C408 224 416 234 416 246 L416 298 C416 310 408 320 396 320 L260 320 C242 320 228 306 228 288 L228 256 C228 238 242 224 260 224 Z" fill="#4f46e5" />
+    <!-- Clasp Button -->
+    <circle cx="276" cy="272" r="18" fill="url(#accentGrad)" />
+    <circle cx="276" cy="272" r="8" fill="#ffffff" />
+  </g>
+</svg>

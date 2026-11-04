@@ -15,13 +15,17 @@ namespace PocketGoal.Tests
     public class FakeProfileContextService : IProfileContextService
     {
         public Guid? CurrentUserId { get; set; }
+        public bool LastIsPersistent { get; private set; }
+        public DateTimeOffset? LastExpiresUtc { get; private set; }
 
         public Guid? GetCurrentUserId() => CurrentUserId;
         public void SetCurrentUserId(Guid userId) => CurrentUserId = userId;
         public void ClearCurrentUserId() => CurrentUserId = null;
-        public Task SignInAsync(UserProfile user, bool isPersistent = true, DateTimeOffset? expiresUtc = null)
+        public Task SignInAsync(UserProfile user, bool isPersistent = false, DateTimeOffset? expiresUtc = null)
         {
             CurrentUserId = user.Id;
+            LastIsPersistent = isPersistent;
+            LastExpiresUtc = expiresUtc;
             return Task.CompletedTask;
         }
         public Task SignOutAsync()
@@ -343,6 +347,59 @@ namespace PocketGoal.Tests
             Assert.Equal("Login", redirectResult.ActionName);
             Assert.True(redirectResult.RouteValues?.ContainsKey("loggedOut"));
             Assert.Equal("true", redirectResult.RouteValues?["loggedOut"]);
+        }
+
+        [Fact]
+        public async Task AccountController_SyncSession_WithoutRememberMe_SignsInAsSessionCookie()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var profileContext = new FakeProfileContextService();
+            var hasher = new PasswordHasherService();
+            var profileService = new UserProfileService(db, hasher, NullLogger<UserProfileService>.Instance);
+            var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build();
+            var fakeJwtValidator = new FakeSupabaseJwtValidator();
+
+            var controller = new AccountController(fakeJwtValidator, profileService, profileContext, configuration, NullLogger<AccountController>.Instance);
+
+            // Act
+            var result = await controller.SyncSession(new SyncSessionRequest
+            {
+                AccessToken = "valid-token",
+                RememberMe = false
+            });
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+            Assert.False(profileContext.LastIsPersistent);
+            Assert.Null(profileContext.LastExpiresUtc);
+        }
+
+        [Fact]
+        public async Task AccountController_SyncSession_WithRememberMe_SignsInWithPersistent14Days()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var profileContext = new FakeProfileContextService();
+            var hasher = new PasswordHasherService();
+            var profileService = new UserProfileService(db, hasher, NullLogger<UserProfileService>.Instance);
+            var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build();
+            var fakeJwtValidator = new FakeSupabaseJwtValidator();
+
+            var controller = new AccountController(fakeJwtValidator, profileService, profileContext, configuration, NullLogger<AccountController>.Instance);
+
+            // Act
+            var result = await controller.SyncSession(new SyncSessionRequest
+            {
+                AccessToken = "valid-token",
+                RememberMe = true
+            });
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+            Assert.True(profileContext.LastIsPersistent);
+            Assert.NotNull(profileContext.LastExpiresUtc);
+            Assert.True(profileContext.LastExpiresUtc.Value <= DateTimeOffset.UtcNow.AddDays(14).AddMinutes(1));
         }
     }
 }

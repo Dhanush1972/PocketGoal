@@ -162,7 +162,7 @@
                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill w-100 w-sm-auto" 
                             data-bs-confirm="true"
                             data-confirm-title="Delete Saving Goal: @Model.GoalName"
-                            data-confirm-message="Indha saving goal '<strong>@Model.GoalName</strong>' and adhula irukka <strong>@Model.SavingsHistory.Count deposits records</strong> ellam delete aagidum. Confirm panriya?"
+                            data-confirm-message="Delete saving goal '@Model.GoalName' and all @Model.SavingsHistory.Count deposit records? This action cannot be undone."
                             data-confirm-btn-text="Yes, Delete Goal"
                             aria-label="Delete Goal @Model.GoalName">
                         <i class="bi bi-trash"></i> Delete Goal
@@ -214,7 +214,7 @@
                                     <button type="button" class="btn btn-link text-danger p-2" 
                                             data-bs-confirm="true"
                                             data-confirm-title="Delete Savings Deposit"
-                                            data-confirm-message="Indha <strong>₹@sav.Amount.ToString("N2")</strong> deposit record-ah delete panna poriya? Un goal progress adjust aagidum."
+                                            data-confirm-message="Delete deposit of ₹@sav.Amount.ToString("N2")? Your goal progress will be adjusted."
                                             data-confirm-btn-text="Yes, Delete Deposit"
                                             aria-label="Delete deposit of ₹@sav.Amount.ToString("N2") from @sav.SavedDate.ToString("MMM dd")"
                                             title="Delete deposit">

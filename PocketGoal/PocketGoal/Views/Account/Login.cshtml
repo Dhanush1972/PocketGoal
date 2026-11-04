@@ -10,9 +10,7 @@
     <div class="col-12 col-md-8 col-lg-5">
         <div class="stat-card p-3 p-sm-4 p-md-5 shadow-sm">
             <div class="text-center mb-4">
-                <div class="brand-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.6rem;">
-                    <i class="bi bi-wallet2"></i>
-                </div>
+                <img src="~/favicon.svg" alt="PocketGoal Logo" width="52" height="52" class="mx-auto mb-3 d-block" />
                 <h3 class="fw-bold text-dark mb-1">Pocket<span class="text-primary">Goal</span></h3>
                 <p class="text-muted small mb-0">Un personal savings & expense partner 🚀</p>
             </div>
@@ -69,6 +67,11 @@
                             <i class="bi bi-eye"></i>
                         </button>
                     </div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="loginRememberMe" />
+                    <label class="form-check-label small text-secondary" for="loginRememberMe">Remember me</label>
                 </div>
 
                 <button type="submit" id="btnLoginSubmit" class="btn btn-primary rounded-pill w-100 py-2 mt-2 fw-semibold">
@@ -220,7 +223,7 @@
             });
 
             // Sync session with ASP.NET backend
-            async function syncWithBackend(session) {
+            async function syncWithBackend(session, rememberMe = false) {
                 const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
                 const csrfToken = tokenInput ? tokenInput.value : '';
 
@@ -232,12 +235,24 @@
                     },
                     body: JSON.stringify({
                         accessToken: session.access_token,
-                        refreshToken: session.refresh_token
+                        refreshToken: session.refresh_token,
+                        rememberMe: rememberMe
                     })
                 });
 
                 const data = await response.json();
                 if (response.ok && data.success) {
+                    if (!rememberMe) {
+                        // If Remember Me was not selected, remove Supabase persistent tokens from localStorage
+                        try {
+                            for (let i = localStorage.length - 1; i >= 0; i--) {
+                                const k = localStorage.key(i);
+                                if (k && (k.startsWith('sb-') || k.toLowerCase().includes('supabase'))) {
+                                    localStorage.removeItem(k);
+                                }
+                            }
+                        } catch (e) {}
+                    }
                     window.location.href = data.redirectUrl || '@Url.Action("Index", "Dashboard")';
                 } else {
                     showAlert('danger', data.message || 'Session sync failed da.');
@@ -249,6 +264,7 @@
                 e.preventDefault();
                 const email = document.getElementById('loginEmail').value.trim();
                 const password = document.getElementById('loginPassword').value;
+                const rememberMe = document.getElementById('loginRememberMe')?.checked === true;
                 lastAttemptedEmail = email;
 
                 if (!supabase) {
@@ -280,7 +296,7 @@
                     }
 
                     if (data?.session) {
-                        await syncWithBackend(data.session);
+                        await syncWithBackend(data.session, rememberMe);
                     }
                 } catch (ex) {
                     showAlert('danger', 'Login attempt-la unexpected error vandhuduchu da.');
@@ -332,7 +348,7 @@
                     }
 
                     if (data?.session) {
-                        await syncWithBackend(data.session);
+                        await syncWithBackend(data.session, false);
                     } else {
                         showAlert('success', 'Account created! Please check your email to confirm and then sign in.');
                     }
@@ -375,18 +391,17 @@
                     window.history.replaceState({}, document.title, cleanUrl);
                 }
             } else if (supabase) {
-                // Auto-check existing session only if not explicitly logged out
-                supabase.auth.getSession().then(({ data }) => {
-                    if (data?.session?.user?.email_confirmed_at) {
-                        syncWithBackend(data.session);
-                    }
-                });
+                // Only sync automatically if the user arrived via an explicit auth callback (e.g. email verification link)
+                const hash = window.location.hash || '';
+                const hasAuthCallback = hash.includes('access_token=') || hash.includes('type=signup') || hash.includes('type=recovery');
 
-                supabase.auth.onAuthStateChange(async (event, session) => {
-                    if (event === 'TOKEN_REFRESHED' && session) {
-                        syncWithBackend(session);
-                    }
-                });
+                if (hasAuthCallback) {
+                    supabase.auth.getSession().then(({ data }) => {
+                        if (data?.session?.user?.email_confirmed_at) {
+                            syncWithBackend(data.session, false);
+                        }
+                    });
+                }
             }
         })();
     </script>

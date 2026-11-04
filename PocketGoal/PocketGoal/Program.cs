@@ -21,6 +21,7 @@ builder.Services.AddHttpContextAccessor();
 
 // Configure Session
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromDays(30);
@@ -36,10 +37,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.Name = ".PocketGoal.Auth";
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+            ? CookieSecurePolicy.SameAsRequest
+            : CookieSecurePolicy.Always;
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
         options.AccessDeniedPath = "/Account/Login";
-        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
     });
 
@@ -65,6 +69,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 // Register Application Services
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton<ISupabaseJwtValidator, SupabaseJwtValidator>();
 builder.Services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
 builder.Services.AddScoped<IProfileContextService, ProfileContextService>();
@@ -74,6 +79,8 @@ builder.Services.AddScoped<ISavingsService, SavingsService>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<INotificationsService, NotificationsService>();
+builder.Services.AddScoped<IGeminiChatService, GeminiChatService>();
+builder.Services.AddScoped<IChatBotService, ChatBotService>();
 
 var app = builder.Build();
 

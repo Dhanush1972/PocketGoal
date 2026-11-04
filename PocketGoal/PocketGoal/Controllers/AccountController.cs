@@ -10,6 +10,7 @@ namespace PocketGoal.Controllers
     {
         public string AccessToken { get; set; } = string.Empty;
         public string? RefreshToken { get; set; }
+        public bool RememberMe { get; set; }
     }
 
     [AllowAnonymous]
@@ -82,18 +83,25 @@ namespace PocketGoal.Controllers
                     validation.FullName,
                     validation.PhoneNumber);
 
-                DateTimeOffset? expiresUtc = validation.ExpiresUtc.HasValue 
-                    ? new DateTimeOffset(validation.ExpiresUtc.Value) 
+                bool rememberMe = request.RememberMe;
+                DateTimeOffset? expiresUtc = rememberMe
+                    ? (validation.ExpiresUtc.HasValue ? new DateTimeOffset(validation.ExpiresUtc.Value) : DateTimeOffset.UtcNow.AddDays(14))
                     : null;
 
-                await _profileContext.SignInAsync(user, isPersistent: true, expiresUtc: expiresUtc);
+                // When RememberMe is true, cap at 14 days
+                if (rememberMe && expiresUtc.HasValue && expiresUtc.Value > DateTimeOffset.UtcNow.AddDays(14))
+                {
+                    expiresUtc = DateTimeOffset.UtcNow.AddDays(14);
+                }
 
-                _logger.LogInformation("Supabase session synced successfully for {Email} ({UserId})", user.Email, user.Id);
+                await _profileContext.SignInAsync(user, isPersistent: rememberMe, expiresUtc: expiresUtc);
+
+                _logger.LogInformation("Supabase session synced successfully for {Email} ({UserId}) - RememberMe: {RememberMe}", user.Email, user.Id, rememberMe);
                 return Ok(new
                 {
                     success = true,
                     userName = user.Name,
-                    redirectUrl = Url.Action("Index", "Dashboard")
+                    redirectUrl = Url?.Action("Index", "Dashboard") ?? "/Dashboard"
                 });
             }
             catch (Exception ex)
@@ -114,9 +122,11 @@ namespace PocketGoal.Controllers
 
             await _profileContext.SignOutAsync();
 
-            // Explicitly delete authentication cookies
+            // Explicitly delete authentication and session cookies
+            Response.Cookies.Delete(".PocketGoal.Auth");
             Response.Cookies.Delete(CookieAuthenticationDefaults.AuthenticationScheme);
             Response.Cookies.Delete(".AspNetCore.Cookies");
+            Response.Cookies.Delete(".PocketGoal.Session");
 
             TempData["SuccessMessage"] = "Successfully signed out panniyaachu! Marubadiyum vaanga 👋";
             return RedirectToAction("Login", new { loggedOut = "true" });

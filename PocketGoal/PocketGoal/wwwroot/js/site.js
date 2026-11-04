@@ -91,48 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 4. Accessible Reusable Confirmation Modal for Destructive Actions
-    const confirmModalEl = document.getElementById('pgConfirmActionModal');
-    let confirmModal = null;
-    let pendingFormToSubmit = null;
-
-    if (confirmModalEl && window.bootstrap) {
-        confirmModal = new bootstrap.Modal(confirmModalEl);
-        const confirmBtn = document.getElementById('pgConfirmActionModalBtn');
-        const titleEl = document.getElementById('pgConfirmActionModalTitle');
-        const messageEl = document.getElementById('pgConfirmActionModalMessage');
-
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', function () {
-                if (pendingFormToSubmit) {
-                    confirmBtn.disabled = true;
-                    confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Deleting...';
-                    pendingFormToSubmit.submit();
-                }
-            });
-        }
-
-        // Attach listener to any element triggering confirm modal
-        document.addEventListener('click', function (e) {
-            const trigger = e.target.closest('[data-bs-confirm="true"]');
-            if (trigger) {
-                e.preventDefault();
-                pendingFormToSubmit = trigger.closest('form');
-                const title = trigger.getAttribute('data-confirm-title') || 'Confirm Delete';
-                const message = trigger.getAttribute('data-confirm-message') || 'Are you sure you want to proceed? This action cannot be undone.';
-                const actionLabel = trigger.getAttribute('data-confirm-btn-text') || 'Yes, Delete';
-
-                if (titleEl) titleEl.textContent = title;
-                if (messageEl) messageEl.innerHTML = message;
-                if (confirmBtn) {
-                    confirmBtn.disabled = false;
-                    confirmBtn.innerHTML = `<i class="bi bi-trash me-1"></i> ${actionLabel}`;
-                }
-
-                confirmModal.show();
-            }
-        });
-    }
+    // 4. Modal Confirmations are handled globally via confirm-modal.js (PG.confirm / PG.alert)
 
     // 5. Category Color Swatches Helper
     const colorInput = document.getElementById('categoryColorInput');

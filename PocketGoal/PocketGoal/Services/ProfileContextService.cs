@@ -10,7 +10,7 @@ namespace PocketGoal.Services
         Guid? GetCurrentUserId();
         void SetCurrentUserId(Guid userId);
         void ClearCurrentUserId();
-        Task SignInAsync(UserProfile user, bool isPersistent = true, DateTimeOffset? expiresUtc = null);
+        Task SignInAsync(UserProfile user, bool isPersistent = false, DateTimeOffset? expiresUtc = null);
         Task SignOutAsync();
     }
 
@@ -43,7 +43,7 @@ namespace PocketGoal.Services
             // Identity is strictly managed via ClaimsPrincipal authentication
         }
 
-        public async Task SignInAsync(UserProfile user, bool isPersistent = true, DateTimeOffset? expiresUtc = null)
+        public async Task SignInAsync(UserProfile user, bool isPersistent = false, DateTimeOffset? expiresUtc = null)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             if (httpContext == null) return;
@@ -61,9 +61,21 @@ namespace PocketGoal.Services
 
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = isPersistent,
-                ExpiresUtc = expiresUtc ?? DateTimeOffset.UtcNow.AddDays(30)
+                IsPersistent = isPersistent
             };
+
+            if (isPersistent)
+            {
+                // Persist for at most 14 days, non-sliding (capped total lifetime)
+                authProperties.ExpiresUtc = expiresUtc ?? DateTimeOffset.UtcNow.AddDays(14);
+                authProperties.AllowRefresh = false;
+            }
+            else
+            {
+                // Session cookie: disappears when browser closes, with 30-min idle timeout
+                authProperties.ExpiresUtc = null;
+                authProperties.AllowRefresh = true;
+            }
 
             await httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, authProperties);
         }

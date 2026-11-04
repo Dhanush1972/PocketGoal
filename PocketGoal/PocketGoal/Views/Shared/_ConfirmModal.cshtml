@@ -1,0 +1,35 @@
+<!-- PocketGoal Reusable Accessible Common Modal (Confirm & Alert) -->
+<div class="modal fade pg-common-modal" id="pgCommonModal" tabindex="-1" aria-labelledby="pgCommonModalTitle" aria-describedby="pgCommonModalMessage" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered mx-auto" style="max-width: 440px; width: 92%;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: var(--pg-radius-lg, 16px);">
+            <div class="modal-body text-center p-4">
+                <!-- Modal Icons -->
+                <div class="pg-modal-icon-container mb-3" id="pgCommonModalIconContainer">
+                    <div class="modal-danger-icon mx-auto d-none" id="pgCommonModalDangerIcon">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <div class="modal-info-icon mx-auto d-none" id="pgCommonModalInfoIcon">
+                        <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <div class="modal-success-icon mx-auto d-none" id="pgCommonModalSuccessIcon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                </div>
+
+                <!-- Title & Message -->
+                <h5 class="fw-bold text-dark mb-2" id="pgCommonModalTitle">Confirm</h5>
+                <p class="text-muted small mb-4 text-break" id="pgCommonModalMessage">Are you sure you want to proceed?</p>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 justify-content-center flex-wrap" id="pgCommonModalActions">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4 flex-grow-1 flex-sm-grow-0" id="pgCommonModalCancelBtn">
+                        <i class="bi bi-x-lg me-1"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4 flex-grow-1 flex-sm-grow-0" id="pgCommonModalConfirmBtn">
+                        <i class="bi bi-check-lg me-1"></i> OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

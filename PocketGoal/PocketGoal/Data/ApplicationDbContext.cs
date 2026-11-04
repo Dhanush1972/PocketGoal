@@ -50,11 +50,17 @@ namespace PocketGoal.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.SavingGoalId);
+                entity.HasIndex(e => e.UserId);
                 entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
 
                 entity.HasOne(e => e.SavingGoal)
                     .WithMany(g => g.Savings)
                     .HasForeignKey(e => e.SavingGoalId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
 

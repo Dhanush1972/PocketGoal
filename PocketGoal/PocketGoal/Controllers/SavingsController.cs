@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PocketGoal.Services;
 using PocketGoal.ViewModels;
 
 namespace PocketGoal.Controllers
 {
+    [Authorize]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class SavingsController : Controller
     {
         private readonly ISavingsService _savingsService;
@@ -26,7 +29,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Add(Guid goalId)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var goal = await _savingGoalService.GetGoalDetailsAsync(goalId, userId.Value);
             if (goal == null)
@@ -53,7 +56,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Add(AddSavingViewModel model)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             if (!ModelState.IsValid)
             {
@@ -76,7 +79,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Delete(Guid id, Guid goalId)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var success = await _savingsService.DeleteSavingAsync(id, userId.Value);
             if (success)

@@ -53,6 +53,7 @@ namespace PocketGoal.Services
             {
                 Id = Guid.NewGuid(),
                 SavingGoalId = goal.Id,
+                UserId = userId,
                 Amount = model.Amount,
                 SavedDate = EnsureUtc(model.SavedDate),
                 Notes = model.Notes?.Trim(),

@@ -16,10 +16,9 @@ namespace PocketGoal.Models
         [StringLength(150)]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Phone number is required")]
         [Phone(ErrorMessage = "Invalid phone number format")]
         [StringLength(20)]
-        public string PhoneNumber { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; } = string.Empty;
 
         public string? PasswordHash { get; set; }
 

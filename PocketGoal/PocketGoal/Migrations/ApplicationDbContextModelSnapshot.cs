@@ -195,9 +195,14 @@ namespace PocketGoal.Migrations
                     b.Property<Guid>("SavingGoalId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SavingGoalId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Savings");
                 });
@@ -321,7 +326,14 @@ namespace PocketGoal.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PocketGoal.Models.UserProfile", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("SavingGoal");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PocketGoal.Models.SavingGoal", b =>

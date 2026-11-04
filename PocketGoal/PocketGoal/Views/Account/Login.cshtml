@@ -1,0 +1,393 @@
+@{
+    ViewData["Title"] = "Sign In & Auth";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+    var initialMode = (ViewData["InitialMode"] as string) ?? "login";
+    var supabaseUrl = (ViewData["SupabaseUrl"] as string) ?? "";
+    var supabaseAnonKey = (ViewData["SupabaseAnonKey"] as string) ?? "";
+}
+
+<div class="row justify-content-center my-3 my-md-5">
+    <div class="col-12 col-md-8 col-lg-5">
+        <div class="stat-card p-3 p-sm-4 p-md-5 shadow-sm">
+            <div class="text-center mb-4">
+                <div class="brand-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.6rem;">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <h3 class="fw-bold text-dark mb-1">Pocket<span class="text-primary">Goal</span></h3>
+                <p class="text-muted small mb-0">Un personal savings & expense partner 🚀</p>
+            </div>
+
+            <!-- Dynamic Feedback Alert -->
+            <div id="authAlertBanner" class="alert d-none shadow-sm align-items-start gap-2 mb-4" role="alert">
+                <i id="authAlertIcon" class="bi fs-5 flex-shrink-0"></i>
+                <div class="flex-grow-1">
+                    <div id="authAlertMessage" class="small fw-semibold"></div>
+                    <div id="authAlertActionContainer" class="mt-2 d-none">
+                        <button type="button" id="btnResendVerification" class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                            <i class="bi bi-envelope-arrow-up me-1"></i> Resend Verification Email
+                        </button>
+                    </div>
+                </div>
+                <button type="button" class="btn-close shadow-none btn-sm" id="btnCloseAlert" aria-label="Close"></button>
+            </div>
+
+            <!-- Mode Switch Tabs -->
+            <ul class="nav nav-pills nav-fill bg-light p-1 rounded-pill mb-4" id="authModeTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-pill py-2 small fw-bold @(initialMode == "login" ? "active" : "")" id="tab-login" type="button" role="tab" data-mode="login">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link rounded-pill py-2 small fw-bold @(initialMode == "signup" ? "active" : "")" id="tab-signup" type="button" role="tab" data-mode="signup">
+                        <i class="bi bi-person-plus me-1"></i> Create Account
+                    </button>
+                </li>
+            </ul>
+
+            <!-- AntiForgery Token Form Wrapper -->
+            <form id="antiForgeryForm">
+                @Html.AntiForgeryToken()
+            </form>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="@(initialMode == "signup" ? "d-none" : "")">
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark" for="loginEmail">Email Address</label> <span class="text-danger">*</span>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" id="loginEmail" class="form-control" placeholder="name@example.com" required autocomplete="email" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark" for="loginPassword">Password</label> <span class="text-danger">*</span>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="Enter password" required autocomplete="current-password" />
+                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="loginPassword">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnLoginSubmit" class="btn btn-primary rounded-pill w-100 py-2 mt-2 fw-semibold">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="@(initialMode == "signup" ? "" : "d-none")">
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark" for="signupName">Your Name</label> <span class="text-danger">*</span>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" id="signupName" class="form-control" placeholder="e.g. Alex Morgan" required autocomplete="name" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark" for="signupEmail">Email Address</label> <span class="text-danger">*</span>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" id="signupEmail" class="form-control" placeholder="name@example.com" required autocomplete="email" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark" for="signupPhone">Phone Number <span class="text-muted fw-normal">(Optional)</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                        <input type="tel" id="signupPhone" class="form-control" placeholder="9876543210" autocomplete="tel" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark" for="signupPassword">Password</label> <span class="text-danger">*</span>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" id="signupPassword" class="form-control" placeholder="Min 6 characters" required minlength="6" autocomplete="new-password" />
+                        <button type="button" class="btn btn-outline-secondary toggle-password" data-target="signupPassword">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnSignupSubmit" class="btn btn-primary rounded-pill w-100 py-2 mt-2 fw-semibold">
+                    <i class="bi bi-rocket-takeoff-fill me-1"></i> Create Account & Start Saving
+                </button>
+            </form>
+
+            <div class="text-center mt-4 pt-3 border-top">
+                <span class="badge bg-light text-secondary border px-2 py-1">
+                    <i class="bi bi-shield-check text-success me-1"></i> Secured with Supabase JWT Auth
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@supabase/supabase-js@2"></script>
+    <script>
+        (function () {
+            const supabaseUrl = '@supabaseUrl';
+            const supabaseAnonKey = '@supabaseAnonKey';
+            let supabase = null;
+
+            if (supabaseUrl && supabaseAnonKey) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+            }
+
+            const alertBanner = document.getElementById('authAlertBanner');
+            const alertIcon = document.getElementById('authAlertIcon');
+            const alertMessage = document.getElementById('authAlertMessage');
+            const alertActionContainer = document.getElementById('authAlertActionContainer');
+            const btnResend = document.getElementById('btnResendVerification');
+            let lastAttemptedEmail = '';
+
+            function showAlert(type, message, showResend = false) {
+                alertBanner.className = `alert alert-${type} shadow-sm d-flex align-items-start gap-2 mb-4`;
+                alertIcon.className = type === 'danger' ? 'bi bi-exclamation-triangle-fill text-danger fs-5 flex-shrink-0' :
+                                      type === 'warning' ? 'bi bi-envelope-exclamation-fill text-warning fs-5 flex-shrink-0' :
+                                      'bi bi-check-circle-fill text-success fs-5 flex-shrink-0';
+                alertMessage.textContent = message;
+                alertActionContainer.classList.toggle('d-none', !showResend);
+            }
+
+            document.getElementById('btnCloseAlert')?.addEventListener('click', function () {
+                alertBanner.classList.add('d-none');
+            });
+
+            // Password reveal toggle
+            document.querySelectorAll('.toggle-password').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const targetId = this.getAttribute('data-target');
+                    const targetInput = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+                    if (targetInput.type === 'password') {
+                        targetInput.type = 'text';
+                        icon.classList.replace('bi-eye', 'bi-eye-slash');
+                    } else {
+                        targetInput.type = 'password';
+                        icon.classList.replace('bi-eye-slash', 'bi-eye');
+                    }
+                });
+            });
+
+            // Mode switcher
+            document.querySelectorAll('#authModeTabs button').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const mode = this.getAttribute('data-mode');
+                    document.querySelectorAll('#authModeTabs button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    if (mode === 'login') {
+                        document.getElementById('loginForm').classList.remove('d-none');
+                        document.getElementById('signupForm').classList.add('d-none');
+                    } else {
+                        document.getElementById('loginForm').classList.add('d-none');
+                        document.getElementById('signupForm').classList.remove('d-none');
+                    }
+                    alertBanner.classList.add('d-none');
+                });
+            });
+
+            // Resend Verification Email handler
+            btnResend?.addEventListener('click', async function () {
+                if (!supabase || !lastAttemptedEmail) {
+                    showAlert('danger', 'Supabase credentials illa da. Email re-send panna mudila.');
+                    return;
+                }
+                btnResend.disabled = true;
+                btnResend.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending...';
+                try {
+                    const { error } = await supabase.auth.resend({
+                        type: 'signup',
+                        email: lastAttemptedEmail
+                    });
+                    if (error) {
+                        showAlert('danger', `Error: ${error.message}`, true);
+                    } else {
+                        showAlert('success', `Verification link marubadiyum ${lastAttemptedEmail}-ku anuppiyaachu da! Inbox / Spam folder check pannunga.`);
+                    }
+                } catch (e) {
+                    showAlert('danger', 'Resend panna mudila da, konjam neram kazhichu try pannunga.');
+                } finally {
+                    btnResend.disabled = false;
+                    btnResend.innerHTML = '<i class="bi bi-envelope-arrow-up me-1"></i> Resend Verification Email';
+                }
+            });
+
+            // Sync session with ASP.NET backend
+            async function syncWithBackend(session) {
+                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                const csrfToken = tokenInput ? tokenInput.value : '';
+
+                const response = await fetch('@Url.Action("SyncSession", "Account")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        accessToken: session.access_token,
+                        refreshToken: session.refresh_token
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    window.location.href = data.redirectUrl || '@Url.Action("Index", "Dashboard")';
+                } else {
+                    showAlert('danger', data.message || 'Session sync failed da.');
+                }
+            }
+
+            // Login submission
+            document.getElementById('loginForm')?.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                lastAttemptedEmail = email;
+
+                if (!supabase) {
+                    showAlert('warning', 'Supabase URL & Anon Key configure aagala da. appsettings.json or environment variables set pannunga!');
+                    return;
+                }
+
+                const submitBtn = document.getElementById('btnLoginSubmit');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Signing in...';
+
+                try {
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+                    if (error) {
+                        const errMsg = (error.message || '').toLowerCase();
+                        if (error.code === 'email_not_confirmed' || errMsg.includes('not confirmed') || errMsg.includes('email_not_confirmed')) {
+                            showAlert('warning', 'Aiyoyoo! Un email innum verify aagala da! 📧 Inbox check panni confirmation link-ah click pannittu login pannunga.', true);
+                        } else {
+                            showAlert('danger', `Login failed: ${error.message}`);
+                        }
+                        return;
+                    }
+
+                    if (data?.user && !data.user.email_confirmed_at) {
+                        await supabase.auth.signOut();
+                        showAlert('warning', 'Aiyoyoo! Un email innum verify aagala da! 📧 Inbox check panni confirmation link-ah click pannittu login pannunga.', true);
+                        return;
+                    }
+
+                    if (data?.session) {
+                        await syncWithBackend(data.session);
+                    }
+                } catch (ex) {
+                    showAlert('danger', 'Login attempt-la unexpected error vandhuduchu da.');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i> Sign In';
+                }
+            });
+
+            // Signup submission
+            document.getElementById('signupForm')?.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const name = document.getElementById('signupName').value.trim();
+                const email = document.getElementById('signupEmail').value.trim();
+                const phone = document.getElementById('signupPhone').value.trim();
+                const password = document.getElementById('signupPassword').value;
+                lastAttemptedEmail = email;
+
+                if (!supabase) {
+                    showAlert('warning', 'Supabase URL & Anon Key configure aagala da. appsettings.json or environment variables set pannunga!');
+                    return;
+                }
+
+                const submitBtn = document.getElementById('btnSignupSubmit');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Creating Account...';
+
+                try {
+                    const { data, error } = await supabase.auth.signUp({
+                        email,
+                        password,
+                        options: {
+                            data: {
+                                full_name: name,
+                                name: name,
+                                phone: phone
+                            }
+                        }
+                    });
+
+                    if (error) {
+                        showAlert('danger', `Signup failed: ${error.message}`);
+                        return;
+                    }
+
+                    if (data?.user && !data.user.email_confirmed_at) {
+                        showAlert('warning', 'Super da! Account create aayiduchu 🚀 Ana un email innum verify aaganum. Un inbox check panni confirmation link-ah click pannunga!', true);
+                        return;
+                    }
+
+                    if (data?.session) {
+                        await syncWithBackend(data.session);
+                    } else {
+                        showAlert('success', 'Account created! Please check your email to confirm and then sign in.');
+                    }
+                } catch (ex) {
+                    showAlert('danger', 'Signup attempt-la unexpected error vandhuduchu da.');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-rocket-takeoff-fill me-1"></i> Create Account & Start Saving';
+                }
+            });
+
+            // Check if user just performed an explicit logout
+            const urlParams = new URLSearchParams(window.location.search);
+            const isExplicitLogout = urlParams.get('loggedOut') === 'true' || sessionStorage.getItem('pg_logged_out') === 'true';
+
+            if (isExplicitLogout) {
+                // Ensure storage is fully purged of Supabase tokens
+                try {
+                    for (let i = localStorage.length - 1; i >= 0; i--) {
+                        const k = localStorage.key(i);
+                        if (k && (k.startsWith('sb-') || k.toLowerCase().includes('supabase'))) {
+                            localStorage.removeItem(k);
+                        }
+                    }
+                    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+                        const k = sessionStorage.key(i);
+                        if (k && (k.startsWith('sb-') || k.toLowerCase().includes('supabase'))) {
+                            sessionStorage.removeItem(k);
+                        }
+                    }
+                    if (supabase) {
+                        supabase.auth.signOut({ scope: 'local' }).catch(() => {});
+                    }
+                    sessionStorage.removeItem('pg_logged_out');
+                } catch (e) {}
+
+                // Clean query string from browser URL bar without triggering a reload
+                if (window.history && window.history.replaceState) {
+                    const cleanUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, cleanUrl);
+                }
+            } else if (supabase) {
+                // Auto-check existing session only if not explicitly logged out
+                supabase.auth.getSession().then(({ data }) => {
+                    if (data?.session?.user?.email_confirmed_at) {
+                        syncWithBackend(data.session);
+                    }
+                });
+
+                supabase.auth.onAuthStateChange(async (event, session) => {
+                    if (event === 'TOKEN_REFRESHED' && session) {
+                        syncWithBackend(session);
+                    }
+                });
+            }
+        })();
+    </script>
+}

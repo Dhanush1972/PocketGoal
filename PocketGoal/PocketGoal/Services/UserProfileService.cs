@@ -8,6 +8,7 @@ namespace PocketGoal.Services
     public interface IUserProfileService
     {
         Task<UserProfile?> GetUserProfileAsync(Guid userId);
+        Task<UserProfile> EnsureUserProfileAsync(Guid userId, string email, string? name, string? phone);
         Task<UserProfile?> FindByEmailOrPhoneAsync(string emailOrPhone);
         Task<(UserProfile User, SavingGoal Goal)> CreateOnboardingProfileAsync(OnboardingViewModel model);
         Task<List<UserProfile>> GetAllProfilesAsync();
@@ -39,6 +40,47 @@ namespace PocketGoal.Services
                 .Include(u => u.SavingGoals)
                 .Include(u => u.Expenses)
                 .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
+        public async Task<UserProfile> EnsureUserProfileAsync(Guid userId, string email, string? name, string? phone)
+        {
+            var user = await _dbContext.UserProfiles.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user != null)
+            {
+                if (!string.IsNullOrWhiteSpace(name) && user.Name != name)
+                {
+                    user.Name = name.Trim();
+                }
+                if (!string.IsNullOrWhiteSpace(email) && user.Email != email)
+                {
+                    user.Email = email.Trim();
+                }
+                if (!string.IsNullOrWhiteSpace(phone) && string.IsNullOrWhiteSpace(user.PhoneNumber))
+                {
+                    user.PhoneNumber = phone.Trim();
+                }
+                user.UpdatedAt = DateTime.UtcNow;
+                await _dbContext.SaveChangesAsync();
+                return user;
+            }
+
+            var displayName = !string.IsNullOrWhiteSpace(name) ? name.Trim() :
+                              (!string.IsNullOrWhiteSpace(email) && email.Contains('@') ? email.Split('@')[0] : "PocketGoal User");
+
+            user = new UserProfile
+            {
+                Id = userId,
+                Email = email.Trim(),
+                Name = displayName,
+                PhoneNumber = phone?.Trim() ?? string.Empty,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _dbContext.UserProfiles.Add(user);
+            await _dbContext.SaveChangesAsync();
+            _logger.LogInformation("Created new UserProfile for verified Supabase user {UserId} ({Email})", userId, email);
+            return user;
         }
 
         public async Task<UserProfile?> FindByEmailOrPhoneAsync(string emailOrPhone)
@@ -186,6 +228,7 @@ namespace PocketGoal.Services
                 {
                     Id = Guid.NewGuid(),
                     SavingGoalId = goal.Id,
+                    UserId = user.Id,
                     Amount = model.InitialSavings,
                     SavedDate = DateTime.UtcNow,
                     Notes = "Initial deposit at goal setup",

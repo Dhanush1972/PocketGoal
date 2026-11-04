@@ -8,7 +8,8 @@ builder.Configuration.Sources.Clear();
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: false)
-    .AddEnvironmentVariables();
+    .AddEnvironmentVariables()
+    .AddUserSecrets<Program>(optional: true);
 
 // Configure port for Render or local environment
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
@@ -35,16 +36,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.Name = ".PocketGoal.Auth";
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
-        options.LoginPath = "/Profile/Switch";
-        options.LogoutPath = "/Profile/Clear";
-        options.AccessDeniedPath = "/Profile/Switch";
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/Login";
         options.ExpireTimeSpan = TimeSpan.FromDays(30);
         options.SlidingExpiration = true;
     });
 
 // Configure Database (PostgreSQL / Supabase or In-Memory fallback for testing)
 var connectionString = builder.Configuration.GetConnectionString("PocketGoalDb") ??
-                       builder.Configuration.GetConnectionString("SaveTrackDb");
+                       builder.Configuration.GetConnectionString("SaveTrackDb") ??
+                       Environment.GetEnvironmentVariable("DATABASE_URL") ??
+                       Environment.GetEnvironmentVariable("POCKETGOAL_DB_CONNECTION");
 var usePostgres = !string.IsNullOrWhiteSpace(connectionString) &&
                   !connectionString.Contains("your_supabase_password", StringComparison.OrdinalIgnoreCase);
 
@@ -62,6 +65,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 });
 
 // Register Application Services
+builder.Services.AddSingleton<ISupabaseJwtValidator, SupabaseJwtValidator>();
 builder.Services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
 builder.Services.AddScoped<IProfileContextService, ProfileContextService>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();

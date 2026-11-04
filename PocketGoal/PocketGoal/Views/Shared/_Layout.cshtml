@@ -1,5 +1,6 @@
 @inject PocketGoal.Services.IProfileContextService ProfileContext
 @inject PocketGoal.Services.IUserProfileService UserProfileService
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     var activeUserId = ProfileContext.GetCurrentUserId();
     PocketGoal.Models.UserProfile? activeUser = null;
@@ -36,7 +37,7 @@
                     <span class="fw-bold">Pocket<span class="text-dark">Goal</span></span>
                 </a>
 
-                <button class="navbar-toggler border-0 p-2 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -79,25 +80,20 @@
                                     </div>
                                     <span class="fw-semibold text-dark small">@activeUser.Name</span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="min-width: 240px; max-width: calc(100vw - 2rem); border-radius: var(--pg-radius-md);">
+                                <ul class="dropdown-menu dropdown-menu-start dropdown-menu-lg-end shadow border-0 mt-2 p-2" style="min-width: 240px; max-width: calc(100vw - 2rem); border-radius: var(--pg-radius-md);">
                                     <li class="px-3 py-2 bg-light rounded-2 mb-2">
                                         <div class="fw-bold text-dark text-truncate">@activeUser.Name</div>
                                         <div class="text-muted small text-truncate">@activeUser.Email</div>
                                         <div class="text-muted small text-truncate">@activeUser.PhoneNumber</div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item rounded-2 py-2 d-flex align-items-center gap-2" asp-controller="Profile" asp-action="Switch">
-                                            <i class="bi bi-arrow-left-right text-muted"></i>
-                                            <span>Switch Profile</span>
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider my-1"></li>
-                                    <li>
-                                        <form asp-controller="Profile" asp-action="Clear" method="post" class="d-inline">
+                                        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline" id="navbarLogoutForm"
+                                              data-supabase-url="@Configuration["Supabase:Url"]"
+                                              data-supabase-key="@Configuration["Supabase:AnonKey"]">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="dropdown-item rounded-2 py-2 text-danger d-flex align-items-center gap-2">
+                                            <button type="submit" class="dropdown-item rounded-2 py-2 text-danger d-flex align-items-center gap-2" id="btnNavbarSignOut">
                                                 <i class="bi bi-box-arrow-right"></i>
-                                                <span>Sign Out / Clear Profile</span>
+                                                <span>Sign Out</span>
                                             </button>
                                         </form>
                                     </li>
@@ -109,13 +105,13 @@
                     {
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-2">
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Profile" asp-action="Switch">
-                                    <i class="bi bi-people"></i>
-                                    <span>Switch Profile</span>
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                                    <span>Sign In</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-primary btn-sm rounded-pill px-3" asp-controller="Profile" asp-action="Onboarding">
+                                <a class="btn btn-primary btn-sm rounded-pill px-3" asp-controller="Account" asp-action="Signup">
                                     <i class="bi bi-rocket-takeoff-fill me-1"></i> Get Started
                                 </a>
                             </li>
@@ -186,7 +182,62 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@supabase/supabase-js@2"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        document.getElementById('navbarLogoutForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = this;
+            const btn = document.getElementById('btnNavbarSignOut');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Signing out...';
+            }
+
+            // 1. Await supabase.auth.signOut({ scope: 'local' })
+            try {
+                const url = form.getAttribute('data-supabase-url');
+                const key = form.getAttribute('data-supabase-key');
+                if (window.supabase && url && key) {
+                    const client = window.supabase.createClient(url, key);
+                    await client.auth.signOut({ scope: 'local' });
+                }
+            } catch(err) {
+                console.warn('Supabase client signOut notice:', err);
+            }
+
+            // 2. Remove all sb-* keys from localStorage and sessionStorage
+            try {
+                const localKeys = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && (k.startsWith('sb-') || k.toLowerCase().includes('supabase'))) {
+                        localKeys.push(k);
+                    }
+                }
+                localKeys.forEach(k => localStorage.removeItem(k));
+
+                const sessionKeys = [];
+                for (let i = 0; i < sessionStorage.length; i++) {
+                    const k = sessionStorage.key(i);
+                    if (k && (k.startsWith('sb-') || k.toLowerCase().includes('supabase'))) {
+                        sessionKeys.push(k);
+                    }
+                }
+                sessionKeys.forEach(k => sessionStorage.removeItem(k));
+            } catch(err) {
+                console.warn('Storage cleanup error:', err);
+            }
+
+            // 3. Mark session logged-out flag
+            try {
+                sessionStorage.setItem('pg_logged_out', 'true');
+            } catch(e) {}
+
+            // 4. Submit form (POST to /Account/Logout with antiforgery token)
+            form.submit();
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

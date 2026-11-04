@@ -14,6 +14,11 @@ namespace PocketGoal.Models
         [ForeignKey(nameof(SavingGoalId))]
         public virtual SavingGoal? SavingGoal { get; set; }
 
+        public Guid? UserId { get; set; }
+
+        [ForeignKey(nameof(UserId))]
+        public virtual UserProfile? User { get; set; }
+
         [Required(ErrorMessage = "Amount is required")]
         [Range(0.01, 1000000000, ErrorMessage = "Amount must be greater than 0")]
         [Column(TypeName = "decimal(18,2)")]

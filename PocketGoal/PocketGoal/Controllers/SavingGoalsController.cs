@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PocketGoal.Models;
 using PocketGoal.Services;
@@ -5,6 +6,8 @@ using PocketGoal.ViewModels;
 
 namespace PocketGoal.Controllers
 {
+    [Authorize]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class SavingGoalsController : Controller
     {
         private readonly ISavingGoalService _savingGoalService;
@@ -24,7 +27,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var goals = await _savingGoalService.GetGoalsForUserAsync(userId.Value);
             return View(goals);
@@ -34,7 +37,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var goal = await _savingGoalService.GetGoalDetailsAsync(id, userId.Value);
             if (goal == null)
@@ -50,7 +53,7 @@ namespace PocketGoal.Controllers
         public IActionResult Create()
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var model = new SavingGoalCreateEditViewModel
             {
@@ -64,7 +67,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Create(SavingGoalCreateEditViewModel model)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             if (!ModelState.IsValid)
             {
@@ -80,7 +83,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var goal = await _savingGoalService.GetGoalDetailsAsync(id, userId.Value);
             if (goal == null)
@@ -107,7 +110,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Edit(SavingGoalCreateEditViewModel model)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             if (!ModelState.IsValid)
             {
@@ -130,7 +133,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var success = await _savingGoalService.DeleteGoalAsync(id, userId.Value);
             if (success)

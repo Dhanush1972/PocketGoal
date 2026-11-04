@@ -22,7 +22,7 @@ namespace PocketGoal.Controllers
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            return RedirectToAction("Onboarding", "Profile");
+            return RedirectToAction("Login", "Account");
         }
 
         public IActionResult Privacy()

@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PocketGoal.Services;
 
 namespace PocketGoal.Controllers
 {
+    [Authorize]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
@@ -21,14 +24,14 @@ namespace PocketGoal.Controllers
             var userId = _profileContext.GetCurrentUserId();
             if (!userId.HasValue)
             {
-                return RedirectToAction("Onboarding", "Profile");
+                return RedirectToAction("Login", "Account");
             }
 
             var dashboardData = await _dashboardService.GetDashboardDataAsync(userId.Value);
             if (dashboardData == null)
             {
-                _profileContext.ClearCurrentUserId();
-                return RedirectToAction("Onboarding", "Profile");
+                await _profileContext.SignOutAsync();
+                return RedirectToAction("Login", "Account");
             }
 
             return View(dashboardData);

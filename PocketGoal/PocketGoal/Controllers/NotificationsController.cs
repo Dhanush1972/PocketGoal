@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PocketGoal.Services;
 using PocketGoal.ViewModels;
 
 namespace PocketGoal.Controllers
 {
+    [Authorize]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class NotificationsController : Controller
     {
         private readonly INotificationsService _notificationsService;
@@ -26,10 +29,10 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var user = await _userProfileService.GetUserProfileAsync(userId.Value);
-            if (user == null) return RedirectToAction("Onboarding", "Profile");
+            if (user == null) return RedirectToAction("Login", "Account");
 
             var reminders = await _notificationsService.GenerateActiveRemindersForUserAsync(userId.Value);
 
@@ -50,7 +53,7 @@ namespace PocketGoal.Controllers
         public async Task<IActionResult> Trigger(TriggerNotificationRequest request)
         {
             var userId = EnsureAuthenticated();
-            if (!userId.HasValue) return RedirectToAction("Onboarding", "Profile");
+            if (!userId.HasValue) return RedirectToAction("Login", "Account");
 
             var (success, message) = await _notificationsService.TriggerSimulatedNotificationAsync(userId.Value, request);
             if (success)

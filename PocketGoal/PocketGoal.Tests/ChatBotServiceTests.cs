@@ -33,13 +33,15 @@ namespace PocketGoal.Tests
         {
             public Func<string, List<ChatMessage>?, DateTime, Task<GeminiExtractionResult>> Handler { get; set; } = null!;
             public Func<string, decimal, Task<ProductSuggestionResult>>? SuggestProductsHandler { get; set; }
+            public Func<string, Task<PriceLookupResult>>? LookupPriceHandler { get; set; }
+            public Func<string, string, string?, Task<string>>? PhraseUserDataAnswerHandler { get; set; }
 
-            public Task<GeminiExtractionResult> ProcessWithGeminiAsync(string userMessage, List<ChatMessage>? history, DateTime currentDate)
+            public Task<GeminiExtractionResult> ProcessWithGeminiAsync(string userMessage, List<ChatMessage>? history, DateTime currentDate, CancellationToken cancellationToken = default)
             {
                 return Handler(userMessage, history, currentDate);
             }
 
-            public Task<ProductSuggestionResult> SuggestProductsAsync(string item, decimal budget)
+            public Task<ProductSuggestionResult> SuggestProductsAsync(string item, decimal budget, CancellationToken cancellationToken = default)
             {
                 if (SuggestProductsHandler != null)
                 {
@@ -50,6 +52,32 @@ namespace PocketGoal.Tests
                     Status = ProductSuggestionStatus.Success,
                     Suggestions = new List<ProductSuggestion>()
                 });
+            }
+
+            public Task<PriceLookupResult> LookupPriceAsync(string item, CancellationToken cancellationToken = default)
+            {
+                if (LookupPriceHandler != null)
+                {
+                    return LookupPriceHandler(item);
+                }
+                return Task.FromResult(new PriceLookupResult
+                {
+                    Status = ProductSuggestionStatus.Success,
+                    ProductName = item,
+                    ApproxPrice = 59900m,
+                    VariantNote = "Base 128GB Wi-Fi",
+                    SourceUrl = "https://www.apple.com/in/ipad-air/",
+                    IsLive = true
+                });
+            }
+
+            public Task<string> PhraseUserDataAnswerAsync(string userMessage, string facts, string? languageStyle, CancellationToken cancellationToken = default)
+            {
+                if (PhraseUserDataAnswerHandler != null)
+                {
+                    return PhraseUserDataAnswerHandler(userMessage, facts, languageStyle);
+                }
+                return Task.FromResult(facts);
             }
         }
 
@@ -1468,6 +1496,758 @@ namespace PocketGoal.Tests
 
             var count = await db.Expenses.CountAsync();
             Assert.Equal(0, count); // Did not guess or save an amount
+        }
+
+        #endregion
+
+        #region Out-of-the-box Questions & Price Lookup Tests
+
+        [Fact]
+        public async Task PriceTheriyala_SearchPannu_ResolvesItemFromHistory_ReturnsConfirmationCardWithoutSaving()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var expenseService = new ExpenseService(db, NullLogger<ExpenseService>.Instance);
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var notifService = new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance);
+            var savingsService = new SavingsService(db, notifService, NullLogger<SavingsService>.Instance);
+
+            var history = new List<ChatMessage>
+            {
+                new() { Role = "user", Content = "iPad Air 11 inch vaanganum" },
+                new() { Role = "model", Content = "iPad Air 11 inch super choice!" }
+            };
+
+            var mockGemini = new MockGeminiService
+            {
+                Handler = (msg, hist, dt) =>
+                {
+                    Assert.NotNull(hist);
+                    Assert.NotEmpty(hist);
+                    var lastUserMsg = hist.FirstOrDefault(h => h.Content.Contains("iPad Air 11 inch"));
+                    Assert.NotNull(lastUserMsg);
+
+                    return Task.FromResult(new GeminiExtractionResult
+                    {
+                        Intent = "set_goal_lookup_price",
+                        Item = "iPad Air 11 inch",
+                        Amount = null,
+                        MissingFields = new List<string>(),
+                        Reply = "iPad Air 11 inch price online-la paathu solren!"
+                    });
+                },
+                LookupPriceHandler = (item) => Task.FromResult(new PriceLookupResult
+                {
+                    Status = ProductSuggestionStatus.Success,
+                    ProductName = "Apple iPad Air 11-inch (128GB)",
+                    ApproxPrice = 59900m,
+                    VariantNote = "Base 128GB Wi-Fi variant",
+                    SourceUrl = "https://www.apple.com/in/ipad-air/",
+                    IsLive = true
+                })
+            };
+
+            var chatBot = new ChatBotService(mockGemini, expenseService, goalService, savingsService, db, CreateMemoryCache(), NullLogger<ChatBotService>.Instance);
+
+            // Act: "price theriyala, search pannu"
+            var response = await chatBot.ProcessChatAsync(userId, new ChatRequest
+            {
+                Message = "price theriyala, search pannu",
+                History = history
+            });
+
+            // Assert: Does NOT save, returns price confirmation card
+            Assert.False(response.Saved);
+            Assert.NotNull(response.PriceLookup);
+            Assert.Equal("Apple iPad Air 11-inch (128GB)", response.PriceLookup.ProductName);
+            Assert.Equal(59900m, response.PriceLookup.ApproxPrice);
+            Assert.Equal("https://www.apple.com/in/ipad-air/", response.PriceLookup.SourceUrl);
+            Assert.True(response.PriceLookup.IsLive);
+
+            var goalCount = await db.SavingGoals.CountAsync();
+            Assert.Equal(0, goalCount); // Goal is NOT saved yet
+        }
+
+        [Fact]
+        public async Task GroundedSearch_429_FallsBackToEstimateMode_IsLiveFalseAndNoSourceUrl()
+        {
+            // Arrange: Grounded search returns 429 Too Many Requests, fallback call succeeds
+            var mockHandler = new MockHttpMessageHandler
+            {
+                ResponseFactory = req =>
+                {
+                    var content = req.Content != null ? req.Content.ReadAsStringAsync().Result : "";
+
+                    // If request contains "googleSearch" tool, simulate 429 rate limit
+                    if (content.Contains("googleSearch"))
+                    {
+                        var tooManyResponse = new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+                        {
+                            Content = new StringContent(
+                                @"{""error"":{""code"":429,""message"":""Resource has been exhausted (check quota)."",""status"":""RESOURCE_EXHAUSTED""}}",
+                                System.Text.Encoding.UTF8,
+                                "application/json"
+                            )
+                        };
+                        return tooManyResponse;
+                    }
+
+                    // Otherwise, fallback ungrounded call: return candidate JSON
+                    var fallbackResponseJson = @"{
+                        ""candidates"": [{
+                            ""content"": {
+                                ""parts"": [{
+                                    ""text"": ""{\""productName\"": \""Apple iPad Air 11-inch (128GB)\"", \""approxPrice\"": 59900, \""variantNote\"": \""Estimated base model price\""}""
+                                }]
+                            }
+                        }]
+                    }";
+
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(fallbackResponseJson, System.Text.Encoding.UTF8, "application/json")
+                    };
+                }
+            };
+
+            var httpClient = new HttpClient(mockHandler);
+            var inMemoryConfig = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["GEMINI_API_KEY"] = "test-mock-key",
+                    ["GEMINI_MODEL"] = "gemini-1.5-flash"
+                })
+                .Build();
+
+            var geminiService = new GeminiChatService(httpClient, inMemoryConfig, NullLogger<GeminiChatService>.Instance);
+
+            // Act
+            var result = await geminiService.LookupPriceAsync("iPad Air 11 inch");
+
+            // Assert: Fallback succeeded, IsLive is false, SourceUrl is null
+            Assert.Equal(ProductSuggestionStatus.Success, result.Status);
+            Assert.False(result.IsLive);
+            Assert.Null(result.SourceUrl);
+            Assert.Equal(59900m, result.ApproxPrice);
+            Assert.Equal("Apple iPad Air 11-inch (128GB)", result.ProductName);
+        }
+
+        [Fact]
+        public async Task ConfirmingCreatesExactlyOneGoal_SecondClickDoesNotCreateDuplicate()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var mockProfile = new MockProfileContextService { CurrentUserId = userId };
+            var mockChatBot = new ChatBotService(
+                new MockGeminiService(),
+                new ExpenseService(db, NullLogger<ExpenseService>.Instance),
+                goalService,
+                new SavingsService(db, new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance), NullLogger<SavingsService>.Instance),
+                db,
+                CreateMemoryCache(),
+                NullLogger<ChatBotService>.Instance
+            );
+
+            var controller = new ChatController(mockChatBot, goalService, mockProfile, NullLogger<ChatController>.Instance);
+
+            var request = new CreateGoalFromSuggestionRequest
+            {
+                Name = "Apple iPad Air 11-inch (128GB)",
+                Price = 59900m
+            };
+
+            // Act: First click
+            var firstResult = await controller.CreateGoalFromSuggestion(request) as OkObjectResult;
+            Assert.NotNull(firstResult);
+            var firstResponse = firstResult.Value as CreateGoalFromSuggestionResponse;
+            Assert.NotNull(firstResponse);
+            Assert.True(firstResponse.Success);
+            var firstGoalId = firstResponse.GoalId;
+
+            // Act: Second click immediately after (rapid double click / duplicate request)
+            var secondResult = await controller.CreateGoalFromSuggestion(request) as OkObjectResult;
+            Assert.NotNull(secondResult);
+            var secondResponse = secondResult.Value as CreateGoalFromSuggestionResponse;
+            Assert.NotNull(secondResponse);
+            Assert.True(secondResponse.Success);
+            Assert.Equal(firstGoalId, secondResponse.GoalId);
+
+            // Assert: Exactly ONE goal in database
+            var allGoals = await db.SavingGoals.Where(g => g.UserId == userId).ToListAsync();
+            Assert.Single(allGoals);
+            Assert.Equal("Apple iPad Air 11-inch (128GB)", allGoals[0].GoalName);
+            Assert.Equal(59900m, allGoals[0].TargetAmount);
+        }
+
+        [Fact]
+        public async Task ChangePrice_UsesUserSpecifiedNumber()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var mockProfile = new MockProfileContextService { CurrentUserId = userId };
+            var mockChatBot = new ChatBotService(
+                new MockGeminiService(),
+                new ExpenseService(db, NullLogger<ExpenseService>.Instance),
+                goalService,
+                new SavingsService(db, new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance), NullLogger<SavingsService>.Instance),
+                db,
+                CreateMemoryCache(),
+                NullLogger<ChatBotService>.Instance
+            );
+
+            var controller = new ChatController(mockChatBot, goalService, mockProfile, NullLogger<ChatController>.Instance);
+
+            // Act: User typed custom modified price of ₹55,000 (instead of ₹59,900)
+            var result = await controller.CreateGoalFromSuggestion(new CreateGoalFromSuggestionRequest
+            {
+                Name = "Apple iPad Air 11-inch (128GB)",
+                Price = 55000m
+            }) as OkObjectResult;
+
+            // Assert: Goal saved with user's custom number 55000
+            Assert.NotNull(result);
+            var response = result.Value as CreateGoalFromSuggestionResponse;
+            Assert.NotNull(response);
+            Assert.True(response.Success);
+
+            var goal = await db.SavingGoals.FirstOrDefaultAsync(g => g.UserId == userId);
+            Assert.NotNull(goal);
+            Assert.Equal(55000m, goal.TargetAmount);
+        }
+
+        [Fact]
+        public async Task UnrelatedQuestion_GetsShortPoliteRedirect()
+        {
+            // Arrange: Unrelated query outside personal finance
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var expenseService = new ExpenseService(db, NullLogger<ExpenseService>.Instance);
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var notifService = new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance);
+            var savingsService = new SavingsService(db, notifService, NullLogger<SavingsService>.Instance);
+
+            var mockGemini = new MockGeminiService
+            {
+                Handler = (msg, hist, dt) => Task.FromResult(new GeminiExtractionResult
+                {
+                    Intent = "general_question",
+                    Reply = "I can help you track expenses, manage savings goals, and look up product prices! Try: 'Add expense: petrol 500' or 'Suggest a phone under 20000'."
+                })
+            };
+
+            var chatBot = new ChatBotService(mockGemini, expenseService, goalService, savingsService, db, CreateMemoryCache(), NullLogger<ChatBotService>.Instance);
+
+            // Act
+            var response = await chatBot.ProcessChatAsync(userId, new ChatRequest
+            {
+                Message = "Who won the cricket match yesterday?"
+            });
+
+            // Assert: Did not save anything, returns short polite redirect with example
+            Assert.False(response.Saved);
+            Assert.Contains("expenses", response.Reply, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("goals", response.Reply, StringComparison.OrdinalIgnoreCase);
+            Assert.Null(response.Record);
+        }
+
+        [Fact]
+        public async Task SpendingQuestion_AnsweredFromBackendComputedTotals()
+        {
+            // Arrange: User has recorded expenses in database
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var expenseService = new ExpenseService(db, NullLogger<ExpenseService>.Instance);
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var notifService = new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance);
+            var savingsService = new SavingsService(db, notifService, NullLogger<SavingsService>.Instance);
+
+            var foodCat = new ExpenseCategory { Id = Guid.NewGuid(), Name = "Food & Dining", UserId = userId, Icon = "bi-cup", ColorHex = "#f59e0b" };
+            var fuelCat = new ExpenseCategory { Id = Guid.NewGuid(), Name = "Fuel & Vehicle", UserId = userId, Icon = "bi-fuel-pump", ColorHex = "#ef4444" };
+            db.ExpenseCategories.AddRange(foodCat, fuelCat);
+
+            var now = DateTime.UtcNow;
+            db.Expenses.Add(new Expense { Id = Guid.NewGuid(), UserId = userId, Amount = 2000m, Description = "Groceries", CategoryId = foodCat.Id, ExpenseDate = now });
+            db.Expenses.Add(new Expense { Id = Guid.NewGuid(), UserId = userId, Amount = 1500m, Description = "Petrol", CategoryId = fuelCat.Id, ExpenseDate = now });
+            await db.SaveChangesAsync();
+
+            var mockGemini = new MockGeminiService
+            {
+                Handler = (msg, hist, dt) => Task.FromResult(new GeminiExtractionResult
+                {
+                    Intent = "query_spending",
+                    Reply = "Checking your spending..."
+                }),
+                PhraseUserDataAnswerHandler = (msg, facts, style) =>
+                {
+                    Assert.Contains("3,500", facts);
+                    return Task.FromResult("Intha maasam neenga motham ₹3,500 selavu pannirukkeenga!");
+                }
+            };
+
+            var chatBot = new ChatBotService(mockGemini, expenseService, goalService, savingsService, db, CreateMemoryCache(), NullLogger<ChatBotService>.Instance);
+
+            // Act: "How much did I spend this month?"
+            var response = await chatBot.ProcessChatAsync(userId, new ChatRequest
+            {
+                Message = "How much did I spend this month?"
+            });
+
+            // Assert: Formatted response uses backend-computed total ₹3,500
+            Assert.False(response.Saved);
+            Assert.Contains("₹3,500", response.Reply);
+        }
+
+        
+        [Fact]
+        public async Task GroundedSearch_Timeout_TriggersFallbackWithinTimeBudget()
+        {
+            // Arrange: Grounded search times out via TaskCanceledException, fallback responds immediately
+            var mockHandler = new MockHttpMessageHandler
+            {
+                ResponseFactory = req =>
+                {
+                    var content = req.Content != null ? req.Content.ReadAsStringAsync().Result : "";
+                    if (content.Contains("googleSearch"))
+                    {
+                        // Simulate timeout exception in grounded search
+                        throw new TaskCanceledException("The operation was canceled due to timeout.");
+                    }
+
+                    var fallbackJson = @"{
+                        ""candidates"": [{
+                            ""content"": {
+                                ""parts"": [{
+                                    ""text"": ""{\""productName\"": \""Apple iPad Air 11-inch (128GB)\"", \""approxPrice\"": 59900, \""variantNote\"": \""Fallback estimate\""}""
+                                }]
+                            }
+                        }]
+                    }";
+
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(fallbackJson, System.Text.Encoding.UTF8, "application/json")
+                    };
+                }
+            };
+
+            var httpClient = new HttpClient(mockHandler);
+            var inMemoryConfig = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["GEMINI_API_KEY"] = "test-mock-key",
+                    ["GEMINI_MODEL"] = "gemini-1.5-flash"
+                })
+                .Build();
+
+            var geminiService = new GeminiChatService(httpClient, inMemoryConfig, NullLogger<GeminiChatService>.Instance);
+
+            // Act
+            var result = await geminiService.LookupPriceAsync("iPad Air 11 inch");
+
+            // Assert: Fallback succeeded without throwing, IsLive is false, SourceUrl is null
+            Assert.Equal(ProductSuggestionStatus.Success, result.Status);
+            Assert.False(result.IsLive);
+            Assert.Null(result.SourceUrl);
+            Assert.Equal(59900m, result.ApproxPrice);
+            Assert.Equal("Apple iPad Air 11-inch (128GB)", result.ProductName);
+        }
+
+        [Fact]
+        public async Task InFlightGuard_TwoIdenticalLookups_ShareOneGeminiCall()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var expenseService = new ExpenseService(db, NullLogger<ExpenseService>.Instance);
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var notifService = new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance);
+            var savingsService = new SavingsService(db, notifService, NullLogger<SavingsService>.Instance);
+
+            int geminiLookupCallCount = 0;
+            var tcs = new TaskCompletionSource<bool>();
+
+            var mockGemini = new MockGeminiService
+            {
+                Handler = (msg, hist, dt) => Task.FromResult(new GeminiExtractionResult
+                {
+                    Intent = "set_goal_lookup_price",
+                    Item = "MacBook Air M2",
+                    Reply = "Checking price..."
+                }),
+                LookupPriceHandler = async (item) =>
+                {
+                    Interlocked.Increment(ref geminiLookupCallCount);
+                    // Block briefly to simulate concurrent in-flight execution
+                    await tcs.Task;
+                    return new PriceLookupResult
+                    {
+                        Status = ProductSuggestionStatus.Success,
+                        ProductName = "MacBook Air M2",
+                        ApproxPrice = 89900m,
+                        IsLive = true
+                    };
+                }
+            };
+
+            var chatBot = new ChatBotService(mockGemini, expenseService, goalService, savingsService, db, CreateMemoryCache(), NullLogger<ChatBotService>.Instance);
+
+            // Act: Fire two identical lookups concurrently
+            var task1 = chatBot.ProcessChatAsync(userId, new ChatRequest { Message = "MacBook Air M2 price theriyala" });
+            var task2 = chatBot.ProcessChatAsync(userId, new ChatRequest { Message = "MacBook Air M2 price theriyala" });
+
+            // Allow the lookup to finish
+            tcs.SetResult(true);
+
+            var results = await Task.WhenAll(task1, task2);
+
+            // Assert: Gemini was only called once, both responses received the price lookup
+            Assert.Equal(1, geminiLookupCallCount);
+            Assert.NotNull(results[0].PriceLookup);
+            Assert.NotNull(results[1].PriceLookup);
+            Assert.Equal(89900m, results[0].PriceLookup.ApproxPrice);
+            Assert.Equal(89900m, results[1].PriceLookup.ApproxPrice);
+        }
+
+        [Fact]
+        public async Task CancelledRequest_StopsCleanly()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var expenseService = new ExpenseService(db, NullLogger<ExpenseService>.Instance);
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var notifService = new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance);
+            var savingsService = new SavingsService(db, notifService, NullLogger<SavingsService>.Instance);
+
+            var cts = new CancellationTokenSource();
+            cts.Cancel(); // Pre-cancelled token
+
+            var mockGemini = new MockGeminiService
+            {
+                Handler = (msg, hist, dt) => Task.FromResult(new GeminiExtractionResult
+                {
+                    Intent = "set_goal_lookup_price",
+                    Item = "iPad Air",
+                    Reply = "Checking..."
+                })
+            };
+
+            var chatBot = new ChatBotService(mockGemini, expenseService, goalService, savingsService, db, CreateMemoryCache(), NullLogger<ChatBotService>.Instance);
+
+            // Act & Assert: Throws OperationCanceledException cleanly
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
+            {
+                await chatBot.ProcessChatAsync(userId, new ChatRequest { Message = "iPad Air price" }, cts.Token);
+            });
+        }
+
+        
+        [Fact]
+        public async Task GroundedSearchTimeout_LeadsToFallbackEstimate_AndConfirmationCard()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var expenseService = new ExpenseService(db, NullLogger<ExpenseService>.Instance);
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var notifService = new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance);
+            var savingsService = new SavingsService(db, notifService, NullLogger<SavingsService>.Instance);
+
+            var mockGemini = new MockGeminiService
+            {
+                Handler = (msg, hist, dt) => Task.FromResult(new GeminiExtractionResult
+                {
+                    Intent = "set_goal_lookup_price",
+                    Item = "Royal Enfield Hunter 350",
+                    Reply = "Checking price..."
+                }),
+                LookupPriceHandler = (item) => Task.FromResult(new PriceLookupResult
+                {
+                    Status = ProductSuggestionStatus.Success,
+                    ProductName = "Royal Enfield Hunter 350 (Dapper)",
+                    ApproxPrice = 149900m,
+                    VariantNote = "Base Dapper variant ex-showroom price",
+                    SourceUrl = null,
+                    IsLive = false
+                })
+            };
+
+            var chatBot = new ChatBotService(mockGemini, expenseService, goalService, savingsService, db, CreateMemoryCache(), NullLogger<ChatBotService>.Instance);
+
+            // Act
+            var response = await chatBot.ProcessChatAsync(userId, new ChatRequest
+            {
+                Message = "I want to add Royal Enfield Hunter 350 as a goal but I don't know the price, could you search online and add it?"
+            });
+
+            // Assert: Does NOT claim "couldn't find price", provides confirmation card with AI estimate badge
+            Assert.False(response.Saved);
+            Assert.NotNull(response.PriceLookup);
+            Assert.False(response.PriceLookup.IsLive);
+            Assert.Equal("Royal Enfield Hunter 350 (Dapper)", response.PriceLookup.ProductName);
+            Assert.Equal(149900m, response.PriceLookup.ApproxPrice);
+            Assert.Null(response.PriceLookup.SourceUrl);
+            Assert.DoesNotContain("couldn't find a price online", response.Reply, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task GroundedSearch429_LeadsToFallbackEstimate()
+        {
+            // Arrange
+            GeminiChatService.ResetCircuitBreakerForTesting();
+
+            var mockHandler = new MockHttpMessageHandler
+            {
+                ResponseFactory = req =>
+                {
+                    var content = req.Content != null ? req.Content.ReadAsStringAsync().Result : "";
+                    if (content.Contains("googleSearch"))
+                    {
+                        return new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+                        {
+                            Content = new StringContent(
+                                @"{""error"":{""code"":429,""message"":""Quota exceeded."",""status"":""RESOURCE_EXHAUSTED""}}",
+                                System.Text.Encoding.UTF8,
+                                "application/json"
+                            )
+                        };
+                    }
+
+                    var fallbackJson = @"{
+                        ""candidates"": [{
+                            ""content"": {
+                                ""parts"": [{
+                                    ""text"": ""{\""productName\"": \""Royal Enfield Hunter 350\"", \""approxPrice\"": 149900, \""variantNote\"": \""Estimated base model price\""}""
+                                }]
+                            }
+                        }]
+                    }";
+
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(fallbackJson, System.Text.Encoding.UTF8, "application/json")
+                    };
+                }
+            };
+
+            var httpClient = new HttpClient(mockHandler);
+            var inMemoryConfig = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["GEMINI_API_KEY"] = "test-mock-key",
+                    ["GEMINI_MODEL"] = "gemini-1.5-flash"
+                })
+                .Build();
+
+            var geminiService = new GeminiChatService(httpClient, inMemoryConfig, NullLogger<GeminiChatService>.Instance);
+
+            // Act
+            var result = await geminiService.LookupPriceAsync("Royal Enfield Hunter 350");
+
+            // Assert
+            Assert.Equal(ProductSuggestionStatus.Success, result.Status);
+            Assert.False(result.IsLive);
+            Assert.Null(result.SourceUrl);
+            Assert.Equal(149900m, result.ApproxPrice);
+            Assert.Equal("Royal Enfield Hunter 350", result.ProductName);
+
+            GeminiChatService.ResetCircuitBreakerForTesting();
+        }
+
+        [Fact]
+        public async Task BothGroundedAndFallbackFailing_ReturnsBusyMessage_NotCouldNotFind()
+        {
+            // Arrange: Both grounded and fallback return 503 Overloaded
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var expenseService = new ExpenseService(db, NullLogger<ExpenseService>.Instance);
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var notifService = new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance);
+            var savingsService = new SavingsService(db, notifService, NullLogger<SavingsService>.Instance);
+
+            var mockGemini = new MockGeminiService
+            {
+                Handler = (msg, hist, dt) => Task.FromResult(new GeminiExtractionResult
+                {
+                    Intent = "set_goal_lookup_price",
+                    Item = "Royal Enfield Hunter 350",
+                    Reply = "Checking..."
+                }),
+                LookupPriceHandler = (item) => Task.FromResult(new PriceLookupResult
+                {
+                    Status = ProductSuggestionStatus.Overloaded,
+                    ErrorMessage = "The AI service is busy right now. Please try again in a minute.",
+                    IsLive = false
+                })
+            };
+
+            var chatBot = new ChatBotService(mockGemini, expenseService, goalService, savingsService, db, CreateMemoryCache(), NullLogger<ChatBotService>.Instance);
+
+            // Act
+            var response = await chatBot.ProcessChatAsync(userId, new ChatRequest
+            {
+                Message = "Royal Enfield Hunter 350 price search pannu"
+            });
+
+            // Assert: Shows busy message, NOT "couldn't find price"
+            Assert.False(response.Saved);
+            Assert.Null(response.PriceLookup);
+            Assert.Equal("The AI service is busy right now. Please try again in a minute.", response.Reply);
+            Assert.DoesNotContain("couldn't find a price online", response.Reply, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("What target price would you like to set", response.Reply, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task FailuresAreNotCached_SubsequentSuccessfulRequestSucceeds()
+        {
+            // Arrange
+            var db = CreateInMemoryDbContext();
+            var user = await CreateTestUserAsync(db);
+            var userId = user.Id;
+            var expenseService = new ExpenseService(db, NullLogger<ExpenseService>.Instance);
+            var goalService = new SavingGoalService(db, NullLogger<SavingGoalService>.Instance);
+            var notifService = new NotificationsService(new ConfigurationBuilder().Build(), db, NullLogger<NotificationsService>.Instance);
+            var savingsService = new SavingsService(db, notifService, NullLogger<SavingsService>.Instance);
+            var cache = CreateMemoryCache();
+
+            bool shouldFail = true;
+            var mockGemini = new MockGeminiService
+            {
+                Handler = (msg, hist, dt) => Task.FromResult(new GeminiExtractionResult
+                {
+                    Intent = "set_goal_lookup_price",
+                    Item = "Royal Enfield Hunter 350",
+                    Reply = "Checking price..."
+                }),
+                LookupPriceHandler = (item) =>
+                {
+                    if (shouldFail)
+                    {
+                        return Task.FromResult(new PriceLookupResult
+                        {
+                            Status = ProductSuggestionStatus.Overloaded,
+                            ErrorMessage = "AI service busy",
+                            IsLive = false
+                        });
+                    }
+
+                    return Task.FromResult(new PriceLookupResult
+                    {
+                        Status = ProductSuggestionStatus.Success,
+                        ProductName = "Royal Enfield Hunter 350",
+                        ApproxPrice = 149900m,
+                        IsLive = false
+                    });
+                }
+            };
+
+            var chatBot = new ChatBotService(mockGemini, expenseService, goalService, savingsService, db, cache, NullLogger<ChatBotService>.Instance);
+
+            // Act 1: Initial failure
+            var resp1 = await chatBot.ProcessChatAsync(userId, new ChatRequest { Message = "Royal Enfield Hunter 350 price" });
+            Assert.Equal("The AI service is busy right now. Please try again in a minute.", resp1.Reply);
+            // Verify failure is NOT cached
+            Assert.False(cache.TryGetValue("price_lookup_royal enfield hunter 350", out _));
+
+            // Act 2: Service recovers
+            shouldFail = false;
+            var resp2 = await chatBot.ProcessChatAsync(userId, new ChatRequest { Message = "Royal Enfield Hunter 350 price" });
+
+            // Assert: Success returned and cached
+            Assert.NotNull(resp2.PriceLookup);
+            Assert.Equal(149900m, resp2.PriceLookup.ApproxPrice);
+            Assert.True(cache.TryGetValue("price_lookup_royal enfield hunter 350", out _));
+        }
+
+        [Fact]
+        public async Task CircuitBreaker_SkipsGrounding_AfterRepeated429s()
+        {
+            // Arrange
+            GeminiChatService.ResetCircuitBreakerForTesting();
+
+            int groundedCallCount = 0;
+            int fallbackCallCount = 0;
+
+            var mockHandler = new MockHttpMessageHandler
+            {
+                ResponseFactory = req =>
+                {
+                    var content = req.Content != null ? req.Content.ReadAsStringAsync().Result : "";
+                    if (content.Contains("googleSearch"))
+                    {
+                        groundedCallCount++;
+                        return new HttpResponseMessage(HttpStatusCode.TooManyRequests)
+                        {
+                            Content = new StringContent(
+                                @"{""error"":{""code"":429,""message"":""Quota exceeded."",""status"":""RESOURCE_EXHAUSTED""}}",
+                                System.Text.Encoding.UTF8,
+                                "application/json"
+                            )
+                        };
+                    }
+
+                    fallbackCallCount++;
+                    var fallbackJson = @"{
+                        ""candidates"": [{
+                            ""content"": {
+                                ""parts"": [{
+                                    ""text"": ""{\""productName\"": \""Product\"", \""approxPrice\"": 5000, \""variantNote\"": \""Estimated\""}""
+                                }]
+                            }
+                        }]
+                    }";
+
+                    return new HttpResponseMessage(HttpStatusCode.OK)
+                    {
+                        Content = new StringContent(fallbackJson, System.Text.Encoding.UTF8, "application/json")
+                    };
+                }
+            };
+
+            var httpClient = new HttpClient(mockHandler);
+            var inMemoryConfig = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["GEMINI_API_KEY"] = "test-mock-key",
+                    ["GEMINI_MODEL"] = "gemini-1.5-flash"
+                })
+                .Build();
+
+            var geminiService = new GeminiChatService(httpClient, inMemoryConfig, NullLogger<GeminiChatService>.Instance);
+
+            // Act: 3 consecutive 429 grounded calls trip the circuit breaker
+            await geminiService.LookupPriceAsync("product 1");
+            await geminiService.LookupPriceAsync("product 2");
+            await geminiService.LookupPriceAsync("product 3");
+
+            Assert.Equal(3, groundedCallCount);
+            Assert.True(GeminiChatService.IsCircuitBreakerOpen());
+
+            // 4th call: circuit breaker is open, grounded search is SKIPPED
+            var result4 = await geminiService.LookupPriceAsync("product 4");
+
+            // Assert: groundedCallCount is STILL 3 (skipped directly to fallback)
+            Assert.Equal(3, groundedCallCount);
+            Assert.Equal(4, fallbackCallCount);
+            Assert.Equal(ProductSuggestionStatus.Success, result4.Status);
+            Assert.False(result4.IsLive);
+
+            // Cleanup
+            GeminiChatService.ResetCircuitBreakerForTesting();
         }
 
         #endregion

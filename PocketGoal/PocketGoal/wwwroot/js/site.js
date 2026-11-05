@@ -37,6 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 2. Prevent Double Submit & Show Loading Spinner on Form Submission
     document.querySelectorAll('form').forEach(function (form) {
+        // Exclude the AI Chatbot form and any form explicitly opting out
+        if (form.id === 'pgChatForm' || form.closest('#pgChatWidget') || form.classList.contains('no-spin') || form.getAttribute('data-no-spin') === 'true') {
+            return;
+        }
         form.addEventListener('submit', function (e) {
             // Check if jQuery validation is present and invalid
             if (window.jQuery && $(form).data('validator')) {

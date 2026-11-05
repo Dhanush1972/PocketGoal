@@ -44,26 +44,26 @@
                 <button type="button" class="btn btn-xs pg-chip" data-prompt="Add expense: lunch, 250">
                     <i class="bi bi-plus-circle me-1"></i> Lunch ₹250
                 </button>
-                <button type="button" class="btn btn-xs pg-chip" data-prompt="I spent 1200 on groceries yesterday">
-                    <i class="bi bi-cart me-1"></i> Groceries ₹1200
-                </button>
                 <button type="button" class="btn btn-xs pg-chip" data-prompt="Suggest a laptop under 60000">
                     <i class="bi bi-search me-1"></i> Laptop &lt; ₹60k
                 </button>
-                <button type="button" class="btn btn-xs pg-chip" data-prompt="Add 5000 to my savings">
-                    <i class="bi bi-piggy-bank me-1"></i> Save ₹5000
+                <button type="button" class="btn btn-xs pg-chip" data-prompt="iPad Air 11 inch price theriyala, search pannu">
+                    <i class="bi bi-tag me-1"></i> iPad price
+                </button>
+                <button type="button" class="btn btn-xs pg-chip" data-prompt="How much did I spend this month?">
+                    <i class="bi bi-graph-up me-1"></i> Spending?
                 </button>
             </div>
         </div>
 
         <!-- Chat Input Footer -->
         <div class="pg-chat-footer p-2 border-top bg-white">
-            <form id="pgChatForm" class="d-flex align-items-center gap-2 m-0" onsubmit="return false;">
-                <input type="text" id="pgChatInput" class="form-control form-control-sm border-0 shadow-none px-2"
-                       placeholder="Type your expense, goal or savings..." autocomplete="off" maxlength="300" />
-                <button type="submit" id="pgChatSendBtn" class="btn btn-primary btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                        style="width: 34px; height: 34px; min-width: 34px;" title="Send message" aria-label="Send">
-                    <i class="bi bi-send-fill" style="font-size: 0.85rem;"></i>
+            <form id="pgChatForm" class="d-flex align-items-center gap-2 m-0 no-spin" data-no-spin="true" onsubmit="return false;">
+                <input type="text" id="pgChatInput" class="form-control border-0 shadow-none px-3"
+                       placeholder="Type your expense, goal or savings..." autocomplete="off" maxlength="300" aria-label="Chat message input" />
+                <button type="button" id="pgChatSendBtn" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center pg-chat-send-btn flex-shrink-0 no-spin"
+                        title="Send message" aria-label="Send message" data-no-spin="true">
+                    <i class="bi bi-send-fill"></i>
                 </button>
             </form>
         </div>

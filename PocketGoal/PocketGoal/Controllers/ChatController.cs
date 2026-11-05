@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using PocketGoal.Models;
 using PocketGoal.Models.Chat;
@@ -28,7 +29,7 @@ namespace PocketGoal.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ChatRequest request)
+        public async Task<IActionResult> Post([FromBody] ChatRequest request, CancellationToken cancellationToken = default)
         {
             var userId = _profileContext.GetCurrentUserId();
             if (!userId.HasValue)
@@ -51,8 +52,13 @@ namespace PocketGoal.Controllers
 
             try
             {
-                var response = await _chatBotService.ProcessChatAsync(userId.Value, request);
+                var response = await _chatBotService.ProcessChatAsync(userId.Value, request, cancellationToken);
                 return Ok(response);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                _logger.LogInformation("Chat request cancelled by client for user {UserId}", userId.Value);
+                return StatusCode(499);
             }
             catch (Exception ex)
             {
@@ -108,7 +114,33 @@ namespace PocketGoal.Controllers
 
             try
             {
+                // Prevent duplicate goal creation if clicked multiple times
+                var existingGoals = await _savingGoalService.GetGoalsForUserAsync(userId.Value);
+                var recentDuplicate = existingGoals.FirstOrDefault(g =>
+                    string.Equals(g.GoalName, trimmedName, StringComparison.OrdinalIgnoreCase) &&
+                    g.TargetAmount == request.Price &&
+                    g.CreatedAt >= DateTime.UtcNow.AddMinutes(-2));
+
+                if (recentDuplicate != null)
+                {
+                    return Ok(new CreateGoalFromSuggestionResponse
+                    {
+                        Success = true,
+                        Message = $"Goal '{recentDuplicate.GoalName}' is already set for ₹{recentDuplicate.TargetAmount:N0} by {recentDuplicate.TargetDate:MMM yyyy}! 🎯",
+                        GoalId = recentDuplicate.Id
+                    });
+                }
+
                 var targetDate = DateTime.SpecifyKind(DateTime.UtcNow.AddMonths(6), DateTimeKind.Utc);
+                if (!string.IsNullOrWhiteSpace(request.TargetDate) &&
+                    DateTime.TryParse(request.TargetDate, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                {
+                    if (parsedDate > DateTime.UtcNow)
+                    {
+                        targetDate = DateTime.SpecifyKind(parsedDate, DateTimeKind.Utc);
+                    }
+                }
+
                 var goal = await _savingGoalService.CreateGoalAsync(userId.Value, new SavingGoalCreateEditViewModel
                 {
                     GoalName = trimmedName,

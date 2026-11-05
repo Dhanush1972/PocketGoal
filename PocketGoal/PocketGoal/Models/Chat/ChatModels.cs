@@ -58,6 +58,41 @@ namespace PocketGoal.Models.Chat
         public string? ErrorMessage { get; set; }
     }
 
+    public class PriceLookupResult
+    {
+        public ProductSuggestionStatus Status { get; set; } = ProductSuggestionStatus.Success;
+        public string ProductName { get; set; } = string.Empty;
+        public decimal ApproxPrice { get; set; }
+        public string? VariantNote { get; set; }
+        public string? SourceUrl { get; set; }
+        public bool IsLive { get; set; } = true;
+        public string? ErrorMessage { get; set; }
+    }
+
+    public class PriceLookupCard
+    {
+        [JsonPropertyName("productName")]
+        public string ProductName { get; set; } = string.Empty;
+
+        [JsonPropertyName("approxPrice")]
+        public decimal ApproxPrice { get; set; }
+
+        [JsonPropertyName("variantNote")]
+        public string? VariantNote { get; set; }
+
+        [JsonPropertyName("sourceUrl")]
+        public string? SourceUrl { get; set; }
+
+        [JsonPropertyName("searchUrl")]
+        public string SearchUrl { get; set; } = string.Empty;
+
+        [JsonPropertyName("flipkartUrl")]
+        public string? FlipkartUrl { get; set; }
+
+        [JsonPropertyName("isLive")]
+        public bool IsLive { get; set; } = true;
+    }
+
     public class ChatResponse
     {
         [JsonPropertyName("saved")]
@@ -72,6 +107,9 @@ namespace PocketGoal.Models.Chat
         [JsonPropertyName("suggestions")]
         public List<ProductSuggestion>? Suggestions { get; set; }
 
+        [JsonPropertyName("priceLookup")]
+        public PriceLookupCard? PriceLookup { get; set; }
+
         [JsonPropertyName("isLive")]
         public bool? IsLive { get; set; }
     }
@@ -83,6 +121,9 @@ namespace PocketGoal.Models.Chat
 
         [JsonPropertyName("price")]
         public decimal Price { get; set; }
+
+        [JsonPropertyName("targetDate")]
+        public string? TargetDate { get; set; }
     }
 
     public class CreateGoalFromSuggestionResponse
@@ -100,7 +141,7 @@ namespace PocketGoal.Models.Chat
     public class GeminiExtractionResult
     {
         [JsonPropertyName("intent")]
-        public string Intent { get; set; } = "unknown"; // "add_expense" | "set_goal" | "add_savings" | "suggest_products" | "unknown"
+        public string Intent { get; set; } = "unknown"; // "add_expense" | "set_goal" | "add_savings" | "suggest_products" | "set_goal_lookup_price" | "general_question" | "query_spending" | "query_goals" | "unknown"
 
         [JsonPropertyName("item")]
         public string? Item { get; set; }
